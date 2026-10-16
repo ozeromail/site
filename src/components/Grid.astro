@@ -1,0 +1,7 @@
+---
+interface Props { items: { h: string; p: string }[]; color: string }
+const { items, color } = Astro.props;
+---
+<div class="grid2" style={`--c:${color}`}>
+  {items.map((f) => <div><h3><i></i>{f.h}</h3><p>{f.p}</p></div>)}
+</div>

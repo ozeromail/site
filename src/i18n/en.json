@@ -1,0 +1,214 @@
+{
+  "title": "Ozero Mail",
+  "description": "Ozero Mail: a private mail app for all your accounts on Android and iOS. No AI, no subscription, nothing in between.",
+  "listLabel": "Letters",
+  "tYest": "Yesterday",
+  "tNow": "Now",
+  "inbox": "Inbox",
+  "h1": "One inbox. No AI. Nothing in between.",
+  "sub": "A private mail app for all your accounts, on Android and iOS. This page is an inbox too: read it, then clear it.",
+  "tip": "Swipe a letter left or press Done.",
+  "tipKey": "Keys: E for Done, U to undo.",
+  "doneLbl": "Done",
+  "undo": "Undo",
+  "reopen": "Open",
+  "avaL": "K",
+  "name": "Khizri",
+  "role": "designer and developer",
+  "tag1": "Personal",
+  "tag2": "Privacy",
+  "tag3": "Product",
+  "tag4": "Promises",
+  "tag5": "Pricing",
+  "tag6": "Thread",
+  "tag7": "Honest comparison",
+  "s1": "I tried every mail app. None fit.",
+  "s2": "I don't read your mail. Neither does a robot.",
+  "s3": "Six reasons you'll hit zero by lunch",
+  "s4": "Four promises, in writing",
+  "s5": "$0 forever, or $19.99 once. No subscription.",
+  "s6": "Re: Re: Re: Your questions",
+  "s7": "Why not Apple Mail, Spark or Gmail?",
+  "m1a": "The private ones felt like settings panels. The friendly ones fed my mail to AI. So I'm building the one I want to use every day.",
+  "m1b": "There's no corporation, team or investor behind it. When you buy Ozero Deep, the money goes to me.",
+  "aiFree": "AI free",
+  "shotLabel": "The app's unified inbox: letters from four accounts, each with its own color stripe",
+  "shInbox": "Inbox",
+  "shAll": "All accounts",
+  "sh1w": "Anna, me",
+  "sh1s": "Re: Mockups for Friday",
+  "sh2w": "Dmitry Orlov",
+  "sh2s": "October invoice",
+  "sh3w": "Mom",
+  "sh3s": "Photos from the garden",
+  "sh4w": "Sasha Kim",
+  "sh4s": "Birthday on Saturday",
+  "aWork": "Work",
+  "aStudio": "Studio",
+  "aPersonal": "Personal",
+  "tbPeople": "People",
+  "tbServices": "Services",
+  "tbNews": "Newsletters",
+  "shSearch": "Search",
+  "wipPill": "In development",
+  "wipText": "All of this is being built right now. The app isn’t out yet, and details may change.",
+  "rc4": "Ozero Deep, planned: your own rules, templates, send later, saved searches, settings sync",
+  "rc5": "Subscription",
+  "rc6": "Total to read your mail",
+  "free": "free",
+  "none": "none",
+  "pricePro": "$19.99",
+  "priceFree": "$0",
+  "proNote": "Ozero Deep is a plan for now, after the free app ships. Once it’s out, try any of it for 14 days, no card needed.",
+  "tipText": "Free is enough? Great. If you still want to thank me, there’s a tip jar, and your name goes on the thank-you list.",
+  "tipLink": "Leave a tip",
+  "you": "You",
+  "bringBack": "Bring the letters back",
+  "composeLabel": "Get notified at launch",
+  "fTo": "To",
+  "fFrom": "From",
+  "fPhone": "Phone",
+  "fSubj": "Subject",
+  "emailPh": "your email",
+  "cSubj": "Tell me when Ozero Mail is out",
+  "cText": "Hi! Write me once, on launch day. Nothing else.",
+  "cFine": "Preview: the list isn’t open yet, so nothing is sent.",
+  "sendLabel": "Send",
+  "statsText": "This site counts visits without cookies.",
+  "statsLink": "The numbers are public",
+  "foot1": "No AI. No ads. No tracking.",
+  "foot2": "Made by Khizri",
+  "tipFoot": "Support the work",
+  "barLabel": "Page controls",
+  "progLabel": "Progress to Inbox Zero",
+  "cta": "Notify me",
+  "getApp": "Get the app",
+  "storeApple": "Download on the",
+  "storeGoogle": "Get it on",
+  "langLabel": "Language",
+  "client": {
+    "left": "{n} left",
+    "allClear": "All clear",
+    "unread": {
+      "one": "unread letter",
+      "other": "unread letters"
+    },
+    "bulk": {
+      "one": "Swipe {n} letter",
+      "other": "Swipe {n} letters"
+    },
+    "bulkLabel": "Mark the remaining {n} as done",
+    "fin": "Not reading everything is fine. Swipe the rest away, or skip to the note below.",
+    "finDone": "All clear. Calm water. One last note, if you like:",
+    "word": "Inbox ",
+    "wordDone": "ozero",
+    "allDone": "All marked as done",
+    "sent": "Sending in",
+    "bad": "Check the address, it looks like there's a typo.",
+    "ok": "This is a preview, so nothing went out yet. The list opens soon.",
+    "undone": "Sending cancelled."
+  },
+  "privacy": [
+    "No AI summaries, no AI replies. Not now, not in Ozero Deep.",
+    "Sorting happens on your phone, by rules you can read.",
+    "Your mail goes from your provider straight to your phone. My servers never see it."
+  ],
+  "features": [
+    {
+      "h": "Unified inbox",
+      "p": "Every account in one list, each with its own color."
+    },
+    {
+      "h": "Inbox Zero",
+      "p": "Done archives a letter. Snooze brings it back later."
+    },
+    {
+      "h": "One-handed",
+      "p": "Every control within reach of your thumb."
+    },
+    {
+      "h": "Fast",
+      "p": "Opens instantly, syncs quietly in the background."
+    },
+    {
+      "h": "People first",
+      "p": "Services and newsletters wait in their own tabs."
+    },
+    {
+      "h": "Native on each phone",
+      "p": "Built separately for Android and for iOS."
+    }
+  ],
+  "comparison": [
+    {
+      "h": "Apple Mail",
+      "p": "Good if all your devices are Apple. Ozero Mail works on Android too."
+    },
+    {
+      "h": "Gmail, Outlook",
+      "p": "Built around their own service, with AI that reads your mail."
+    },
+    {
+      "h": "Spark",
+      "p": "A great inbox, but with a subscription and built-in AI."
+    },
+    {
+      "h": "FairEmail, Thunderbird",
+      "p": "Private, but heavy on settings. Ozero Mail is made for one hand."
+    }
+  ],
+  "promises": [
+    {
+      "h": "Honesty",
+      "p": "Free stays free. Nothing moves behind a paywall."
+    },
+    {
+      "h": "Safety",
+      "p": "Your password goes to your provider, never to me."
+    },
+    {
+      "h": "Openness",
+      "p": "A public roadmap and a changelog for every update."
+    },
+    {
+      "h": "A real person",
+      "p": "Every email gets a reply from me."
+    }
+  ],
+  "receiptFree": [
+    "Any provider, unlimited accounts",
+    "Unified inbox, search, Inbox Zero",
+    "Dark mode, accessibility, app lock"
+  ],
+  "questions": [
+    {
+      "q": "Can you read my email?",
+      "a": "No. I never get a copy. Instant alerts for Gmail and Outlook pass through a tiny relay that only hears “something new arrived”."
+    },
+    {
+      "q": "Will my email provider work?",
+      "a": "Yes: Gmail, Outlook, iCloud and any IMAP mail, as many accounts as you like."
+    },
+    {
+      "q": "What if you stop working on it?",
+      "a": "The app doesn’t need my servers to work with your mail, so it keeps working. Your mail stays with your provider, and Ozero Deep stays yours."
+    },
+    {
+      "q": "Why “Ozero”?",
+      "a": "It’s Russian for “lake”, and it ends in “zero”. Calm water, empty inbox."
+    },
+    {
+      "q": "When can I get it?",
+      "a": "It's in development. Here's the whole plan:"
+    }
+  ],
+  "roadmap": [
+    "Prototype",
+    "Now: one account, end to end",
+    "All accounts at once",
+    "Polish and launch"
+  ],
+  "roadmapNow": 1,
+  "doneFor": "Done: {s}",
+  "openFor": "Open again: {s}"
+}

@@ -1,0 +1,18 @@
+---
+// Netlify sends "/" to /ru/ or /en/ by the browser language (netlify.toml). This page is the fallback for other hosts.
+import { INDEXABLE } from '../config';
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Ozero Mail</title>
+  {!INDEXABLE && <meta name="robots" content="noindex, nofollow">}
+  <meta http-equiv="refresh" content="0; url=/en/">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <a href="/en/">English</a> · <a href="/ru/">Русский</a>
+</body>
+</html>
