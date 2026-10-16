@@ -10,7 +10,7 @@ permissions:
 
 concurrency:
   group: build-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
@@ -27,3 +27,19 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      # Netlify builds private org repos only on a paid plan, so CI uploads the build: main goes live, a PR gets a preview.
+      # Without the secrets a PR skips its preview, but main fails.
+      - name: Deploy to Netlify
+        shell: bash
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          if [ -z "$NETLIFY_AUTH_TOKEN" ] || [ -z "$NETLIFY_SITE_ID" ]; then
+            msg="Set the NETLIFY_AUTH_TOKEN and NETLIFY_SITE_ID repo secrets"
+            if [ "${{ github.event_name }}" = push ]; then echo "::error::$msg"; exit 1; fi
+            echo "::warning::No preview: $msg"; exit 0
+          fi
+          url=$(npx --yes netlify-cli@27.11.1 deploy --no-build --dir dist --json \
+            ${{ github.event_name == 'push' && '--prod' || format('--alias pr-{0}', github.event.number) }} | jq -er '.url // .deploy_url')
+          echo "Deployed: $url" >> "$GITHUB_STEP_SUMMARY"
