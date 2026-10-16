@@ -5,7 +5,7 @@ Astro static site: one page per language, `src/pages/[lang]/index.astro`; client
 ## Git and PRs
 
 - Author every commit as `Khizri Makhmudov <khizrim@khizrim.ru>`. No `Co-Authored-By`, `Claude-Session` or "Generated with Claude Code" lines.
-- Conventional Commits for commits and PR titles: `feat: add pricing letter`.
+- Conventional Commits for commits, PR titles and branch names: `feat: add pricing letter`, branch `feat/pricing-letter`.
 - Everything in the repo is in English: code, comments, docs, commits, PRs. Keep it short and plain.
 - Before opening a PR, run `/simplify`, then `/code-review`, and fix what they find.
 
