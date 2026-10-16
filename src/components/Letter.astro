@@ -1,0 +1,32 @@
+---
+// One section of the page, shaped as a letter: swipe it left or press Done to collapse it.
+import type { Strings } from '../i18n';
+import { fill } from '../i18n/format';
+
+interface Props {
+  t: Strings;
+  id: string;
+  color: string;
+  tag: string;
+  when: string;
+  subject: string;
+  ava?: string;
+  pill?: string;
+}
+const { t, id, color, tag, when, subject, ava = t.avaL, pill } = Astro.props;
+---
+<article class="mail" id={id} style={`--c:${color}`}>
+  <div class="under" aria-hidden="true"><span>{t.doneLbl}</span><svg width="18" height="18"><use href="#i-check"/></svg></div>
+  <div class="sheet">
+    <div class="mhead">
+      <span class:list={['ava', { you: ava === '?' }]} aria-hidden="true">{ava}</span>
+      <span class="from"><slot name="from">{tag}</slot></span>
+      <span class="when">{when}</span>
+    </div>
+    {pill && <span class="pill pill-head">{pill}</span>}
+    <h2 class="subj">{subject}</h2>
+    <slot />
+    <div class="mfoot"><button class="act done" type="button" aria-label={fill(t.doneFor, { s: subject })}><svg><use href="#i-check"/></svg><span>{t.doneLbl}</span></button></div>
+  </div>
+  <button class="row" type="button" aria-label={fill(t.openFor, { s: subject })}><span class="ok"><svg width="16" height="16"><use href="#i-check"/></svg></span><span class="rs">{subject}</span><span class="open">{t.reopen}</span></button>
+</article>
