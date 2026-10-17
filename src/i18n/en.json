@@ -11,28 +11,34 @@
   "statsLink": "The numbers are public",
   "description": "Ozero Mail: one calm inbox for all your email on Android and iOS. No AI reading your mail, no subscription.",
   "h1": "All your email. One calm inbox.",
-  "sub": "A mail app for Android and iOS. No AI reading your mail, no subscription.",
+  "sub": "I’m making the mail app I couldn’t find for myself. Native, fast and free of AI.",
   "pains": [
     {
       "q": "Five accounts, five apps?",
-      "a": "Gmail, Outlook, iCloud and work mail in one list. Each account keeps its own color.",
+      "a": "Gmail, Outlook, iCloud and work mail in one list, like in Apple Mail. Each account keeps its color, and every swipe answers at once.",
       "from": "Accounts",
       "when": "09:41"
     },
     {
       "q": "Who else reads your mail?",
-      "a": "Nobody. There’s no AI, and my servers never see your mail: it goes from your provider straight to your phone.",
+      "a": "Nobody. No AI, no ads, no tracking. Mail goes from your provider straight to your phone, my servers never see it.",
       "from": "Privacy",
       "when": "08:15"
     },
     {
       "q": "Real letters lost in the noise?",
-      "a": "People come first. Newsletters and notifications wait in their own tabs.",
+      "a": "People come first. Newsletters and notifications wait in their own tabs, sorted by simple rules on your phone.",
       "from": "Focus",
       "when": "Yesterday"
+    },
+    {
+      "q": "Who’s behind it?",
+      "a": "Just me, Khizri, a designer and developer. The app is free forever; extras are a one-time purchase that pays me, not a corporation.",
+      "from": "Khizri",
+      "when": "Mon"
     }
   ],
-  "soon": "Ozero Mail is still in the works. Write to me, and I’ll answer on launch day.",
+  "soon": "Ozero Mail is still in the works. I answer every letter myself. Write, and I’ll tell you on launch day.",
   "mailSubj": "Tell me when Ozero Mail is out",
   "mailBody": "Hi! Write me once, on launch day.",
   "by": "Made by Khizri",
