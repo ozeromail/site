@@ -45,8 +45,19 @@ export function start() {
     f?.();
   });
 
+  /* Changes to the list morph instead of jumping: letters slide into their new places. Scrolling waits for the morph. */
+  const still = matchMedia('(prefers-reduced-motion: reduce)');
+  let settled: Promise<unknown> = Promise.resolve();
+  function morph(change: () => void) {
+    if (!document.startViewTransition || still.matches) return change();
+    settled = document.startViewTransition(change).finished;
+  }
+  const glide = (target: HTMLElement, block: ScrollLogicalPosition) =>
+    void settled.then(() => target.scrollIntoView({ block, behavior: still.matches ? 'instant' : 'smooth' }));
+
   /* Letters */
   const mails = [...document.querySelectorAll<HTMLElement>('.mail')];
+  mails.forEach((m, i) => (m.style.viewTransitionName = `mail-${i}`));
   const isOpen = (m: HTMLElement | null | undefined): m is HTMLElement => !!m && !m.classList.contains('is-done');
   const isUnread = (m: HTMLElement) => isOpen(m) && !m.classList.contains('is-read');
   const el = Object.fromEntries(
@@ -92,8 +103,8 @@ export function start() {
       el.lake.classList.remove('go');
       return;
     }
-    // Inbox Zero: centre the word and let the water move.
-    oz.scrollIntoView({ block: 'center', behavior: 'instant' });
+    // Inbox Zero: glide to the word and let the water move.
+    glide(oz, 'center');
     el.calm.focus({ preventScroll: true });
     requestAnimationFrame(() => {
       centreLake();
@@ -111,22 +122,28 @@ export function start() {
   }
   // Reopens a group of letters and brings the reader back to the first one.
   function restore(list: HTMLElement[], reset = false) {
-    for (const m of list) collapse(m, false, reset);
-    upd();
-    list[0].scrollIntoView({ block: 'start' });
+    morph(() => {
+      for (const m of list) collapse(m, false, reset);
+      upd();
+    });
+    glide(list[0], 'start');
     doneBtn(list[0]).focus({ preventScroll: true });
   }
   const doneBtn = (m: HTMLElement) => m.querySelector<HTMLElement>('.act.done')!;
 
   function reopen(m: HTMLElement) {
     hideToast();
-    collapse(m, false);
-    upd();
-    doneBtn(m).focus();
+    morph(() => {
+      collapse(m, false);
+      upd();
+    });
+    doneBtn(m).focus({ preventScroll: true });
   }
   function done(m: HTMLElement) {
-    collapse(m, true);
-    upd();
+    morph(() => {
+      collapse(m, true);
+      upd();
+    });
     if (mails.some(isOpen)) m.querySelector<HTMLElement>('.row')!.focus({ preventScroll: true });
     say(`${S.done}. ${leftText()}`);
     showToast(() => reopen(m));
@@ -207,8 +224,10 @@ export function start() {
   function doneAll() {
     const open = mails.filter(isOpen);
     if (!open.length) return;
-    for (const m of open) collapse(m, true);
-    upd();
+    morph(() => {
+      for (const m of open) collapse(m, true);
+      upd();
+    });
     say(S.allDone);
     showToast(() => restore(open));
   }
