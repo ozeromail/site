@@ -14,6 +14,12 @@
   "sub": "I’m making the email app I couldn’t find for myself. For Android and iPhone, no AI.",
   "pains": [
     {
+      "q": "1,254 unread?",
+      "a": "The inbox is a to-do list, not an archive. Done moves a letter to the archive, nothing is deleted. Snooze brings it back when you need it. The bar at the bottom shows what’s left, and at zero it goes quiet. Try it here: swipe this letter left.",
+      "from": "Inbox Zero",
+      "when": "10:12"
+    },
+    {
       "q": "One inbox, but five Sent folders?",
       "a": "Most apps merge only the inbox. Here Sent, Archive, Spam and Trash can be shared across accounts too, like in Apple Mail. Gmail, Outlook, iCloud or any IMAP mail.",
       "from": "Accounts",
@@ -66,8 +72,8 @@
   },
   "calm": "Empty and quiet. That’s the feeling I’m building.",
   "name": "Khizri",
-  "tip": "Swipe a letter left or tap Done to clear it.",
-  "tipMouse": "Drag a letter left by its top or press Done. Keys: E for Done, U to undo.",
+  "tip": "The letters are below. Clear them like mail: swipe left or tap Done.",
+  "tipMouse": "The letters are below. Drag one left by its top or press Done. Keys: E for Done, U to undo.",
   "bringBack": "Bring the letters back",
   "fTo": "To",
   "fPhone": "Phone",
