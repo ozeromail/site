@@ -11,6 +11,23 @@ const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getEleme
 export function start() {
   const S: Strings = JSON.parse($('strings').textContent ?? '{}');
 
+  /* Every visit is a fresh inbox, so it opens at the top: no restored scroll, no #anchor kept in the address. */
+  history.scrollRestoration = 'manual';
+  if (location.hash) {
+    history.replaceState(null, '', location.pathname + location.search);
+    scrollTo(0, 0);
+  }
+  document.addEventListener('click', (e) => {
+    const a = (e.target as Element).closest<HTMLAnchorElement>('a[href^="#"]');
+    const target = a && document.getElementById(a.hash.slice(1));
+    if (!target) return;
+    e.preventDefault();
+    glide(target, 'start');
+    // Move focus along, so Tab continues from the target.
+    if (!target.hasAttribute('tabindex')) target.tabIndex = -1;
+    target.focus({ preventScroll: true });
+  });
+
   /* One live region speaks for the page, so each action is announced once. */
   const live = $('live');
   const say = (text: string) => {
