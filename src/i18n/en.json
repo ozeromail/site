@@ -7,8 +7,7 @@
   "inbox": "Inbox",
   "h1": "One inbox. No AI. Nothing in between.",
   "sub": "A private mail app for all your accounts, on Android and iOS. This page is an inbox too: read it, then clear it.",
-  "tip": "Swipe a letter left or press Done.",
-  "tipKey": "Keys: E for Done, U to undo.",
+  "tip": "Swipe a letter left or tap Done.",
   "doneLbl": "Done",
   "undo": "Undo",
   "reopen": "Open",
@@ -21,18 +20,18 @@
   "tag4": "Promises",
   "tag5": "Pricing",
   "tag6": "Thread",
-  "tag7": "Honest comparison",
+  "tag7": "Comparison",
   "s1": "I tried every mail app. None fit.",
-  "s2": "I don't read your mail. Neither does a robot.",
-  "s3": "Six reasons you'll hit zero by lunch",
+  "s2": "I don’t read your mail. Neither does a robot.",
+  "s3": "Six things I’m building it to do",
   "s4": "Four promises, in writing",
   "s5": "$0 forever, or $19.99 once. No subscription.",
   "s6": "Re: Re: Re: Your questions",
   "s7": "Why not Apple Mail, Spark or Gmail?",
-  "m1a": "The private ones felt like settings panels. The friendly ones fed my mail to AI. So I'm building the one I want to use every day.",
-  "m1b": "There's no corporation, team or investor behind it. When you buy Ozero Deep, the money goes to me.",
+  "m1a": "The private ones felt like settings panels. The friendly ones fed my mail to AI. So I’m building the one I want to use every day.",
+  "m1b": "There’s no corporation, team or investor behind it. If you buy Ozero Deep one day, the money goes to me.",
   "aiFree": "AI free",
-  "shotLabel": "The app's unified inbox: letters from four accounts, each with its own color stripe",
+  "shotLabel": "The app’s unified inbox: letters from four accounts, each with its own color stripe",
   "shInbox": "Inbox",
   "shAll": "All accounts",
   "sh1w": "Anna, me",
@@ -60,19 +59,16 @@
   "pricePro": "$19.99",
   "priceFree": "$0",
   "proNote": "Ozero Deep is a plan for now, after the free app ships. Once it’s out, try any of it for 14 days, no card needed.",
-  "tipText": "Free is enough? Great. If you still want to thank me, there’s a tip jar, and your name goes on the thank-you list.",
+  "tipText": "Free is enough? Great. If you still want to thank me, there’s a tip jar.",
   "tipLink": "Leave a tip",
   "you": "You",
   "bringBack": "Bring the letters back",
-  "composeLabel": "Get notified at launch",
   "fTo": "To",
-  "fFrom": "From",
   "fPhone": "Phone",
   "fSubj": "Subject",
-  "emailPh": "your email",
   "cSubj": "Tell me when Ozero Mail is out",
   "cText": "Hi! Write me once, on launch day. Nothing else.",
-  "cFine": "Preview: the list isn’t open yet, so nothing is sent.",
+  "cFine": "Opens your mail app. Your address stays in my inbox and nowhere else.",
   "sendLabel": "Send",
   "statsText": "This site counts visits without cookies.",
   "statsLink": "The numbers are public",
@@ -100,13 +96,10 @@
     "bulkLabel": "Mark the remaining {n} as done",
     "fin": "Not reading everything is fine. Swipe the rest away, or skip to the note below.",
     "finDone": "All clear. Calm water. One last note, if you like:",
-    "word": "Inbox ",
+    "word": "Inbox",
     "wordDone": "ozero",
     "allDone": "All marked as done",
-    "sent": "Sending in",
-    "bad": "Check the address, it looks like there's a typo.",
-    "ok": "This is a preview, so nothing went out yet. The list opens soon.",
-    "undone": "Sending cancelled."
+    "phone": "My phone: {os}"
   },
   "privacy": [
     "No AI summaries, no AI replies. Not now, not in Ozero Deep.",
@@ -146,11 +139,11 @@
     },
     {
       "h": "Gmail, Outlook",
-      "p": "Built around their own service, with AI that reads your mail."
+      "p": "Built around their own service, with AI assistants built in."
     },
     {
       "h": "Spark",
-      "p": "A great inbox, but with a subscription and built-in AI."
+      "p": "A great inbox, but extras come by subscription, and AI is built in."
     },
     {
       "h": "FairEmail, Thunderbird",
@@ -172,7 +165,7 @@
     },
     {
       "h": "A real person",
-      "p": "Every email gets a reply from me."
+      "p": "I read every email myself."
     }
   ],
   "receiptFree": [
@@ -187,11 +180,11 @@
     },
     {
       "q": "Will my email provider work?",
-      "a": "Yes: Gmail, Outlook, iCloud and any IMAP mail, as many accounts as you like."
+      "a": "That’s the plan: Gmail, Outlook, iCloud and any IMAP mail, as many accounts as you like."
     },
     {
       "q": "What if you stop working on it?",
-      "a": "The app doesn’t need my servers to work with your mail, so it keeps working. Your mail stays with your provider, and Ozero Deep stays yours."
+      "a": "The app doesn’t need my servers to work with your mail, so it keeps working. Your mail stays with your provider, and an Ozero Deep you bought stays yours."
     },
     {
       "q": "Why “Ozero”?",
@@ -199,7 +192,7 @@
     },
     {
       "q": "When can I get it?",
-      "a": "It's in development. Here's the whole plan:"
+      "a": "It’s in development. Here’s the whole plan:"
     }
   ],
   "roadmap": [
@@ -210,5 +203,9 @@
   ],
   "roadmapNow": 1,
   "doneFor": "Done: {s}",
-  "openFor": "Open again: {s}"
+  "openFor": "Open again: {s}",
+  "tipMouse": "Press Done, or drag a letter left by its header. Keys: E for Done, U to undo.",
+  "skip": "Skip to the letters",
+  "ogLocale": "en_US",
+  "lost": "This letter got lost. Back to the inbox"
 }

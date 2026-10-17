@@ -21,14 +21,34 @@ jobs:
       ASTRO_TELEMETRY_DISABLED: 1
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
       - run: npm run build
-      # Netlify builds private org repos only on a paid plan, so CI uploads the build: main goes live, a PR gets a preview.
-      # Without the secrets a PR skips its preview, but main fails.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: |
+            dist
+            netlify.toml
+          retention-days: 3
+
+  # Netlify builds private org repos only on a paid plan, so CI uploads the build: main goes live, a PR gets a preview.
+  # A separate job keeps the Netlify token away from npm install scripts. Without the secrets a PR skips its preview, but main fails.
+  deploy:
+    name: deploy
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      # The build and netlify.toml, which carries the headers and redirects.
+      - uses: actions/download-artifact@v4
+        with:
+          name: site
       - name: Deploy to Netlify
         shell: bash
         env:
