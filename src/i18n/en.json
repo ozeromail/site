@@ -1,5 +1,5 @@
 {
-  "title": "Ozero Mail: email app for Android, no AI",
+  "title": "Ozero Mail: email app without AI for Android and iPhone",
   "inbox": "Inbox",
   "storeApple": "Download on the",
   "storeGoogle": "Get it on",
@@ -9,19 +9,19 @@
   "tipFoot": "Support me",
   "statsText": "This site counts visits without cookies.",
   "statsLink": "The numbers are public",
-  "description": "Ozero Mail puts Gmail, iCloud and any IMAP mail in one calm inbox. No AI, no ads, no tracking. Android first, then iPhone.",
+  "description": "Ozero Mail: one calm inbox for Gmail, Outlook, iCloud and any IMAP mail, with shared folders and people first. No AI, no ads, no tracking.",
   "h1": "All your email. One calm inbox.",
-  "sub": "I’m making the email app I couldn’t find for myself. No AI. Android first, then iPhone.",
+  "sub": "I’m making the email app I couldn’t find for myself. For Android and iPhone, no AI.",
   "pains": [
     {
-      "q": "Five accounts, five apps?",
-      "a": "Gmail, iCloud, Fastmail and any IMAP mail in one list, each account in its own color. Swipes work instantly, even offline. Outlook comes later.",
+      "q": "One inbox, but five Sent folders?",
+      "a": "Most apps merge only the inbox. Here Sent, Archive, Spam and Trash can be shared across accounts too, like in Apple Mail. Gmail, Outlook, iCloud or any IMAP mail.",
       "from": "Accounts",
       "when": "09:41"
     },
     {
       "q": "Who else reads your mail?",
-      "a": "Only you and your mail provider. No AI, no ads, no tracking. Mail goes from your provider straight to your phone, never through my servers.",
+      "a": "Only you and your mail provider. No AI, no ads, no tracking. Images in newsletters stay hidden, so senders can’t tell you opened them.",
       "from": "Privacy",
       "when": "08:15"
     },
@@ -33,7 +33,7 @@
     },
     {
       "q": "Who’s on the other end?",
-      "a": "Me, Khizri. I design and build it alone, for my own inbox. The mail stays free. Later there will be extras for a one-time price: you pay me, not a corporation. No ads, ever.",
+      "a": "Me, Khizri. I design and build it alone, for my own inbox. Mail is free forever; extras are a one-time purchase. You pay me, not a corporation. No ads, ever.",
       "from": "Khizri",
       "when": "Mon"
     }
