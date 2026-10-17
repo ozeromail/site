@@ -2,7 +2,7 @@
 // to clear it with Undo in a toast, a bulk "Swipe N letters" strip, and a quiet "ozero" moment at Inbox Zero.
 
 import type en from '../i18n/en.json';
-import { fill, plural } from '../i18n/format';
+import { plural } from '../i18n/format';
 
 type Strings = typeof en.client & { lang: string; word: string; done: string };
 
@@ -98,7 +98,7 @@ export function start() {
   const nav = document.querySelector<HTMLElement>('.bbar')!;
   let unread = mails.length;
   let wasLeft = mails.length;
-  const leftText = () => (unread ? fill(S.left, { n: unread }) : mails.some(isOpen) ? S.allRead : S.allClear);
+  const leftText = () => (unread ? plural(S.lang, S.left, unread) : mails.some(isOpen) ? S.allRead : S.allClear);
 
   function centreLake() {
     const r = oz.getBoundingClientRect();
