@@ -17,7 +17,7 @@ const t = strings[lang];
 const c = t.client;
 const tip = TIPS[lang];
 const when = ['09:41', '09:38', t.tYest];
-const letters = t.pains.map((p, i) => ({ id: `m${i + 1}`, tag: t.tags[i], when: when[i], subject: p.q, body: p.a }));
+const letters = t.pains.map((p, i) => ({ tag: p.tag, when: when[i], subject: p.q, body: p.a }));
 const n = letters.length;
 const mailto = `mailto:${CONTACT}?subject=${encodeURIComponent(t.mailSubj)}&body=${encodeURIComponent(t.mailBody)}`;
 
@@ -33,6 +33,7 @@ const shot = [
   { c: 'var(--acc-1)', who: t.sh4w, acc: t.aPersonal, when: t.tYest, subj: t.sh4s },
 ];
 const site = Astro.site;
+const url = new URL(`/${lang}/`, site);
 ---
 <!doctype html>
 <html lang={lang}>
@@ -50,7 +51,7 @@ const site = Astro.site;
   <meta property="og:site_name" content="Ozero Mail">
   <meta property="og:title" content={t.h1}>
   <meta property="og:description" content={t.sub}>
-  <meta property="og:url" content={new URL(`/${lang}/`, site)}>
+  <meta property="og:url" content={url}>
   <meta property="og:locale" content={t.ogLocale}>
   <meta property="og:image" content={new URL(`/og-${lang}.png`, site)}>
   <meta property="og:image:width" content="1200">
@@ -102,7 +103,7 @@ const site = Astro.site;
   ))}
 
   <section class="finale" id="finale">
-    <div class="oz" aria-hidden="true"><span class="w" id="ozw">{c.word}</span><span class="n" id="ozn">{n}</span></div>
+    <div class="oz" aria-hidden="true"><span id="ozw">{t.inbox}</span><span class="n" id="ozn">{n}</span></div>
     <p class="calm" id="calm" tabindex="-1" hidden>{t.calm}</p>
     <p class="soon">{t.soon}</p>
     <a class="btn" href={mailto}>{t.write}</a>
@@ -116,9 +117,9 @@ const site = Astro.site;
 </main>
 
 <p class="sr" id="live" aria-live="polite"></p>
-<div class="toast" id="toast" hidden><span id="toastText"></span><button type="button" id="toastUndo">{t.undo}</button></div>
+<div class="toast" id="toast" hidden><span>{t.doneLbl}</span><button type="button" id="toastUndo">{t.undo}</button></div>
 
-<script type="application/json" id="strings" set:html={JSON.stringify({ lang, ...c }).replace(/</g, '\\u003c')} />
+<script type="application/json" id="strings" set:html={JSON.stringify({ lang, word: t.inbox, done: t.doneLbl, ...c }).replace(/</g, '\\u003c')} />
 <script>
   import { start } from '../../scripts/inbox';
   start();

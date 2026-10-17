@@ -17,7 +17,6 @@
   "tbPeople": "People",
   "tbServices": "Services",
   "tbNews": "Newsletters",
-  "shSearch": "Search",
   "shAll": "All accounts",
   "storeApple": "Download on the",
   "storeGoogle": "Get it on",
@@ -33,15 +32,18 @@
   "pains": [
     {
       "q": "Five accounts, five apps?",
-      "a": "Gmail, Outlook, iCloud and work mail in one list. Each account keeps its own color."
+      "a": "Gmail, Outlook, iCloud and work mail in one list. Each account keeps its own color.",
+      "tag": "Accounts"
     },
     {
       "q": "Who else reads your mail?",
-      "a": "Nobody. There’s no AI, and my servers never see your mail: it goes from your provider straight to your phone."
+      "a": "Nobody. There’s no AI, and my servers never see your mail: it goes from your provider straight to your phone.",
+      "tag": "Privacy"
     },
     {
       "q": "Real letters lost in the noise?",
-      "a": "People come first. Newsletters and notifications wait in their own tabs."
+      "a": "People come first. Newsletters and notifications wait in their own tabs.",
+      "tag": "Focus"
     }
   ],
   "soon": "Ozero Mail is still in the works. Write to me, and I’ll answer on launch day.",
@@ -50,7 +52,6 @@
   "mailBody": "Hi! Write me once, on launch day.",
   "by": "Made by Khizri",
   "shotLabel": "The app’s inbox: letters from four accounts, each marked with its color",
-  "listLabel": "Letters",
   "doneLbl": "Done",
   "undo": "Undo",
   "reopen": "Open",
@@ -59,20 +60,12 @@
   "doneFor": "Done: {s}",
   "openFor": "Open again: {s}",
   "tip": "Swipe a letter left or press Done.",
-  "tags": [
-    "Accounts",
-    "Privacy",
-    "Focus"
-  ],
-  "tNow": "Now",
   "client": {
     "unread": {
       "one": "unread letter",
       "other": "unread letters"
     },
-    "word": "Inbox",
-    "wordDone": "ozero",
-    "done": "Done"
+    "wordDone": "ozero"
   },
   "calm": "All clear. That’s how the app should feel."
 }

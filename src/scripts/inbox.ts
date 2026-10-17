@@ -4,7 +4,7 @@
 import type en from '../i18n/en.json';
 import { plural } from '../i18n/format';
 
-type Strings = typeof en.client & { lang: string };
+type Strings = typeof en.client & { lang: string; word: string; done: string };
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 
@@ -26,7 +26,6 @@ export function start() {
   function showToast(undoFn: () => void) {
     hideToast();
     undo = undoFn;
-    $('toastText').textContent = S.done;
     toast.hidden = false;
     let n = 8;
     timer = window.setInterval(() => {
@@ -43,17 +42,15 @@ export function start() {
   /* Letters */
   const mails = [...document.querySelectorAll<HTMLElement>('.mail')];
   const isOpen = (m: HTMLElement) => !m.classList.contains('is-done');
-  const count = $('count');
-  const lake = $('lake');
+  const [count, unreadSr, ozw, ozn, lake, calm] = ['count', 'unreadSr', 'ozw', 'ozn', 'lake', 'calm'].map((id) => $(id));
   const oz = document.querySelector<HTMLElement>('.oz')!;
-  const calm = $('calm');
 
   function upd() {
     const left = mails.filter(isOpen).length;
     count.textContent = String(left);
-    $('unreadSr').textContent = ' ' + plural(S.lang, S.unread, left);
-    $('ozw').textContent = left ? S.word : S.wordDone;
-    $('ozn').textContent = left ? String(left) : '';
+    unreadSr.textContent = ' ' + plural(S.lang, S.unread, left);
+    ozw.textContent = left ? S.word : S.wordDone;
+    ozn.textContent = left ? String(left) : '';
     oz.classList.toggle('clear', !left);
     calm.hidden = !!left;
     if (left) {
@@ -74,30 +71,31 @@ export function start() {
     });
   }
 
-  function setDone(m: HTMLElement, done: boolean) {
-    m.classList.toggle('is-done', done);
-    m.querySelector<HTMLElement>('.sheet')!.style.transform = '';
-    upd();
-    if (!done) return;
-    if (mails.some(isOpen)) m.querySelector<HTMLElement>('.row')!.focus({ preventScroll: true });
-    live.textContent = '';
-    requestAnimationFrame(() => (live.textContent = S.done));
-    showToast(() => {
-      setDone(m, false);
-      m.querySelector<HTMLElement>('.act.done')!.focus();
-    });
-  }
-
   /* A left swipe past 45% of the width clears the letter. Only clearly horizontal gestures count, so scrolling still works.
      Touch swipes anywhere on the letter; a mouse drags by the header, so text stays selectable. */
   for (const m of mails) {
     const sheet = m.querySelector<HTMLElement>('.sheet')!;
-    m.querySelector('.act.done')!.addEventListener('click', () => setDone(m, true));
-    m.querySelector('.row')!.addEventListener('click', () => {
+    const row = m.querySelector<HTMLElement>('.row')!;
+    const doneBtn = m.querySelector<HTMLElement>('.act.done')!;
+    const setDone = (done: boolean) => {
+      m.classList.toggle('is-done', done);
+      sheet.style.transform = '';
+      upd();
+    };
+    const reopen = () => {
       hideToast();
-      setDone(m, false);
-      m.querySelector<HTMLElement>('.act.done')!.focus();
-    });
+      setDone(false);
+      doneBtn.focus();
+    };
+    const done = () => {
+      setDone(true);
+      if (mails.some(isOpen)) row.focus({ preventScroll: true });
+      live.textContent = '';
+      requestAnimationFrame(() => (live.textContent = S.done));
+      showToast(reopen);
+    };
+    doneBtn.addEventListener('click', done);
+    row.addEventListener('click', reopen);
     let x0: number | null = null;
     let y0 = 0;
     let dx = 0;
@@ -138,7 +136,7 @@ export function start() {
       m.classList.remove('dragging');
       if (axis === 'x' && dx < -m.offsetWidth * 0.45) {
         sheet.style.transform = 'translateX(-110%)';
-        setTimeout(() => setDone(m, true), 200);
+        setTimeout(done, 200);
       } else {
         sheet.style.transform = '';
       }
