@@ -265,7 +265,7 @@ export function start() {
     m.querySelector('.row')!.addEventListener('click', () => reopen(m));
     swipeable(m, m.querySelector<HTMLElement>('.sheet')!, () => done(m), (e) => {
       const target = e.target as Element;
-      return !target.closest('a,button') && (e.pointerType !== 'mouse' || !!target.closest('.mhead,.subj'));
+      return !target.closest('a,button,label') && (e.pointerType !== 'mouse' || !!target.closest('.mhead,.subj'));
     });
   }
 
@@ -315,6 +315,27 @@ export function start() {
   addEventListener('scroll', readSoon, { passive: true });
   addEventListener('resize', readSoon);
   readSoon();
+
+  /* Demos play only while their letter is on screen: Inbox Zero clears a row at a time, the Sent folders merge and part. */
+  const zero = document.querySelector<HTMLElement>('.demo.zero');
+  const boxes = document.querySelector<HTMLElement>('.demo.boxes');
+  const zeroRows = zero ? [...zero.querySelectorAll('.di')] : [];
+  const zeroCount = zero?.querySelector('.dc');
+  let beat = 0;
+  if (!still.matches) {
+    setInterval(() => {
+      beat++;
+      if (zero?.closest('.on')) {
+        // Rows go one per beat, then a few quiet beats before they come back.
+        const n = zeroRows.length;
+        const gone = beat % (n + 4);
+        zeroRows.forEach((r, i) => r.classList.toggle('gone', i < gone));
+        zero.classList.toggle('clear', gone >= n);
+        if (zeroCount) zeroCount.textContent = gone < n ? String(n - gone) : '';
+      }
+      if (boxes?.closest('.on') && beat % 2 === 0) boxes.classList.toggle('merged');
+    }, 1400);
+  }
 
   /* Keyboard: E marks the focused letter, or the first open one in view, as Done; U or Z undoes. */
   document.addEventListener('keydown', (e) => {

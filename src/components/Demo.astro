@@ -1,0 +1,51 @@
+---
+// A small live piece of the app inside a letter, so the point is seen, not only read.
+import type { Strings } from '../i18n';
+
+interface Props {
+  t: Strings;
+  kind?: string;
+}
+const { t, kind } = Astro.props;
+const d = t.demo;
+---
+{kind === 'zero' && (
+  <div class="demo zero" aria-hidden="true">
+    <p class="dh">{d.zero.title}<span class="dc">{d.zero.rows.length}</span></p>
+    <div class="dl">
+      {d.zero.rows.map(([who, what]) => <p class="di"><span class="dn">{who}</span><span class="ds">{what}</span></p>)}
+      <p class="de">{d.zero.empty}</p>
+    </div>
+  </div>
+)}
+{kind === 'boxes' && (
+  <div class="demo boxes" aria-hidden="true">
+    <p class="dh">{d.boxes.title}<span class="dots"><i></i><i></i><i></i></span></p>
+    <div class="dl">
+      {d.boxes.folders.map((f, i) => i === 1 ? (
+        <div class="sent">
+          {d.boxes.accounts.map((a, j) => <p class="di one"><span class="dn">{f}</span><span class="ds">{a}</span><span class="dots"><i class={`a${j + 1}`}></i></span></p>)}
+          <p class="di all"><span class="dn">{f}</span><span class="ds"></span><span class="dots"><i></i><i></i><i></i></span></p>
+        </div>
+      ) : (
+        <p class="di"><span class="dn">{f}</span><span class="ds"></span><span class="dots"><i></i><i></i><i></i></span></p>
+      ))}
+    </div>
+  </div>
+)}
+{kind === 'privacy' && (
+  <div class="demo privacy">
+    <p class="di"><span class="dn">{d.privacy.from}</span><span class="ds">{d.privacy.subj}</span></p>
+    <label class="pic"><input type="checkbox" /><span class="ph">{d.privacy.hidden}</span><span class="btnish">{d.privacy.show}</span></label>
+  </div>
+)}
+{kind === 'focus' && (
+  <div class="demo focus">
+    <div class="tabs">
+      {d.focus.tabs.map((tab, i) => <label><input type="radio" name="focus" value={i} checked={i === 0} /><span>{tab}</span></label>)}
+    </div>
+    <div class="dl">
+      {d.focus.lists.map((list, i) => <div class={`fl f${i}`}>{list.map(([who, what]) => <p class="di"><span class="dn">{who}</span><span class="ds">{what}</span></p>)}</div>)}
+    </div>
+  </div>
+)}

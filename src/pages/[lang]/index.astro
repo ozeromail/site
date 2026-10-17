@@ -4,6 +4,7 @@ import '../../styles/fonts.css';
 import '../../styles/site.css';
 import Mark from '../../components/Mark.astro';
 import Letter from '../../components/Letter.astro';
+import Demo from '../../components/Demo.astro';
 import { LANGS, strings, type Lang } from '../../i18n';
 import { fill, plural } from '../../i18n/format';
 import { CONTACT, INDEXABLE, STATS_URL, STORES, TIPS } from '../../config';
@@ -79,7 +80,7 @@ const url = new URL(`/${lang}/`, site);
   </section>
 
   {t.pains.map((p, i) => (
-    <Letter t={t} id={i === 0 ? 'first' : undefined} subject={p.q} from={p.from} when={p.when}><p>{p.a}</p></Letter>
+    <Letter t={t} id={i === 0 ? 'first' : undefined} subject={p.q} from={p.from} when={p.when}><p>{p.a}</p><Demo t={t} kind={p.demo} /></Letter>
   ))}
   <Letter t={t} subject={t.plan.q} from={t.plan.from} when={t.plan.when}>
     <p>{t.plan.a}</p>

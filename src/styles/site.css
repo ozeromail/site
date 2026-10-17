@@ -201,3 +201,47 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 
 .lost{min-height:100vh;display:grid;place-content:center;justify-items:center;gap:12px;padding:20px;text-align:center}
 .lost .oz{color:var(--accent)}
+
+/* Demos: a small live piece of the app inside a letter */
+.demo{width:100%;max-width:380px;margin:6px 0 4px;padding:6px;border-radius:20px;background:var(--bg-soft);font-size:15px;line-height:1.3}
+.demo p{margin:0}
+.demo .dh{display:flex;align-items:center;gap:8px;padding:8px 10px 10px;font-weight:600;color:var(--fg)}
+.demo .dc{color:var(--accent);font-variant-numeric:tabular-nums}
+.demo .dl{display:grid;gap:3px}
+.demo .di{display:flex;align-items:center;gap:10px;min-height:44px;padding:0 14px;border-radius:14px;background:var(--bg);overflow:hidden}
+.demo .dn{font-weight:600;color:var(--fg);white-space:nowrap}
+.demo .ds{flex:1;min-width:0;color:var(--fg-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dots{display:inline-flex;padding-left:2px}
+.dots i{width:10px;height:10px;margin-left:-3px;border-radius:50%;border:2px solid var(--bg);background:var(--acc-1)}
+.demo .dh .dots i{border-color:var(--bg-soft)}
+.dots i:nth-child(2),.dots .a2{background:var(--acc-2)}
+.dots i:nth-child(3),.dots .a3{background:var(--acc-3)}
+/* Inbox Zero: the rows go one by one, then it is quiet */
+.zero .di{transition:transform .6s ease,opacity .6s ease,min-height .5s ease .3s}
+.zero .di.gone{transform:translateX(-105%);opacity:0;min-height:0;height:0}
+.zero .de{display:grid;place-items:center;min-height:0;height:0;opacity:0;color:var(--accent);font-weight:600;transition:opacity .9s ease,min-height .5s ease}
+.zero.clear .de{min-height:132px;opacity:1}
+/* Accounts: three Sent folders become one */
+.boxes .sent{display:grid}
+.boxes .sent .di+.di{margin-top:3px}
+.boxes.merged .sent .di{margin-top:0}
+.boxes .sent .di{transition:min-height .6s ease,opacity .5s ease}
+.boxes .sent .all,.boxes.merged .sent .one{min-height:0;height:0;opacity:0}
+.boxes.merged .sent .all{min-height:44px;height:auto;opacity:1}
+/* Privacy: an image that waits for permission */
+.privacy .pic{position:relative;display:grid;place-items:center;gap:10px;margin-top:3px;min-height:150px;padding:18px;border-radius:14px;text-align:center;cursor:pointer;
+  background:repeating-linear-gradient(-45deg,var(--bg),var(--bg) 10px,var(--bg-soft) 10px,var(--bg-soft) 20px);color:var(--fg-2)}
+.privacy input{position:absolute;opacity:0;pointer-events:none}
+.privacy .btnish{padding:8px 16px;border-radius:999px;background:var(--bg);box-shadow:0 0 0 1px var(--line);font-weight:600;color:var(--accent)}
+.privacy .pic:has(input:focus-visible) .btnish{outline:2px solid var(--accent);outline-offset:2px}
+.privacy .pic:has(input:checked){background:linear-gradient(135deg,var(--acc-1),var(--acc-3) 55%,var(--acc-2));color:transparent}
+.privacy .pic:has(input:checked) > span{visibility:hidden}
+/* Focus: tabs, each with its own list */
+.focus .tabs{display:flex;gap:4px;padding:4px;margin-bottom:6px;border-radius:999px;background:var(--bg)}
+.focus .tabs label{flex:1;position:relative}
+.focus .tabs input{position:absolute;opacity:0}
+.focus .tabs span{display:grid;place-items:center;min-height:36px;padding:0 8px;border-radius:999px;font-size:14px;font-weight:600;color:var(--fg-3);cursor:pointer;white-space:nowrap}
+.focus .tabs input:checked+span{background:var(--accent-fill);color:#fff}
+.focus .tabs input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+.focus .fl{display:none;gap:3px}
+.focus:has([value="0"]:checked) .f0,.focus:has([value="1"]:checked) .f1,.focus:has([value="2"]:checked) .f2{display:grid}
