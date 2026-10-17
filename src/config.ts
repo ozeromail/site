@@ -15,5 +15,5 @@ export const TIPS = { en: '', ru: '' };
 // Public, cookieless stats page. The footer mentions stats only when this is set.
 export const STATS_URL = '';
 
-// Launch notes go to this address: the compose window opens the visitor's mail app, nothing is stored on the site.
+// "Write to me" opens the visitor's mail app with a note to this address; the site stores nothing.
 export const CONTACT = 'khizrim@khizrim.ru';
