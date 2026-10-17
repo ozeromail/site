@@ -62,23 +62,23 @@ p{margin:0}
 .ph-top b{font-size:26px;font-weight:700;letter-spacing:-.01em}
 .ph-list{list-style:none;margin:0;padding:0}
 .ph-list a{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0 10px;padding:9px 18px 9px 26px;border-top:1px solid var(--line);color:var(--fg);line-height:1.35}
-.ph-list a:hover{text-decoration:none;background:var(--bg-soft)}
-.ph-list a.on{background:var(--bg-soft)}
+.ph-list a:hover,.ph-list a.on{text-decoration:none;background:var(--bg-soft)}
 /* Unread: a blue dot, as in the app */
 .ph-list a::before{content:"";position:absolute;left:10px;top:15px;width:8px;height:8px;border-radius:50%;background:var(--accent)}
-.ph-list li.is-read a::before,.ph-list li.is-done a::before{display:none}
+.ph-list a.is-read::before{display:none}
 .ph-from{font-weight:600;font-size:14px}
 .ph-t{font-size:12px;color:var(--fg-3);font-variant-numeric:tabular-nums}
 .ph-s{grid-column:1/-1;font-size:13px;color:var(--fg-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ph-list li.is-read .ph-from{font-weight:500}
-.ph-list li.is-done a{opacity:.7}
-.ph-list li.is-done .ph-s{text-decoration:line-through}
-.ph-tabs{display:flex;gap:4px;margin:10px 12px 0;padding:4px;border-radius:999px;background:var(--bg-soft);font-size:12px}
-.ph-tabs span{flex:1;text-align:center;padding:6px 4px;border-radius:999px;color:var(--fg-2)}
-.ph-tabs span.on{background:var(--bg);color:var(--fg);font-weight:600}
+.ph-list a.is-read .ph-from{font-weight:500}
+.ph-list a.is-done{opacity:.7}
+.ph-list a.is-done .ph-s{text-decoration:line-through}
+/* The app's tab switcher, in the phone and the mini app screen */
+.tabs{display:flex;gap:4px;margin:10px 12px 0;padding:4px;border-radius:999px;background:var(--bg-soft);font-size:12px}
+.tabs span{flex:1;text-align:center;padding:6px 4px;border-radius:999px;color:var(--fg-2)}
+.tabs span.on{background:var(--bg);color:var(--fg);font-weight:600}
 .ph-mobile{display:none}
-@media (max-width:920px){.ph-mobile{display:block;max-width:400px;margin-top:6px}.ph-mobile .ph-top{display:none}.ph-mobile .phone{padding-top:4px}}
-@media (max-width:920px){.app{grid-template-columns:minmax(0,1fr);gap:0;padding-block:24px 130px}.side{display:none}}
+@media (max-width:920px){.app{grid-template-columns:minmax(0,1fr);gap:0;padding-block:24px 130px}.side{display:none}
+  .ph-mobile{display:block;max-width:400px;margin-top:6px}.ph-mobile .ph-top{display:none}.ph-mobile .phone{padding-top:4px}}
 
 /* Header: inbox line + the promise */
 .head{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;padding-bottom:30px;border-bottom:1px solid var(--line)}
@@ -87,9 +87,8 @@ p{margin:0}
 .inboxline{display:flex;align-items:baseline;gap:.35em;font-family:var(--f-display);font-weight:500;font-size:clamp(22px,2.6vw,28px);letter-spacing:-.01em}
 .inboxline .n{color:var(--accent);font-variant-numeric:tabular-nums;display:inline-block;transition:transform .2s ease}
 .inboxline .n.tick{transform:translateY(-.15em)}
-main{min-width:0}
 .mbody>*{min-width:0}
-main{container-type:inline-size}
+main{min-width:0;container-type:inline-size}
 .tip .mouse{display:none}
 @media (hover:hover){.tip .touch{display:none}.tip .mouse{display:inline}}
 .head h1{font-family:var(--f-display);font-weight:500;font-size:clamp(25px,8cqi,60px);hyphens:manual;line-height:1.05;letter-spacing:-.02em}
@@ -145,7 +144,6 @@ main{container-type:inline-size}
 .links{display:flex;flex-wrap:wrap;gap:8px 18px;font-weight:500}
 .stamp{justify-self:start;font-family:var(--f-display);font-weight:700;font-size:22px;line-height:1;letter-spacing:.04em;padding:8px 12px;border:2px solid currentColor;border-radius:8px;color:var(--fg-2);transform:rotate(-4deg)}
 .stamp s{text-decoration-thickness:2px}
-.stamp br{display:none}
 .checks{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .checks li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px}
 .checks svg{width:20px;height:20px;margin-top:4px;color:var(--done)}
@@ -167,9 +165,7 @@ main{container-type:inline-size}
 .shot .r small{font-size:11px;color:var(--fg-3)}
 .shot .r .s{color:var(--fg-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .shot .r.u::after{content:"";position:absolute;left:10px;top:15px;width:6px;height:6px;border-radius:50%;background:var(--accent)}
-.shot .tabs{display:flex;gap:4px;margin:8px 12px 12px;padding:4px;border-radius:999px;background:var(--bg-soft);font-size:12px}
-.shot .tabs span{flex:1;text-align:center;padding:6px 4px;border-radius:999px;color:var(--fg-2)}
-.shot .tabs span.on{background:var(--bg);color:var(--fg);font-weight:600}
+.shot .tabs{margin:8px 12px 12px}
 .shot .bar{display:flex;gap:8px;padding:0 12px 14px}
 .shot .bar span{height:34px;border-radius:999px;background:var(--bg-soft);display:flex;align-items:center;padding:0 12px;color:var(--fg-3);font-size:13px}
 .shot .bar span:first-child{flex:1}
@@ -178,7 +174,7 @@ main{container-type:inline-size}
 .receipt{font-variant-numeric:tabular-nums;font-size:15px;max-width:30em;border:1px dashed var(--line);border-radius:14px;padding:18px 20px;display:grid;gap:8px}
 .receipt .ln{display:flex;gap:12px;align-items:baseline}
 .receipt .ln span:first-child{flex:1;min-width:0}
-.receipt .ln b{font-weight:500;white-space:nowrap;font-variant-numeric:tabular-nums}
+.receipt .ln b{font-weight:500;white-space:nowrap}
 .receipt .sep{border-top:1px dashed var(--line);margin:4px 0}
 .receipt .sum b{color:var(--accent)}
 .receipt .muted{color:var(--fg-3)}
@@ -217,7 +213,8 @@ main{container-type:inline-size}
 @media (prefers-reduced-motion:reduce){.lake{display:none}}
 /* Stillness first: for a few seconds after Inbox Zero only the word and the water are on screen */
 .head,.compose,#bringBack,.bbar,.side,.finale p{transition:opacity 1.2s ease}
-body.quiet .head,body.quiet .compose,body.quiet #bringBack,body.quiet .bbar,body.quiet .side,body.quiet .finale p{opacity:0;pointer-events:none}
+/* The script makes these inert for the quiet moment */
+body.quiet [inert],body.quiet .finale p{opacity:0}
 .app.clear ~ .bbar .cta{display:none}
 /* "Swipe N letters": the app's bulk strip. Swipe it left to clear everything left. */
 .bulk{position:relative;width:min(100%,460px);border-radius:16px;overflow:hidden;margin-top:6px}
@@ -246,8 +243,9 @@ body.quiet .head,body.quiet .compose,body.quiet #bringBack,body.quiet .bbar,body
 .compose .text{padding:18px 22px;color:var(--fg-2);font-size:17px;min-height:84px}
 .compose .send{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px 14px 22px;border-top:1px solid var(--line)}
 .compose .send .fine{flex:1 1 150px;font-size:13px;color:var(--fg-3)}
-.sendbtn:hover{text-decoration:none;filter:brightness(1.06)}
-.sendbtn{display:inline-flex;align-items:center;gap:8px;height:46px;border-radius:999px;border:0;background:var(--accent-fill);color:#fff;padding:0 18px 0 20px;cursor:pointer;font-weight:600;flex:none}
+.btn{display:inline-flex;align-items:center;min-height:46px;border-radius:999px;padding:0 18px;background:var(--accent-fill);color:#fff;font-weight:600;white-space:nowrap}
+.btn:hover{text-decoration:none;filter:brightness(1.06)}
+.sendbtn{gap:8px;padding:0 18px 0 20px;flex:none}
 .sendbtn svg{width:18px;height:18px}
 
 footer{margin-top:40px;display:flex;flex-wrap:wrap;gap:8px 20px;font-size:14px;color:var(--fg-3)}
@@ -261,16 +259,14 @@ footer{margin-top:40px;display:flex;flex-wrap:wrap;gap:8px 20px;font-size:14px;c
 .bbar .prog b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;color:var(--fg)}
 .bbar .track{flex:1;height:5px;border-radius:5px;background:var(--line);overflow:hidden;min-width:40px}
 .bbar .track i{display:block;height:100%;width:0;background:var(--done);transition:width .35s ease}
-@media (max-width:430px){.bbar .track{display:none}}
+@media (max-width:430px){.bbar .track{display:none}.bbar .cap{gap:4px}.bbar .prog{padding-left:8px}.bbar .cta{padding:0 12px;font-size:13px}}
 @media (max-width:400px){.field{grid-template-columns:minmax(0,1fr);gap:6px;padding:12px 18px}.field .lbl{font-size:13px}}
 @media (max-width:360px){#left{display:none}}
 .lang{display:flex;gap:2px;padding:3px;border-radius:999px;background:var(--bg-soft)}
 .lang a{display:grid;place-items:center;font:600 12px/1 var(--f-body);letter-spacing:.04em;color:var(--fg-3);min-width:44px;min-height:44px;border-radius:999px}
 .lang a:hover{text-decoration:none;color:var(--fg)}
 .lang a[aria-current="page"]{background:var(--bg);color:var(--fg);box-shadow:0 1px 3px rgba(0,0,0,.08)}
-.cta{display:inline-flex;align-items:center;min-height:46px;border-radius:999px;padding:0 18px;background:var(--accent-fill);color:#fff;font-weight:600;font-size:14px;white-space:nowrap}
-.cta:hover{text-decoration:none;filter:brightness(1.06)}
-@media (max-width:400px){.bbar .cap{gap:4px}.cta{padding:0 12px;font-size:13px}.bbar .prog{padding-left:8px}}
+.cta{font-size:14px}
 .toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:21;background:var(--fg);color:var(--bg);border-radius:999px;padding:6px 6px 6px 18px;display:flex;align-items:center;gap:12px;font-size:15px;box-shadow:var(--shadow);max-width:calc(100% - 32px)}
 .toast[hidden]{display:none}
 #toastText{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}

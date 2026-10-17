@@ -48,7 +48,7 @@ const lastQuestion = t.questions.length - 1;
 const site = Astro.site;
 const url = new URL(`/${lang}/`, site);
 const mailto = (os: string) =>
-  `mailto:${CONTACT}?subject=${encodeURIComponent(t.cSubj)}&body=${encodeURIComponent(`${t.cText}\n\n${fill(c.phone, { os })}`)}`;
+  `mailto:${CONTACT}?subject=${encodeURIComponent(t.cSubj)}&body=${encodeURIComponent(`${t.cText}\n\n${fill(t.cPhone, { os })}`)}`;
 ---
 <!doctype html>
 <html lang={lang}>
@@ -121,7 +121,7 @@ const mailto = (os: string) =>
 
     <Letter t={t} {...m2}>
       <div class="mbody">
-        <div class="stamp" role="img" aria-label={t.aiFree}><s>AI</s><br>FREE</div>
+        <div class="stamp" role="img" aria-label={t.aiFree}><s>AI</s> FREE</div>
         <ul class="checks">
           {t.privacy.map((s) => <li><svg><use href="#i-check"/></svg><span>{s}</span></li>)}
         </ul>
@@ -199,13 +199,13 @@ const mailto = (os: string) =>
       <div class="field"><span class="lbl">{t.fTo}</span><span>{t.name}</span></div>
       <fieldset class="field"><legend class="lbl">{t.fPhone}</legend>
         <div class="seg">
-          <label><input type="radio" name="os" value="iPhone" checked><span>iPhone</span></label>
-          <label><input type="radio" name="os" value="Android"><span>Android</span></label>
+          <label><input type="radio" name="os" value="iphone" checked><span>iPhone</span></label>
+          <label><input type="radio" name="os" value="android"><span>Android</span></label>
         </div>
       </fieldset>
       <div class="field"><span class="lbl">{t.fSubj}</span><h2 id="waitTitle">{t.cSubj}</h2></div>
       <p class="text">{t.cText}</p>
-      <div class="send"><span class="fine">{t.cFine}</span><a class="sendbtn" id="send" href={mailto('iPhone')} data-href={mailto('{os}')}><span>{t.sendLabel}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></a></div>
+      <div class="send"><span class="fine">{t.cFine}</span><a class="btn sendbtn" id="send" href={mailto('iPhone')} data-iphone={mailto('iPhone')} data-android={mailto('Android')}><span>{t.sendLabel}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></a></div>
     </section>
 
     <footer>
@@ -224,8 +224,8 @@ const mailto = (os: string) =>
       {LANGS.map((l) => <a href={`/${l}/`} hreflang={l} lang={l} aria-current={l === lang ? 'page' : undefined}>{l.toUpperCase()}</a>)}
     </div>
     {stores.length > 0
-      ? <a class="cta" id="cta" href={stores[0].url} target="_blank" rel="noopener">{t.getApp}</a>
-      : <a class="cta" id="cta" href="#wait">{t.cta}</a>}
+      ? <a class="btn cta" id="cta" href={stores[0].url} target="_blank" rel="noopener">{t.getApp}</a>
+      : <a class="btn cta" id="cta" href="#wait">{t.cta}</a>}
   </div>
 </nav>
 <p class="sr" id="live" aria-live="polite"></p>
