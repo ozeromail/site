@@ -6,16 +6,15 @@ import { fill } from '../i18n/format';
 interface Props {
   t: Strings;
   id: string;
-  color: string;
   tag: string;
   when: string;
   subject: string;
   ava?: string;
   pill?: string;
 }
-const { t, id, color, tag, when, subject, ava = t.avaL, pill } = Astro.props;
+const { t, id, tag, when, subject, ava = t.avaL, pill } = Astro.props;
 ---
-<article class="mail" id={id} style={`--c:${color}`}>
+<article class="mail" id={id}>
   <div class="under" aria-hidden="true"><span>{t.doneLbl}</span><svg width="18" height="18"><use href="#i-check"/></svg></div>
   <div class="sheet">
     <div class="mhead">

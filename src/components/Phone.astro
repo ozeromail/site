@@ -1,0 +1,22 @@
+---
+// The app's inbox on a phone, listing the page's own letters: tap a row to read it.
+// A blue dot marks a letter not read yet; a struck row is Done.
+import Mark from './Mark.astro';
+import type { Strings } from '../i18n';
+
+interface Props {
+  t: Strings;
+  id: string;
+  letters: { id: string; tag: string; when: string; subject: string }[];
+}
+const { t, id, letters } = Astro.props;
+---
+<div class="phone">
+  <div class="ph-top"><span class="ph-brand"><Mark id={id} />ozero mail</span><b>{t.inbox}</b></div>
+  <ol class="ph-list">
+    {letters.map((l) => (
+      <li><a href={`#${l.id}`} data-id={l.id}><span class="ph-from">{l.tag}</span><span class="ph-t">{l.when}</span><span class="ph-s">{l.subject}</span></a></li>
+    ))}
+  </ol>
+  <div class="ph-tabs" aria-hidden="true"><span class="on">{t.tbPeople}</span><span>{t.tbServices}</span><span>{t.tbNews}</span></div>
+</div>

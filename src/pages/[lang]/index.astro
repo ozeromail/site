@@ -5,6 +5,7 @@ import '../../styles/site.css';
 import Mark from '../../components/Mark.astro';
 import Letter from '../../components/Letter.astro';
 import Grid from '../../components/Grid.astro';
+import Phone from '../../components/Phone.astro';
 import { LANGS, strings, type Lang } from '../../i18n';
 import { fill, plural } from '../../i18n/format';
 import { CONTACT, INDEXABLE, STATS_URL, STORES, TIPS } from '../../config';
@@ -19,15 +20,17 @@ const c = t.client;
 const tip = TIPS[lang];
 
 const letters = [
-  { id: 'm1', color: 'var(--acc-4)', tag: t.tag1, when: '09:41', subject: t.s1 },
-  { id: 'm2', color: 'var(--acc-1)', tag: t.tag2, when: '09:38', subject: t.s2 },
-  { id: 'm3', color: 'var(--acc-2)', tag: t.tag3, when: '09:30', subject: t.s3 },
-  { id: 'm4', color: 'var(--acc-3)', tag: t.tag7, when: t.tYest, subject: t.s7 },
-  { id: 'm5', color: 'var(--acc-3)', tag: t.tag4, when: t.tYest, subject: t.s4 },
-  { id: 'm6', color: 'var(--accent)', tag: t.tag5, when: t.tYest, subject: t.s5 },
-  { id: 'm7', color: 'var(--fg-3)', tag: t.tag6, when: t.tNow, subject: t.s6 },
+  { id: 'm1', tag: t.tag1, when: '09:41', subject: t.s1 },
+  { id: 'm2', tag: t.tag2, when: '09:38', subject: t.s2 },
+  { id: 'm3', tag: t.tag3, when: '09:30', subject: t.s3 },
+  { id: 'm4', tag: t.tag7, when: t.tYest, subject: t.s7 },
+  { id: 'm5', tag: t.tag4, when: t.tYest, subject: t.s4 },
+  { id: 'm6', tag: t.tag5, when: t.tYest, subject: t.s5 },
+  { id: 'm7', tag: t.tag6, when: t.tNow, subject: t.s6 },
+  { id: 'm8', tag: t.tag8, when: t.tNow, subject: t.s8 },
 ];
-const [m1, m2, m3, m4, m5, m6, m7] = letters;
+const [m1, m2, m3, m4, m5, m6, m7, m8] = letters;
+const day = new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'long', timeZone: 'UTC' });
 const n = letters.length;
 
 const stores = [
@@ -59,6 +62,7 @@ const mailto = (os: string) =>
   {LANGS.map((l) => <link rel="alternate" hreflang={l} href={new URL(`/${l}/`, site)}>)}
   <link rel="alternate" hreflang="x-default" href={new URL('/en/', site)}>
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="alternate" type="application/rss+xml" title={t.logTitle} href={`/${lang}/changes.xml`}>
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Ozero Mail">
   <meta property="og:title" content={t.h1}>
@@ -81,13 +85,8 @@ const mailto = (os: string) =>
 <div class="lake" id="lake" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <div class="app" id="app">
   <aside class="side" aria-label={t.listLabel}>
-    <span class="brand"><Mark id="mk1" />ozero mail</span>
-    <ol id="sidelist">
-      {letters.map((l) => (
-        <li><a href={`#${l.id}`} style={`--c:${l.color}`}><span class="s-from">{l.tag}</span><span class="s-t">{l.when}</span><span class="s-subj">{l.subject}</span></a></li>
-      ))}
-    </ol>
-    <span class="meta">Android · iOS · Gmail · Outlook · iCloud · IMAP</span>
+    <Phone t={t} id="mk1" letters={letters} />
+    <span class="meta">{['Android', 'iOS', 'Gmail', 'Outlook', 'iCloud', 'IMAP'].join('\u00a0· ')}</span>
   </aside>
 
   <main>
@@ -96,6 +95,7 @@ const mailto = (os: string) =>
       <p class="inboxline"><span>{t.inbox}</span><span class="n" id="count">{n}</span><span class="sr" id="unreadSr"> {plural(lang, c.unread, n)}</span></p>
       <h1>{t.h1}</h1>
       <p class="sub">{t.sub}</p>
+      <p class="wip"><span class="pill">{t.wipPill}</span> {t.wipHero}</p>
       {stores.length > 0 && (
         <div class="stores">
           {stores.map((s) => (
@@ -106,6 +106,7 @@ const mailto = (os: string) =>
           ))}
         </div>
       )}
+      <nav class="ph-mobile" aria-label={t.phoneLabel}><Phone t={t} id="mk3" letters={letters} /></nav>
       <p class="tip"><span class="touch">{t.tip}</span><span class="mouse">{t.tipMouse}</span></p>
     </header>
 
@@ -137,17 +138,17 @@ const mailto = (os: string) =>
           <div class="tabs"><span class="on">{t.tbPeople}</span><span>{t.tbServices}</span><span>{t.tbNews}</span></div>
           <div class="bar"><span>{t.shSearch}</span><span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg></span></div>
         </div>
-        <Grid items={t.features} color="var(--acc-2)" />
+        <Grid items={t.features} />
         <p class="note">{t.wipText}</p>
       </div>
     </Letter>
 
     <Letter t={t} {...m4}>
-      <div class="mbody"><Grid items={t.comparison} color="var(--acc-3)" /></div>
+      <div class="mbody"><Grid items={t.comparison} /></div>
     </Letter>
 
     <Letter t={t} {...m5}>
-      <div class="mbody"><Grid items={t.promises} color="var(--acc-3)" /></div>
+      <div class="mbody"><Grid items={t.promises} /></div>
     </Letter>
 
     <Letter t={t} {...m6}>
@@ -171,10 +172,19 @@ const mailto = (os: string) =>
           <>
             <div class="bubble"><span class="ava you" aria-hidden="true">?</span><p class="txt"><span class="who">{t.you}</span><span>{q}</span></p></div>
             <div class="bubble me"><span class="ava" aria-hidden="true">{t.avaL}</span><p class="txt"><span>{a}</span>
-              {i === lastQuestion && <span class="steps">{t.roadmap.map((s, k) => <span class:list={{ now: k === t.roadmapNow }}>{s}</span>)}</span>}
+              {i === lastQuestion && <span class="steps">{t.roadmap.map((s, k) => k === t.roadmapNow ? <span class="now">{fill(t.now, { s })}</span> : <span>{s}</span>)}</span>}
             </p></div>
           </>
         ))}
+      </div>
+    </Letter>
+
+    <Letter t={t} {...m8}>
+      <div class="mbody">
+        <ol class="log">
+          {t.log.map((e) => <li><time datetime={e.date}>{day.format(new Date(e.date))}</time><p>{e.text}</p></li>)}
+        </ol>
+        <p class="note"><a href={`/${lang}/changes.xml`}>{t.logRss}</a></p>
       </div>
     </Letter>
 
