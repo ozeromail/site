@@ -45,6 +45,15 @@ export function start() {
   const [count, unreadSr, ozw, ozn, lake, calm] = ['count', 'unreadSr', 'ozw', 'ozn', 'lake', 'calm'].map((id) => $(id));
   const oz = document.querySelector<HTMLElement>('.oz')!;
 
+  function centreLake() {
+    const r = oz.getBoundingClientRect();
+    lake.style.setProperty('--cx', r.left + r.width / 2 + 'px');
+    lake.style.setProperty('--cy', r.top + r.height / 2 + 'px');
+  }
+  addEventListener('resize', () => {
+    if (lake.classList.contains('go')) centreLake();
+  });
+
   function upd() {
     const left = mails.filter(isOpen).length;
     count.textContent = String(left);
@@ -58,13 +67,10 @@ export function start() {
       return;
     }
     // Inbox Zero: centre the word and let the water move.
-    hideToast();
-    oz.scrollIntoView({ block: 'center' });
+    oz.scrollIntoView({ block: 'center', behavior: 'instant' });
     calm.focus({ preventScroll: true });
     requestAnimationFrame(() => {
-      const r = oz.getBoundingClientRect();
-      lake.style.setProperty('--cx', r.left + r.width / 2 + 'px');
-      lake.style.setProperty('--cy', r.top + r.height / 2 + 'px');
+      centreLake();
       lake.classList.remove('go');
       void lake.offsetWidth;
       lake.classList.add('go');
@@ -91,7 +97,8 @@ export function start() {
       setDone(true);
       if (mails.some(isOpen)) row.focus({ preventScroll: true });
       live.textContent = '';
-      requestAnimationFrame(() => (live.textContent = S.done));
+      const left = mails.filter(isOpen).length;
+      requestAnimationFrame(() => (live.textContent = `${S.done}. ${left} ${plural(S.lang, S.unread, left)}`));
       showToast(reopen);
     };
     doneBtn.addEventListener('click', done);

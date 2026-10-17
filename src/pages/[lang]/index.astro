@@ -17,7 +17,7 @@ const t = strings[lang];
 const c = t.client;
 const tip = TIPS[lang];
 const when = ['09:41', '09:38', t.tYest];
-const letters = t.pains.map((p, i) => ({ tag: p.tag, when: when[i], subject: p.q, body: p.a }));
+const letters = t.pains.map((p, i) => ({ tag: p.tag, when: when[i] ?? t.tYest, subject: p.q, body: p.a }));
 const n = letters.length;
 const mailto = `mailto:${CONTACT}?subject=${encodeURIComponent(t.mailSubj)}&body=${encodeURIComponent(t.mailBody)}`;
 
@@ -105,8 +105,7 @@ const url = new URL(`/${lang}/`, site);
   <section class="finale" id="finale">
     <div class="oz" aria-hidden="true"><span id="ozw">{t.inbox}</span><span class="n" id="ozn">{n}</span></div>
     <p class="calm" id="calm" tabindex="-1" hidden>{t.calm}</p>
-    <p class="soon">{t.soon}</p>
-    <a class="btn" href={mailto}>{t.write}</a>
+    {stores.length === 0 && <><p class="soon">{t.soon}</p><a class="btn" href={mailto}>{t.write}</a></>}
   </section>
 
   <footer>
