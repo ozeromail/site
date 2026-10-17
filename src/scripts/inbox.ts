@@ -45,15 +45,26 @@ export function start() {
     f?.();
   });
 
-  /* Changes to the list morph instead of jumping: letters slide into their new places. Scrolling waits for the morph. */
+  /* Changes to the list morph instead of jumping: letters slide into their new places.
+     The browser applies the change a frame later, so focus and announcements go in `after`, and scrolling waits for the morph. */
   const still = matchMedia('(prefers-reduced-motion: reduce)');
-  let settled: Promise<unknown> = Promise.resolve();
-  function morph(change: () => void) {
-    if (!document.startViewTransition || still.matches) return change();
-    settled = document.startViewTransition(change).finished;
+  let settled: Promise<void> = Promise.resolve();
+  function morph(change: () => void, after: () => void) {
+    const apply = () => {
+      change();
+      upd();
+    };
+    if (!document.startViewTransition || still.matches) {
+      apply();
+      after();
+      return;
+    }
+    const vt = document.startViewTransition(apply);
+    settled = vt.finished.catch(() => {});
+    void vt.updateCallbackDone.then(after, after);
   }
-  const glide = (target: HTMLElement, block: ScrollLogicalPosition) =>
-    void settled.then(() => target.scrollIntoView({ block, behavior: still.matches ? 'instant' : 'smooth' }));
+  // CSS turns smooth scrolling off for reduced motion.
+  const glide = (target: HTMLElement, block: ScrollLogicalPosition) => void settled.then(() => target.scrollIntoView({ block }));
 
   /* Letters */
   const mails = [...document.querySelectorAll<HTMLElement>('.mail')];
@@ -122,30 +133,30 @@ export function start() {
   }
   // Reopens a group of letters and brings the reader back to the first one.
   function restore(list: HTMLElement[], reset = false) {
-    morph(() => {
-      for (const m of list) collapse(m, false, reset);
-      upd();
-    });
+    morph(
+      () => list.forEach((m) => collapse(m, false, reset)),
+      () => doneBtn(list[0]).focus({ preventScroll: true }),
+    );
     glide(list[0], 'start');
-    doneBtn(list[0]).focus({ preventScroll: true });
   }
   const doneBtn = (m: HTMLElement) => m.querySelector<HTMLElement>('.act.done')!;
 
   function reopen(m: HTMLElement) {
     hideToast();
-    morph(() => {
-      collapse(m, false);
-      upd();
-    });
-    doneBtn(m).focus({ preventScroll: true });
+    morph(
+      () => collapse(m, false),
+      () => doneBtn(m).focus({ preventScroll: true }),
+    );
+    glide(m, 'nearest');
   }
   function done(m: HTMLElement) {
-    morph(() => {
-      collapse(m, true);
-      upd();
-    });
-    if (mails.some(isOpen)) m.querySelector<HTMLElement>('.row')!.focus({ preventScroll: true });
-    say(`${S.done}. ${leftText()}`);
+    morph(
+      () => collapse(m, true),
+      () => {
+        if (mails.some(isOpen)) m.querySelector<HTMLElement>('.row')!.focus({ preventScroll: true });
+        say(`${S.done}. ${leftText()}`);
+      },
+    );
     showToast(() => reopen(m));
   }
 
@@ -198,7 +209,8 @@ export function start() {
         sheet.style.transform = 'translateX(-110%)';
         setTimeout(() => {
           onSwipe();
-          sheet.style.transform = '';
+          // After the morph has captured the swiped-away state, so the letter doesn't flash back.
+          void settled.then(() => (sheet.style.transform = ''));
         }, 200);
       } else {
         sheet.style.transform = '';
@@ -224,11 +236,10 @@ export function start() {
   function doneAll() {
     const open = mails.filter(isOpen);
     if (!open.length) return;
-    morph(() => {
-      for (const m of open) collapse(m, true);
-      upd();
-    });
-    say(S.allDone);
+    morph(
+      () => open.forEach((m) => collapse(m, true)),
+      () => say(S.allDone),
+    );
     showToast(() => restore(open));
   }
   const swiped = swipeable(el.bulk, el.bulkBtn, doneAll, () => true);
