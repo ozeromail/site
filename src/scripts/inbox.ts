@@ -42,7 +42,7 @@ export function start() {
   /* Letters */
   const mails = [...document.querySelectorAll<HTMLElement>('.mail')];
   const isOpen = (m: HTMLElement) => !m.classList.contains('is-done');
-  const [count, unreadSr, ozw, ozn, lake, calm] = ['count', 'unreadSr', 'ozw', 'ozn', 'lake', 'calm'].map((id) => $(id));
+  const [unreadSr, ozw, ozn, lake, calm] = ['unreadSr', 'ozw', 'ozn', 'lake', 'calm'].map((id) => $(id));
   const oz = document.querySelector<HTMLElement>('.oz')!;
 
   function centreLake() {
@@ -56,7 +56,6 @@ export function start() {
 
   function upd() {
     const left = mails.filter(isOpen).length;
-    count.textContent = String(left);
     unreadSr.textContent = ' ' + plural(S.lang, S.unread, left);
     ozw.textContent = left ? S.word : S.wordDone;
     ozn.textContent = left ? String(left) : '';
@@ -78,7 +77,7 @@ export function start() {
   }
 
   /* A left swipe past 45% of the width clears the letter. Only clearly horizontal gestures count, so scrolling still works.
-     Touch swipes anywhere on the letter; a mouse drags by the header, so text stays selectable. */
+     Touch swipes anywhere on the letter; a mouse drags by the subject, so text stays selectable. */
   for (const m of mails) {
     const sheet = m.querySelector<HTMLElement>('.sheet')!;
     const row = m.querySelector<HTMLElement>('.row')!;
@@ -109,7 +108,7 @@ export function start() {
     let axis: 'x' | 'y' | null = null;
     sheet.addEventListener('pointerdown', (e) => {
       const target = e.target as Element;
-      if (e.button || target.closest('a,button') || (e.pointerType === 'mouse' && !target.closest('.mhead'))) return;
+      if (e.button || target.closest('a,button') || (e.pointerType === 'mouse' && !target.closest('.subj'))) return;
       x0 = e.clientX;
       y0 = e.clientY;
       dx = 0;
