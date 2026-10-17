@@ -13,9 +13,13 @@ export function getStaticPaths() {
 const lang = Astro.params.lang as Lang;
 const p = strings[lang].privacy;
 const site = Astro.site;
-const [before, after] = p.sections.at(-1)!.p[0].split('{email}');
-const sections = p.sections.slice(0, -1);
-const contact = p.sections.at(-1)!;
+
+// Text with [links](url) in it, as plain parts and links.
+const parts = (text: string) =>
+  fill(text, { email: CONTACT })
+    .split(/\[([^\]]+)\]\(([^)]+)\)/)
+    .map((s, i, all) => (i % 3 === 0 ? { text: s } : i % 3 === 1 ? { text: s, href: all[i + 1] } : null))
+    .filter((part) => part !== null);
 ---
 <!doctype html>
 <html lang={lang} class="doc">
@@ -23,10 +27,11 @@ const contact = p.sections.at(-1)!;
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <title>{p.title}</title>
-  <meta name="description" content={p.lead}>
+  <meta name="description" content={p.description}>
   {!INDEXABLE && <meta name="robots" content="noindex, nofollow">}
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   {LANGS.map((l) => <link rel="alternate" hreflang={l} href={new URL(`/${l}/privacy/`, site)}>)}
+  <link rel="alternate" hreflang="x-default" href={new URL('/en/privacy/', site)}>
   <meta name="color-scheme" content="light dark">
 </head>
 <body>
@@ -35,16 +40,14 @@ const contact = p.sections.at(-1)!;
   <h1>{p.h1}</h1>
   <p class="date">{p.updated}</p>
   <p class="lead">{p.lead}</p>
-  {sections.map((s) => (
+  {p.sections.map((s) => (
     <section>
       <h2>{s.h}</h2>
-      {s.p.map((text) => <p>{text}</p>)}
+      {s.p.map((text) => (
+        <p>{parts(text).map((part) => (part.href ? <a href={part.href}>{part.text}</a> : part.text))}</p>
+      ))}
     </section>
   ))}
-  <section>
-    <h2>{contact.h}</h2>
-    <p>{before}<a href={`mailto:${CONTACT}`}>{CONTACT}</a>{after}</p>
-  </section>
   <p class="other">{LANGS.filter((l) => l !== lang).map((l) => <a href={`/${l}/privacy/`} lang={l}>{strings[l].privacy.h1}</a>)}</p>
 </main>
 </body>
