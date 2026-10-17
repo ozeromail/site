@@ -54,7 +54,6 @@
       "one": "Swipe {n} letter",
       "other": "Swipe {n} letters"
     },
-    "bulkLabel": "Mark the remaining {n} as done",
     "allDone": "All marked as done"
   },
   "calm": "All clear. That’s how the app should feel.",

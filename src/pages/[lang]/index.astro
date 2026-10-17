@@ -83,7 +83,7 @@ const url = new URL(`/${lang}/`, site);
 
   <section class="finale" id="finale">
     <div class="oz" aria-hidden="true"><span id="ozw">{t.inbox}</span><span class="n" id="ozn">{n}</span></div>
-    <div class="bulk" id="bulk"><div class="under" aria-hidden="true"><svg width="18" height="18"><use href="#i-check"/></svg><span>{t.doneLbl}</span></div><button type="button" class="bs" id="bulkBtn" aria-label={fill(c.bulkLabel, { n })}><span class="grip" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span><span id="bulkText">{plural(lang, c.bulk, n)}</span><span class="grip" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span></button></div>
+    <div class="bulk" id="bulk"><div class="under" aria-hidden="true"><svg width="18" height="18"><use href="#i-check"/></svg><span>{t.doneLbl}</span></div><button type="button" class="bs" id="bulkBtn"><span class="grip" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span><span id="bulkText">{plural(lang, c.bulk, n)}</span><span class="grip" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span></button></div>
     <p class="calm" id="calm" tabindex="-1" hidden>{t.calm}</p>
     <button type="button" class="back" id="bringBack" hidden>{t.bringBack}</button>
   </section>
