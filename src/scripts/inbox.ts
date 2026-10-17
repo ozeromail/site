@@ -22,6 +22,8 @@ export function start() {
   const toast = $('toast');
   const undoBtn = $<HTMLButtonElement>('toastUndo');
   const toastText = $('toastText');
+  // Touch screens keep :hover after a tap, so only a real pointer may hold the toast.
+  const hoverable = matchMedia('(hover: hover)');
   let timer: number | undefined;
   let undo: (() => void) | null = null;
   function hideToast() {
@@ -36,7 +38,8 @@ export function start() {
     toast.hidden = false;
     let n = seconds;
     timer = window.setInterval(() => {
-      if (!toast.matches(':hover,:focus-within') && --n <= 0) hideToast();
+      const held = toast.matches(':focus-within') || (hoverable.matches && toast.matches(':hover'));
+      if (!held && --n <= 0) hideToast();
     }, 1000);
   }
   undoBtn.addEventListener('click', () => {
@@ -50,9 +53,13 @@ export function start() {
   const mails = [...document.querySelectorAll<HTMLElement>('.mail')];
   const isOpen = (m: Element | null | undefined): m is HTMLElement => !!m && !m.classList.contains('is-done');
   const isUnread = (m: HTMLElement) => isOpen(m) && !m.classList.contains('is-read');
-  // Phone rows of a letter: the desktop side phone and the one in the mobile header.
-  const eachRow = (m: HTMLElement, f: (a: HTMLAnchorElement) => void) =>
-    document.querySelectorAll<HTMLAnchorElement>(`.ph-list a[href="#${m.id}"]`).forEach(f);
+  // Phone rows by letter id: the desktop side phone and the one in the mobile header.
+  const rows = new Map<string, HTMLAnchorElement[]>();
+  for (const a of document.querySelectorAll<HTMLAnchorElement>('.ph-list a')) {
+    const id = a.hash.slice(1);
+    rows.set(id, [...(rows.get(id) ?? []), a]);
+  }
+  const eachRow = (m: HTMLElement, f: (a: HTMLAnchorElement) => void) => rows.get(m.id)?.forEach(f);
   const el = {
     count: $('count'), unreadSr: $('unreadSr'), left: $('left'), bar: $('bar'), track: $('track'),
     finale: $('finale'), ozw: $('ozw'), ozn: $('ozn'), finaleText: $('finaleText'), lake: $('lake'),
@@ -61,6 +68,7 @@ export function start() {
   // Hidden during the quiet moment, so they leave the tab order too.
   const calm = [...document.querySelectorAll<HTMLElement>('.head,.compose,#bringBack,.bbar,.side')];
   let prevLeft = mails.length;
+  let frame = 0;
   let unread = mails.length;
   const leftText = (unread: number) => (unread ? fill(S.left, { n: unread }) : mails.some(isOpen) ? S.allRead : S.allClear);
 
@@ -93,6 +101,8 @@ export function start() {
     el.bulkBtn.setAttribute('aria-label', fill(S.bulkLabel, { n: left }));
     el.finale.classList.toggle('clear', !left);
     app.classList.toggle('clear', !left);
+    // Collapsing letters moves others into view.
+    readSoon();
     if (left === prevLeft) return;
     prevLeft = left;
     if (!left) quiet();
@@ -110,8 +120,11 @@ export function start() {
     el.lake.style.setProperty('--cx', r.left + r.width / 2 + 'px');
     el.lake.style.setProperty('--cy', r.top + r.height / 2 + 'px');
   }
+  // Undo for the action that reached Inbox Zero, offered once the page comes back.
+  let afterQuiet: (() => void) | null = null;
   function endQuiet() {
     clearTimeout(quietTimer);
+    afterQuiet = null;
     document.body.classList.remove('quiet');
     for (const e of calm) e.inert = false;
   }
@@ -124,12 +137,13 @@ export function start() {
     el.lake.classList.remove('go');
     void el.lake.offsetWidth;
     el.lake.classList.add('go');
-    say(S.finDone);
+    el.finaleText.focus({ preventScroll: true });
     clearTimeout(quietTimer);
     quietTimer = window.setTimeout(() => {
+      const f = afterQuiet;
       endQuiet();
-      el.finaleText.focus({ preventScroll: true });
       $('wait').scrollIntoView({ block: 'end' });
+      f?.();
     }, 3200);
   }
   addEventListener('resize', () => {
@@ -149,15 +163,19 @@ export function start() {
     collapse(m, done);
     upd();
     if (!done || above) m.scrollIntoView({ block: 'start' });
-    if (!done || app.classList.contains('clear')) return;
-    m.querySelector<HTMLElement>('.row')!.focus({ preventScroll: true });
-    if (silent) return;
-    const left = leftText(unread);
-    say(`${S.done}. ${left[0].toUpperCase()}${left.slice(1)}`);
-    showToast(S.done, () => {
+    if (!done || silent) return;
+    const back = () => {
       setDone(m, false, true);
       m.querySelector<HTMLElement>('.act.done')!.focus({ preventScroll: true });
-    });
+    };
+    if (app.classList.contains('clear')) {
+      afterQuiet = () => showToast(S.done, back);
+      return;
+    }
+    m.querySelector<HTMLElement>('.row')!.focus({ preventScroll: true });
+    const left = leftText(unread);
+    say(`${S.done}. ${left[0].toUpperCase()}${left.slice(1)}`);
+    showToast(S.done, back);
   }
 
   /* A left swipe that passes 45% of the width fires onSwipe. Only clearly horizontal gestures count, so scrolling still works. */
@@ -234,19 +252,26 @@ export function start() {
     });
   }
 
-  /* For visitors who scrolled past without clearing: one bulk action, as in the app. Swipe it or just press it.
-     No toast: Inbox Zero follows at once, and "Bring the letters back" undoes it. */
+  /* For visitors who scrolled past without clearing: one bulk action, as in the app. Swipe it or just press it. */
   function doneAll() {
-    for (const m of mails) collapse(m, true);
+    const open = mails.filter(isOpen);
+    for (const m of open) collapse(m, true);
     upd();
+    afterQuiet = () => showToast(S.allDone, () => {
+      for (const m of open) collapse(m, false);
+      upd();
+      open[0].scrollIntoView({ block: 'start' });
+      open[0].querySelector<HTMLElement>('.act.done')!.focus({ preventScroll: true });
+    });
   }
   const { bulk, bulkBtn } = el;
   const swiped = swipeable(bulk, bulkBtn, 8, 1.5, () => {
     bulkBtn.style.transform = '';
     doneAll();
   }, () => true);
-  bulkBtn.addEventListener('click', () => {
-    if (!swiped()) doneAll();
+  // A keyboard click (detail 0) has no press of its own, so an old swipe must not cancel it.
+  bulkBtn.addEventListener('click', (e) => {
+    if (!e.detail || !swiped()) doneAll();
   });
 
   $('bringBack').addEventListener('click', () => {
@@ -274,7 +299,6 @@ export function start() {
 
   /* Reading: a letter whose end has come into view, above the bottom bar, counts as read. */
   const nav = el.bar.closest('nav')!;
-  let frame = 0;
   const read = () => {
     frame = 0;
     if (!unread) return;
@@ -287,13 +311,17 @@ export function start() {
     for (const m of seen) m.classList.add('is-read');
     if (seen.length) upd();
   };
-  addEventListener('scroll', () => {
+  // Also after load and resize: short letters may be read without any scrolling.
+  const readSoon = () => {
     frame ||= requestAnimationFrame(read);
-  }, { passive: true });
+  };
+  addEventListener('scroll', readSoon, { passive: true });
+  addEventListener('resize', readSoon);
+  readSoon();
 
   /* Keyboard: E marks the letter in view as Done, U or Z undoes. A held key does not repeat. */
   document.addEventListener('keydown', (e) => {
-    if (e.repeat || e.metaKey || e.ctrlKey || e.altKey || (e.target as Element).closest('a,input,textarea')) return;
+    if (e.repeat || e.metaKey || e.ctrlKey || e.altKey || (e.target as Element).closest('input,textarea')) return;
     const k = e.key.toLowerCase();
     if (k === 'e') {
       const focused = document.activeElement?.closest<HTMLElement>('.mail');

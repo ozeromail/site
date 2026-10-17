@@ -35,6 +35,8 @@ jobs:
           path: |
             dist
             netlify.toml
+            .nvmrc
+          include-hidden-files: true
           retention-days: 3
 
   # Netlify builds private org repos only on a paid plan, so CI uploads the build: main goes live, a PR gets a preview.
@@ -49,6 +51,9 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: site
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
       - name: Deploy to Netlify
         shell: bash
         env:
