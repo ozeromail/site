@@ -5,7 +5,7 @@ import '../../styles/site.css';
 import Mark from '../../components/Mark.astro';
 import Letter from '../../components/Letter.astro';
 import { LANGS, strings, type Lang } from '../../i18n';
-import { plural } from '../../i18n/format';
+import { fill, plural } from '../../i18n/format';
 import { CONTACT, INDEXABLE, STATS_URL, STORES, TIPS } from '../../config';
 
 export function getStaticPaths() {
@@ -17,7 +17,8 @@ const t = strings[lang];
 const c = t.client;
 const tip = TIPS[lang];
 const n = t.pains.length;
-const mailto = `mailto:${CONTACT}?subject=${encodeURIComponent(t.mailSubj)}&body=${encodeURIComponent(t.mailBody)}`;
+const mailto = (os: string) =>
+  `mailto:${CONTACT}?subject=${encodeURIComponent(t.mailSubj)}&body=${encodeURIComponent(`${t.mailBody}\n\n${fill(t.cPhone, { os })}`)}`;
 
 const stores = [
   { key: 'appStore', url: STORES.appStore, small: t.storeApple, big: 'App Store' },
@@ -50,7 +51,7 @@ const url = new URL(`/${lang}/`, site);
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="color-scheme" content="light dark">
-  <noscript><style>.act{display:none}</style></noscript>
+  <noscript><style>.act,.tip,.bulk,.bbar{display:none}</style></noscript>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -67,22 +68,43 @@ const url = new URL(`/${lang}/`, site);
   </header>
 
   <section class="head">
+    <p class="inboxline"><span>{t.inbox}</span><span class="n" id="count">{n}</span><span class="sr" id="unreadSr"> {plural(lang, c.unread, n)}</span></p>
     <h1>{t.h1}</h1>
     <p class="sub">{t.sub}</p>
     {stores.length > 0 && (
       <div class="stores">{stores.map((s) => <a class="store" href={s.url} target="_blank" rel="noopener"><small>{s.small}</small><b>{s.big}</b></a>)}</div>
     )}
+    <p class="tip"><span class="touch">{t.tip}</span><span class="mouse">{t.tipMouse}</span></p>
   </section>
 
   {t.pains.map((p) => (
-    <Letter t={t} subject={p.q}><p>{p.a}</p></Letter>
+    <Letter t={t} subject={p.q} from={p.from} when={p.when}><p>{p.a}</p></Letter>
   ))}
 
   <section class="finale" id="finale">
-    <div class="oz"><span id="ozw">{t.inbox}</span><span class="n" id="ozn">{n}</span><span class="sr" id="unreadSr"> {plural(lang, c.unread, n)}</span></div>
+    <div class="oz" aria-hidden="true"><span id="ozw">{c.word}</span><span class="n" id="ozn">{n}</span></div>
+    <div class="bulk" id="bulk"><div class="under" aria-hidden="true"><svg width="18" height="18"><use href="#i-check"/></svg><span>{t.doneLbl}</span></div><button type="button" class="bs" id="bulkBtn" aria-label={fill(c.bulkLabel, { n })}><span class="grip" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span><span id="bulkText">{plural(lang, c.bulk, n)}</span><span class="grip" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span></button></div>
     <p class="calm" id="calm" tabindex="-1" hidden>{t.calm}</p>
-    {stores.length === 0 && <><p class="soon">{t.soon}</p><a class="btn" href={mailto}>{t.write}</a></>}
+    <button type="button" class="back" id="bringBack" hidden>{t.bringBack}</button>
   </section>
+
+  {stores.length === 0 && (
+    <section class="wait" id="wait" aria-labelledby="waitTitle">
+      <p class="soon">{t.soon}</p>
+      <div class="compose">
+        <div class="field"><span class="lbl">{t.fTo}</span><span>{t.name}</span></div>
+        <fieldset class="field"><legend class="lbl">{t.fPhone}</legend>
+          <div class="seg">
+            <label><input type="radio" name="os" value="iphone" checked><span>iPhone</span></label>
+            <label><input type="radio" name="os" value="android"><span>Android</span></label>
+          </div>
+        </fieldset>
+        <div class="field"><span class="lbl">{t.fSubj}</span><h2 id="waitTitle">{t.mailSubj}</h2></div>
+        <p class="text">{t.mailBody}</p>
+        <div class="send"><span class="fine">{t.cFine}</span><a class="btn" id="send" href={mailto('iPhone')} data-iphone={mailto('iPhone')} data-android={mailto('Android')}>{t.send}</a></div>
+      </div>
+    </section>
+  )}
 
   <footer>
     <span><span>{t.by}</span> · <a href="https://khizrim.ru" target="_blank" rel="noopener">khizrim.ru</a></span>
@@ -91,10 +113,16 @@ const url = new URL(`/${lang}/`, site);
   </footer>
 </main>
 
+<nav class="bbar" aria-label={t.barLabel}>
+  <div class="cap">
+    <div class="prog"><b id="left">{fill(c.left, { n })}</b><span class="track" role="progressbar" aria-valuemin="0" aria-valuemax={n} aria-valuenow="0" id="track" aria-label={t.progLabel}><i id="bar"></i></span></div>
+    {stores.length === 0 && <a class="btn" href="#wait">{t.cta}</a>}
+  </div>
+</nav>
 <p class="sr" id="live" aria-live="polite"></p>
 <div class="toast" id="toast" hidden><span>{t.doneLbl}</span><button type="button" id="toastUndo">{t.undo}</button></div>
 
-<script type="application/json" id="strings" set:html={JSON.stringify({ lang, word: t.inbox, done: t.doneLbl, ...c }).replace(/</g, '\\u003c')} />
+<script type="application/json" id="strings" set:html={JSON.stringify({ lang, done: t.doneLbl, ...c }).replace(/</g, '\\u003c')} />
 <script>
   import { start } from '../../scripts/inbox';
   start();
