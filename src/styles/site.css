@@ -125,11 +125,10 @@ main{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:24px max(
 .btn:hover{text-decoration:none;filter:brightness(1.06)}
 .lake{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
 .lake i{position:absolute;left:var(--cx,50%);top:var(--cy,50%);width:150vmax;height:150vmax;margin:-75vmax 0 0 -75vmax;border:2px solid var(--accent);border-radius:50%;opacity:0;transform:scale(.02)}
-.lake.go i{animation:ripple 11s cubic-bezier(.3,.1,.4,1) forwards}
+.lake.go i{animation:ripple 11s cubic-bezier(.3,.1,.4,1)}
 .lake.go i:nth-child(2){animation-delay:2.6s}
 .lake.go i:nth-child(3){animation-delay:5.2s}
 @keyframes ripple{0%{transform:scale(.02);opacity:0}12%{opacity:.5}70%{opacity:.18}100%{transform:scale(1);opacity:0}}
-@media (prefers-reduced-motion:reduce){.lake{display:none}}
 
 footer{margin-top:56px;display:flex;flex-wrap:wrap;justify-content:center;gap:8px 20px;font-size:14px;color:var(--fg-3)}
 

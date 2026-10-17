@@ -5,19 +5,17 @@ import { fill } from '../i18n/format';
 
 interface Props {
   t: Strings;
-  id: string;
   tag: string;
   when: string;
   subject: string;
-  ava?: string;
 }
-const { t, id, tag, when, subject, ava = t.avaL } = Astro.props;
+const { t, tag, when, subject } = Astro.props;
 ---
-<article class="mail" id={id}>
+<article class="mail">
   <div class="under" aria-hidden="true"><span>{t.doneLbl}</span><svg width="18" height="18"><use href="#i-check"/></svg></div>
   <div class="sheet">
     <div class="mhead">
-      <span class:list={['ava', { you: ava === '?' }]} aria-hidden="true">{ava}</span>
+      <span class="ava" aria-hidden="true">{t.avaL}</span>
       <span class="from"><slot name="from">{tag}</slot></span>
       <span class="when">{when}</span>
     </div>
