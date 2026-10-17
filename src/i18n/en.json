@@ -76,7 +76,7 @@
   "tipMouse": "The letters are below. Drag one left by its top or press Done. Keys: E for Done, U to undo.",
   "bringBack": "Bring the letters back",
   "fTo": "To",
-  "fPhone": "Phone",
+  "fOs": "Your OS",
   "fSubj": "Subject",
   "cPhone": "My phone: {os}",
   "cFine": "Opens your mail app. Your address stays in my inbox and nowhere else.",
