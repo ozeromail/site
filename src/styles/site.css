@@ -1,4 +1,4 @@
-/* Layout: the landing page IS an inbox. Each section is a letter from the author; the visitor swipes them to Done and reaches "Ozero": a calm lake with ripples, then a compose window. Controls live in a bottom bar, as in the app. */
+/* A short inbox: three letters from the author, one per pain. Clearing them leaves "ozero" and calm water. */
 :root{
   --bg:#ffffff;
   --bg-soft:#f4f5f7;
@@ -11,7 +11,6 @@
   --accent-fill:#1f66d9;
   --toast-link:#8ab8ff;
   --under-fg:#ffffff;
-  --accent-soft:#e8f0fe;
   --done:#277a3c;
   --acc-1:#ef4a5c;
   --acc-2:#14a38b;
@@ -19,145 +18,89 @@
   --acc-4:#f39a1e;
   --ava-bg:#16181d;
   --ava-fg:#ffffff;
-  --bar:rgba(255,255,255,.84);
   --shadow:0 18px 40px -18px rgba(22,30,50,.30),0 4px 12px -6px rgba(22,30,50,.14);
   --f-display:"Unbounded Variable","Onest Variable",system-ui,sans-serif;
   --f-body:"Onest Variable",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
 }
 @media (prefers-color-scheme: dark){:root{
   --bg:#0f1318;--bg-soft:#171c23;--fg:#eef1f5;--fg-2:#aab1bc;--fg-3:#8c939e;--line:#252b34;--stripe:#3a424e;
-  --accent:#6aa3ff;--accent-fill:#2d6fe0;--accent-soft:#18263d;--done:#4fb767;--toast-link:#1f5fc9;--under-fg:#0f1318;
-  --ava-bg:#232a34;--ava-fg:#eef1f5;--bar:rgba(23,28,35,.84);
+  --accent:#6aa3ff;--accent-fill:#2d6fe0;--done:#4fb767;--toast-link:#1f5fc9;--under-fg:#0f1318;
+  --ava-bg:#232a34;--ava-fg:#eef1f5;
   --shadow:0 18px 40px -18px rgba(0,0,0,.7),0 4px 12px -6px rgba(0,0,0,.5);color-scheme:dark}}
 
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding:24px 0 110px}
+html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
 a{color:var(--accent);text-decoration:none}
 a:hover{text-decoration:underline}
 button{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
-h1,h2,h3{margin:0;text-wrap:balance}
+h1,h2{margin:0;text-wrap:balance}
 p{margin:0}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.skip{position:fixed;left:12px;top:12px;z-index:30;padding:10px 16px;border-radius:999px;background:var(--fg);color:var(--bg);transform:translateY(-200%)}
-.skip:focus{transform:none}
-/* Links inside text are underlined, not only coloured */
-.mbody a,.note a,footer a{text-decoration:underline;text-underline-offset:.2em;text-decoration-thickness:1px}
-
-/* The mark is the app's accounts button: three overlapping account circles, no tile */
 .mark{height:20px;width:auto;flex:none;display:block}
 
-/* Two panes: a sticky list of letters and the stream of letters */
-.app{position:relative;z-index:1;max-width:1180px;margin:0 auto;display:grid;grid-template-columns:300px minmax(0,1fr);gap:56px;
-  padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));padding-block:40px 140px}
-.side{position:sticky;top:calc(24px + env(safe-area-inset-top,0px));align-self:start;display:grid;gap:18px;z-index:1}
-.side .meta{font-size:12px;color:var(--fg-3);text-wrap:balance;padding-left:6px}
+/* One calm column */
+main{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:24px max(20px,env(safe-area-inset-right,0px)) 64px max(20px,env(safe-area-inset-left,0px));container-type:inline-size}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700}
+.lang{display:flex;gap:2px}
+.lang a{display:grid;place-items:center;font:600 12px/1 var(--f-body);letter-spacing:.04em;color:var(--fg-3);min-width:44px;min-height:44px;border-radius:999px}
+.lang a:hover{text-decoration:none;color:var(--fg)}
+.lang a[aria-current="page"]{color:var(--fg);background:var(--bg-soft)}
 
-/* The app's inbox on a phone, listing the page's letters */
-.phone{border:1px solid var(--line);border-radius:34px;padding:18px 0 12px;background:var(--bg);box-shadow:var(--shadow);overflow:hidden}
-.ph-top{display:grid;gap:4px;padding:0 20px 10px}
-.ph-brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px}
-.ph-top b{font-size:26px;font-weight:700;letter-spacing:-.01em}
-.ph-list{list-style:none;margin:0;padding:0}
-.ph-list a{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0 10px;padding:9px 18px 9px 26px;border-top:1px solid var(--line);color:var(--fg);line-height:1.35}
-.ph-list a:hover,.ph-list a.on{text-decoration:none;background:var(--bg-soft)}
-/* Unread: a blue dot, as in the app */
-.ph-list a::before{content:"";position:absolute;left:10px;top:15px;width:8px;height:8px;border-radius:50%;background:var(--accent)}
-.ph-list a.is-read::before{display:none}
-.ph-from{font-weight:600;font-size:14px}
-.ph-t{font-size:12px;color:var(--fg-3);font-variant-numeric:tabular-nums}
-.ph-s{grid-column:1/-1;font-size:13px;color:var(--fg-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ph-list a.is-read .ph-from{font-weight:500}
-.ph-list a.is-done{opacity:.7}
-.ph-list a.is-done .ph-s{text-decoration:line-through}
-/* The app's tab switcher, in the phone and the mini app screen */
-.tabs{display:flex;gap:4px;margin:10px 12px 0;padding:4px;border-radius:999px;background:var(--bg-soft);font-size:12px}
-.tabs span{flex:1;text-align:center;padding:6px 4px;border-radius:999px;color:var(--fg-2)}
-.tabs span.on{background:var(--bg);color:var(--fg);font-weight:600}
-.ph-mobile{display:none}
-@media (max-width:920px){.app{grid-template-columns:minmax(0,1fr);gap:0;padding-block:24px 130px}.side{display:none}
-  .ph-mobile{display:block;max-width:400px;margin-top:6px}.ph-mobile .ph-top{display:none}.ph-mobile .phone{padding-top:4px}}
-
-/* Header: inbox line + the promise */
-.head{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;padding-bottom:30px;border-bottom:1px solid var(--line)}
-.head .mobile-brand{display:none;align-items:center;gap:10px;font-weight:700;margin-bottom:4px}
-@media (max-width:920px){.head .mobile-brand{display:flex}}
-.inboxline{display:flex;align-items:baseline;gap:.35em;font-family:var(--f-display);font-weight:500;font-size:clamp(22px,2.6vw,28px);letter-spacing:-.01em}
-.inboxline .n{color:var(--accent);font-variant-numeric:tabular-nums;display:inline-block;transition:transform .2s ease}
-.inboxline .n.tick{transform:translateY(-.15em)}
-.mbody>*{min-width:0}
-main{min-width:0;container-type:inline-size}
-.tip .mouse{display:none}
-@media (hover:hover){.tip .touch{display:none}.tip .mouse{display:inline}}
-.head h1{font-family:var(--f-display);font-weight:500;font-size:clamp(25px,8cqi,60px);hyphens:manual;line-height:1.05;letter-spacing:-.02em}
-.head .sub{font-size:clamp(18px,2.1vw,21px);color:var(--fg-2);max-width:34em}
+.head{display:grid;gap:14px;padding:clamp(40px,10cqi,88px) 0 28px;border-bottom:1px solid var(--line)}
+.inboxline{display:flex;align-items:baseline;gap:.35em;font-family:var(--f-display);font-weight:500;font-size:20px}
+.inboxline .n{color:var(--accent);font-variant-numeric:tabular-nums}
+.head h1{font-family:var(--f-display);font-weight:500;font-size:clamp(28px,8cqi,52px);line-height:1.08;letter-spacing:-.02em}
+.head .sub{font-size:clamp(18px,3cqi,20px);color:var(--fg-2)}
 .head .tip{font-size:14px;color:var(--fg-3)}
-.head .wip{font-size:15px;color:var(--fg-2);display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
-/* Store buttons: shown only for stores listed in STORES; the visitor's own platform comes first */
 .stores{display:flex;flex-wrap:wrap;gap:10px}
-.store{display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:6px 18px 6px 14px;border-radius:14px;background:var(--fg);color:var(--bg);line-height:1.15}
-.store:hover{text-decoration:none;filter:brightness(1.15)}
-.store svg{width:22px;height:22px;flex:none}
-.store small{display:block;font-size:11px;opacity:.75}
-.store b{display:block;font-size:16px;font-weight:600}
+.store{display:inline-grid;min-height:48px;padding:6px 18px;border-radius:14px;background:var(--fg);color:var(--bg);line-height:1.15}
+.store:hover{text-decoration:none}
+.store small{font-size:11px;opacity:.75}
+.store b{font-size:16px;font-weight:600}
 
 /* A letter */
-.mail{position:relative;border-bottom:1px solid var(--line);overflow:hidden;scroll-margin-top:24px}
+.mail{position:relative;border-bottom:1px solid var(--line);overflow:hidden}
 .mail .under{position:absolute;inset:0;background:var(--done);color:var(--under-fg);display:flex;align-items:center;justify-content:flex-end;padding-right:28px;font-weight:600;gap:8px;opacity:0}
 .mail.dragging .under{opacity:1}
-.mail .sheet{position:relative;background:var(--bg);padding:30px 0 30px 26px;transition:transform .25s ease;touch-action:pan-y}
+.mail .sheet{position:relative;background:var(--bg);padding:28px 0 28px 22px;transition:transform .25s ease;touch-action:pan-y}
 .mail.dragging .sheet{transition:none}
-.mail .sheet::before{content:"";position:absolute;left:0;top:30px;bottom:30px;width:4px;border-radius:2px;background:var(--stripe)}
-.mhead{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 14px;align-items:center;cursor:grab;user-select:none;-webkit-user-select:none}
-.ava{width:40px;height:40px;border-radius:50%;background:var(--ava-bg);color:var(--ava-fg);display:grid;place-items:center;font:700 16px var(--f-display);flex:none}
-.ava.you{background:var(--bg-soft);color:var(--fg-2)}
+.mail .sheet::before{content:"";position:absolute;left:0;top:28px;bottom:28px;width:4px;border-radius:2px;background:var(--stripe)}
+.mhead{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 12px;align-items:center;cursor:grab;user-select:none;-webkit-user-select:none}
+.ava{width:36px;height:36px;border-radius:50%;background:var(--ava-bg);color:var(--ava-fg);display:grid;place-items:center;font:700 15px var(--f-display)}
 .from{font-weight:600;min-width:0}
 .from .role{font-weight:400;color:var(--fg-3);margin-left:6px;font-size:14px}
 @media (max-width:480px){.from .role{display:none}}
-.when{font-size:13px;color:var(--fg-3);font-variant-numeric:tabular-nums;text-align:right}
-.subj{font-family:var(--f-display);font-weight:500;font-size:clamp(22px,2.9vw,32px);overflow-wrap:break-word;line-height:1.15;letter-spacing:-.01em;margin:20px 0 16px}
-.mbody{display:grid;gap:16px;max-width:40em;font-size:18px}
-.mfoot{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
-.act{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:11px 18px;font-weight:600;font-size:15px;cursor:pointer;background:var(--bg-soft);color:var(--fg);min-height:44px}
+.when{font-size:13px;color:var(--fg-3);font-variant-numeric:tabular-nums}
+.subj{font-family:var(--f-display);font-weight:500;font-size:clamp(22px,5cqi,28px);line-height:1.2;letter-spacing:-.01em;margin:16px 0 10px;overflow-wrap:break-word}
+.mbody{display:grid;gap:20px;font-size:18px;color:var(--fg-2)}
+.mfoot{margin-top:20px}
+.act{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:10px 18px;font-weight:600;font-size:15px;cursor:pointer;background:var(--bg-soft);color:var(--fg);min-height:44px}
 .act svg{width:16px;height:16px;color:var(--done)}
 .act:hover{background:var(--done);color:var(--under-fg)}
 .act:hover svg{color:var(--under-fg)}
 
-/* Collapsed (done) letter: the whole row reopens it */
-.mail .row{display:none;width:100%;align-items:center;gap:12px;padding:14px 0 14px 26px;color:var(--fg-3);position:relative;border:0;background:none;text-align:left;cursor:pointer}
-.mail .row::before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:4px;border-radius:2px;background:var(--stripe);opacity:.6}
+/* A done letter collapses into one row; the row reopens it */
+.mail .row{display:none;width:100%;align-items:center;gap:12px;padding:14px 0 14px 22px;color:var(--fg-3);border:0;background:none;text-align:left;cursor:pointer}
 .mail .row:hover{background:var(--bg-soft)}
 .mail .row .rs{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:line-through}
 .mail .row .ok{color:var(--done);display:flex}
-.mail .row .open{color:var(--accent);font-weight:600;font-size:14px;padding-right:6px}
+.mail .row .open{color:var(--accent);font-weight:600;font-size:14px}
 .mail.is-done .sheet{display:none}
 .mail.is-done .row{display:flex}
-.app.clear .mail.is-done{display:none}
-@media (max-width:920px){
+@media (max-width:680px){
   /* Letters reach the right edge so a thumb can start a swipe there */
   .mail{margin-right:min(-20px,calc(-1 * env(safe-area-inset-right,0px)))}
   .mail .sheet,.mail .row{padding-right:20px}}
 
-/* Letter contents */
-.links{display:flex;flex-wrap:wrap;gap:8px 18px;font-weight:500}
-.stamp{justify-self:start;font-family:var(--f-display);font-weight:700;font-size:22px;line-height:1;letter-spacing:.04em;padding:8px 12px;border:2px solid currentColor;border-radius:8px;color:var(--fg-2);transform:rotate(-4deg)}
-.stamp s{text-decoration-thickness:2px}
-.checks{list-style:none;margin:0;padding:0;display:grid;gap:10px}
-.checks li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px}
-.checks svg{width:20px;height:20px;margin-top:4px;color:var(--done)}
-.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 32px}
-.grid2 h3{font-size:17px;font-weight:600;display:flex;align-items:center;gap:8px}
-.grid2 h3 i{width:8px;height:8px;border-radius:50%;background:var(--stripe)}
-.grid2 p{color:var(--fg-2);font-size:16px}
-@media (max-width:560px){.grid2{grid-template-columns:1fr}}
-
-/* Mini app screen inside the product letter */
-.shot{border:1px solid var(--line);border-radius:22px;overflow:hidden;width:100%;max-width:420px;background:var(--bg);box-shadow:var(--shadow);font-size:14px;line-height:1.35}
-.shot .top{padding:16px 18px 10px}
-.shot .top strong{display:block;font-size:22px;font-weight:700;letter-spacing:-.01em}
-.shot .top span{font-size:12px;color:var(--fg-3)}
+/* The app's inbox, inside the first letter: account colours are the only colour on the page */
+.shot{border:1px solid var(--line);border-radius:22px;overflow:hidden;max-width:380px;background:var(--bg);box-shadow:var(--shadow);font-size:14px;line-height:1.35;color:var(--fg)}
+.shot .top-s{padding:16px 18px 10px}
+.shot .top-s strong{display:block;font-size:22px}
+.shot .top-s span{font-size:12px;color:var(--fg-3)}
 .shot .r{position:relative;padding:10px 16px 10px 22px;border-top:1px solid var(--line)}
 .shot .r::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--rc)}
 .shot .r .l1{display:flex;gap:6px;align-items:baseline}
@@ -165,118 +108,34 @@ main{min-width:0;container-type:inline-size}
 .shot .r small{font-size:11px;color:var(--fg-3)}
 .shot .r .s{color:var(--fg-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .shot .r.u::after{content:"";position:absolute;left:10px;top:15px;width:6px;height:6px;border-radius:50%;background:var(--accent)}
-.shot .tabs{margin:8px 12px 12px}
-.shot .bar{display:flex;gap:8px;padding:0 12px 14px}
-.shot .bar span{height:34px;border-radius:999px;background:var(--bg-soft);display:flex;align-items:center;padding:0 12px;color:var(--fg-3);font-size:13px}
-.shot .bar span:first-child{flex:1}
+.tabs{display:flex;gap:4px;margin:8px 12px 12px;padding:4px;border-radius:999px;background:var(--bg-soft);font-size:12px}
+.tabs span{flex:1;text-align:center;padding:6px 4px;border-radius:999px;color:var(--fg-2)}
+.tabs span.on{background:var(--bg);color:var(--fg);font-weight:600}
 
-/* Pricing as a receipt */
-.receipt{font-variant-numeric:tabular-nums;font-size:15px;max-width:30em;border:1px dashed var(--line);border-radius:14px;padding:18px 20px;display:grid;gap:8px}
-.receipt .ln{display:flex;gap:12px;align-items:baseline}
-.receipt .ln span:first-child{flex:1;min-width:0}
-.receipt .ln b{font-weight:500;white-space:nowrap}
-.receipt .sep{border-top:1px dashed var(--line);margin:4px 0}
-.receipt .sum b{color:var(--accent)}
-.receipt .muted{color:var(--fg-3)}
-/* Honest status: features are still being built */
-.pill{display:inline-block;font-size:12px;font-weight:600;letter-spacing:.02em;padding:3px 10px;border-radius:999px;border:1px solid var(--line);color:var(--fg-2);background:var(--bg-soft);white-space:nowrap}
-.pill-head{margin-top:16px}
-.pill-head + .subj{margin-top:10px}
-.note{font-size:15px;color:var(--fg-2)}
-
-/* Thread of questions */
-.thread{display:grid;gap:10px;max-width:40em}
-.bubble{display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px;align-items:start}
-.bubble .ava{width:32px;height:32px;font-size:13px}
-.bubble .txt{background:var(--bg-soft);border-radius:4px 16px 16px 16px;padding:10px 14px;font-size:16px}
-.bubble.me .txt{background:var(--accent-soft)}
-.bubble .who{display:block;font-size:12px;color:var(--fg-3);margin-bottom:2px}
-.steps{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.steps span{font-size:13px;padding:4px 10px;border-radius:999px;background:var(--bg);border:1px solid var(--line)}
-.steps span.now{border-color:var(--accent);color:var(--accent);font-weight:600}
-
-/* Finale: "Inbox N" becomes "Ozero". Ripples are a fixed full-screen layer, not tied to the word. */
-.finale{scroll-margin-top:24px;min-height:62vh;align-content:center;margin-top:56px;display:grid;grid-template-columns:minmax(0,1fr);justify-items:center;text-align:center;gap:14px;padding:30px 0 10px}
-.oz{position:relative;font-family:var(--f-display);font-weight:700;font-size:clamp(28px,10cqi,120px);line-height:1;letter-spacing:-.03em;display:flex;align-items:baseline;gap:.25em}
-.oz .w{transition:opacity .4s ease}
+/* Finale: "Inbox N" becomes "ozero", then the note to the author */
+.finale{display:grid;justify-items:center;text-align:center;gap:16px;padding:72px 0 24px}
+.oz{font-family:var(--f-display);font-weight:700;font-size:clamp(32px,11cqi,72px);line-height:1;letter-spacing:-.03em;display:flex;gap:.25em}
 .oz .n{color:var(--accent);font-variant-numeric:tabular-nums}
 .oz .n:empty{display:none}
-.finale.clear .oz .w{color:var(--accent);animation:calm 2.4s ease both}
+.oz.clear{color:var(--accent);animation:calm 2.4s ease both}
 @keyframes calm{from{opacity:0}to{opacity:1}}
+.finale p{color:var(--fg-2);max-width:26em}
+.calm:focus{outline:none}
+.btn{display:inline-flex;align-items:center;min-height:48px;border-radius:999px;padding:0 24px;background:var(--accent-fill);color:#fff;font-weight:600}
+.btn:hover{text-decoration:none;filter:brightness(1.06)}
 .lake{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
 .lake i{position:absolute;left:var(--cx,50%);top:var(--cy,50%);width:150vmax;height:150vmax;margin:-75vmax 0 0 -75vmax;border:2px solid var(--accent);border-radius:50%;opacity:0;transform:scale(.02)}
 .lake.go i{animation:ripple 11s cubic-bezier(.3,.1,.4,1) forwards}
 .lake.go i:nth-child(2){animation-delay:2.6s}
 .lake.go i:nth-child(3){animation-delay:5.2s}
-.lake.go i:nth-child(4){animation-delay:7.8s}
-@keyframes ripple{0%{transform:scale(.02);opacity:0}12%{opacity:.6}70%{opacity:.22}100%{transform:scale(1);opacity:0}}
+@keyframes ripple{0%{transform:scale(.02);opacity:0}12%{opacity:.5}70%{opacity:.18}100%{transform:scale(1);opacity:0}}
 @media (prefers-reduced-motion:reduce){.lake{display:none}}
-/* Stillness first: for a few seconds after Inbox Zero only the word and the water are on screen */
-.head,.compose,#bringBack,.bbar,.side,.finale p{transition:opacity 1.2s ease}
-/* The script makes these inert for the quiet moment */
-body.quiet [inert],body.quiet .finale p{opacity:0}
-.app.clear ~ .bbar .cta{display:none}
-/* "Swipe N letters": the app's bulk strip. Swipe it left to clear everything left. */
-.bulk{position:relative;width:min(100%,460px);border-radius:16px;overflow:hidden;margin-top:6px}
-.bulk .under{pointer-events:none;position:absolute;inset:2px;border-radius:14px;background:var(--done);color:var(--under-fg);display:flex;align-items:center;justify-content:flex-end;padding-right:22px;font-weight:600;gap:8px}
-.bulk .bs{position:relative;width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 14px;background:var(--bg);border:1px solid var(--line);border-radius:16px;color:var(--fg);font:inherit;font-size:16px;font-weight:600;cursor:grab;touch-action:pan-y;transition:transform .25s ease}
-.bulk:not(.dragging) .under{opacity:0}
-.bulk.dragging .bs{transition:none;cursor:grabbing}
-.bulk .grip{display:grid;grid-template-columns:repeat(2,4px);gap:3px}
-.bulk .grip i{width:4px;height:4px;border-radius:50%;background:var(--fg-3)}
-#finaleText:focus{outline:none}
-.finale p{color:var(--fg-2);font-size:18px;max-width:28em}
-#bringBack{border:0;background:var(--bg-soft);color:var(--fg-2);font-weight:500;font-size:15px;cursor:pointer;padding:10px 18px;border-radius:999px;min-height:44px}
 
-/* Compose window: the waitlist */
-.compose{background:var(--bg);margin-top:28px;border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:var(--shadow);scroll-margin-top:24px}
-.field{margin:0;min-width:0;border-width:0 0 1px;display:grid;grid-template-columns:minmax(76px,auto) minmax(0,1fr);align-items:center;gap:8px;padding:12px 22px;border-style:solid;border-color:var(--line);font-size:16px}
-.field legend{float:left;padding:0}
-.field h2{font:inherit}
-.field .lbl{color:var(--fg-3)}
-.seg{display:flex;gap:6px;flex-wrap:wrap}
-.seg label{display:inline-flex}
-.seg input{position:absolute;opacity:0;pointer-events:none}
-.seg span{padding:8px 14px;border-radius:999px;background:var(--bg-soft);color:var(--fg-2);cursor:pointer;font-size:15px;min-height:40px;display:inline-flex;align-items:center}
-.seg input:checked + span{background:var(--accent-fill);color:#fff}
-.seg input:focus-visible + span{outline:2px solid var(--accent);outline-offset:2px}
-.compose .text{padding:18px 22px;color:var(--fg-2);font-size:17px;min-height:84px}
-.compose .send{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px 14px 22px;border-top:1px solid var(--line)}
-.compose .send .fine{flex:1 1 150px;font-size:13px;color:var(--fg-3)}
-.btn{display:inline-flex;align-items:center;min-height:46px;border-radius:999px;padding:0 18px;background:var(--accent-fill);color:#fff;font-weight:600;white-space:nowrap}
-.btn:hover{text-decoration:none;filter:brightness(1.06)}
-.sendbtn{gap:8px;padding:0 18px 0 20px;flex:none}
-.sendbtn svg{width:18px;height:18px}
+footer{margin-top:56px;display:flex;flex-wrap:wrap;justify-content:center;gap:8px 20px;font-size:14px;color:var(--fg-3)}
 
-footer{margin-top:40px;display:flex;flex-wrap:wrap;gap:8px 20px;font-size:14px;color:var(--fg-3)}
-
-/* Bottom bar, in thumb reach, like the app */
-.bbar{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;justify-content:center;
-  padding:0 max(12px,env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));pointer-events:none}
-.bbar .cap{pointer-events:auto;display:flex;align-items:center;gap:8px;width:min(640px,100%);padding:6px;border-radius:999px;background:var(--bar);
-  backdrop-filter:saturate(1.6) blur(18px);-webkit-backdrop-filter:saturate(1.6) blur(18px);box-shadow:var(--shadow);border:1px solid var(--line)}
-.bbar .prog{flex:1;min-width:0;display:flex;align-items:center;gap:10px;padding-left:12px;font-size:14px;color:var(--fg-2);font-variant-numeric:tabular-nums}
-.bbar .prog b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;color:var(--fg)}
-.bbar .track{flex:1;height:5px;border-radius:5px;background:var(--line);overflow:hidden;min-width:40px}
-.bbar .track i{display:block;height:100%;width:0;background:var(--done);transition:width .35s ease}
-@media (max-width:430px){.bbar .track{display:none}.bbar .cap{gap:4px}.bbar .prog{padding-left:8px}.bbar .cta{padding:0 12px;font-size:13px}}
-@media (max-width:400px){.field{grid-template-columns:minmax(0,1fr);gap:6px;padding:12px 18px}.field .lbl{font-size:13px}}
-@media (max-width:360px){#left{display:none}}
-.lang{display:flex;gap:2px;padding:3px;border-radius:999px;background:var(--bg-soft)}
-.lang a{display:grid;place-items:center;font:600 12px/1 var(--f-body);letter-spacing:.04em;color:var(--fg-3);min-width:44px;min-height:44px;border-radius:999px}
-.lang a:hover{text-decoration:none;color:var(--fg)}
-.lang a[aria-current="page"]{background:var(--bg);color:var(--fg);box-shadow:0 1px 3px rgba(0,0,0,.08)}
-.cta{font-size:14px}
-.toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:21;background:var(--fg);color:var(--bg);border-radius:999px;padding:6px 6px 6px 18px;display:flex;align-items:center;gap:12px;font-size:15px;box-shadow:var(--shadow);max-width:calc(100% - 32px)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:21;background:var(--fg);color:var(--bg);border-radius:999px;padding:6px 6px 6px 18px;display:flex;align-items:center;gap:12px;font-size:15px;box-shadow:var(--shadow)}
 .toast[hidden]{display:none}
-#toastText{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .toast button{border:0;background:transparent;color:var(--toast-link);font-weight:700;cursor:pointer;padding:0 12px;min-height:40px}
 
 .lost{min-height:100vh;display:grid;place-content:center;justify-items:center;gap:12px;padding:20px;text-align:center}
 .lost .oz{color:var(--accent)}
-
-/* Build log */
-.log{list-style:none;margin:0;padding:0;display:grid;gap:14px}
-.log li{display:grid;grid-template-columns:7.5em minmax(0,1fr);gap:4px 16px}
-.log time{color:var(--fg-3);font-size:15px;padding-top:2px}
-@media (max-width:480px){.log li{grid-template-columns:minmax(0,1fr)}}
