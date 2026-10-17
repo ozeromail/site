@@ -81,7 +81,6 @@ export function start() {
     el.ozn.textContent = unread ? String(unread) : '';
     el.bulk.hidden = !left;
     el.bulkText.textContent = plural(S.lang, S.bulk, left);
-    el.bulkBtn.setAttribute('aria-label', fill(S.bulkLabel, { n: left }));
     oz.classList.toggle('clear', !left);
     el.calm.hidden = el.bringBack.hidden = !!left;
     // Collapsing letters moves others into view.
@@ -140,6 +139,8 @@ export function start() {
     let axis: 'x' | 'y' | null = null;
     let moved = false;
     sheet.addEventListener('pointerdown', (e) => {
+      // One finger at a time: a second pointer must not reset the gesture in progress.
+      if (x0 !== null) return;
       moved = false;
       if (e.button || !canStart(e)) return;
       x0 = e.clientX;
@@ -157,12 +158,12 @@ export function start() {
       const mx = e.clientX - x0;
       const my = e.clientY - y0;
       if (!axis && (Math.abs(mx) > 10 || Math.abs(my) > 10)) {
+        moved = true;
         axis = mx < 0 && Math.abs(mx) > 1.5 * Math.abs(my) ? 'x' : 'y';
         if (axis === 'y') {
           x0 = null;
           return;
         }
-        moved = true;
         sheet.setPointerCapture(e.pointerId);
         box.classList.add('dragging');
       }
@@ -187,7 +188,7 @@ export function start() {
     };
     sheet.addEventListener('pointerup', end);
     sheet.addEventListener('pointercancel', end);
-    // Whether the last press became a swipe, so its click can be ignored.
+    // Whether the last press became a drag, so its click can be ignored.
     return () => moved;
   }
 
@@ -204,6 +205,7 @@ export function start() {
   /* For visitors who scrolled past without clearing: one bulk action, as in the app. Swipe it or just press it. */
   function doneAll() {
     const open = mails.filter(isOpen);
+    if (!open.length) return;
     for (const m of open) collapse(m, true);
     upd();
     say(S.allDone);
@@ -220,7 +222,7 @@ export function start() {
     restore(mails, true);
   });
 
-  /* Reading: a letter whose end has come into view, above the bottom bar, counts as read. */
+  /* Reading: a letter whose end has passed above the bottom bar counts as read. */
   let frame = 0;
   const read = () => {
     frame = 0;
@@ -229,7 +231,7 @@ export function start() {
     // Measure all first, then write, so layout is read once.
     const seen = mails.filter(isUnread).filter((m) => {
       const r = m.getBoundingClientRect();
-      return r.bottom <= edge && r.bottom > 0;
+      return r.bottom <= edge;
     });
     for (const m of seen) m.classList.add('is-read');
     if (seen.length) upd();
@@ -245,15 +247,16 @@ export function start() {
   /* Keyboard: E marks the focused letter, or the first open one in view, as Done; U or Z undoes. */
   document.addEventListener('keydown', (e) => {
     if (e.repeat || e.metaKey || e.ctrlKey || e.altKey || (e.target as Element).closest('input,textarea')) return;
-    const k = e.key.toLowerCase();
-    if (k === 'e') {
+    // By physical key, so the shortcuts work on any keyboard layout.
+    const k = e.code;
+    if (k === 'KeyE') {
       const focused = document.activeElement?.closest<HTMLElement>('.mail');
       const m = isOpen(focused) ? focused : mails.find((x) => isOpen(x) && x.getBoundingClientRect().bottom > 0) ?? mails.find(isOpen);
       if (m) {
         e.preventDefault();
         done(m);
       }
-    } else if ((k === 'u' || k === 'z') && undo) {
+    } else if ((k === 'KeyU' || k === 'KeyZ') && undo) {
       e.preventDefault();
       undoBtn.click();
     }
@@ -261,7 +264,11 @@ export function start() {
 
   /* Compose: Send opens the visitor's mail app with a note to the author; the phone goes into the text. */
   const send = document.getElementById('send') as HTMLAnchorElement | null;
-  send?.closest('.compose')!.addEventListener('change', (e) => {
-    send.href = send.dataset[(e.target as HTMLInputElement).value]!;
-  });
+  if (send) {
+    const compose = send.closest('.compose')!;
+    // Browsers may restore the radio choice on reload without a change event.
+    const sync = () => (send.href = send.dataset[compose.querySelector<HTMLInputElement>('input:checked')!.value]!);
+    compose.addEventListener('change', sync);
+    sync();
+  }
 }
