@@ -16,7 +16,7 @@ const lang = Astro.params.lang as Lang;
 const t = strings[lang];
 const c = t.client;
 const tip = TIPS[lang];
-const n = t.pains.length;
+const n = t.pains.length + 1;
 const mailto = (os: string) =>
   `mailto:${CONTACT}?subject=${encodeURIComponent(t.mailSubj)}&body=${encodeURIComponent(`${t.mailBody}\n\n${fill(t.cPhone, { os })}`)}`;
 
@@ -81,6 +81,10 @@ const url = new URL(`/${lang}/`, site);
   {t.pains.map((p) => (
     <Letter t={t} subject={p.q} from={p.from} when={p.when}><p>{p.a}</p></Letter>
   ))}
+  <Letter t={t} subject={t.plan.q} from={t.plan.from} when={t.plan.when}>
+    <p>{t.plan.a}</p>
+    <ol class="plan">{t.plan.steps.map((step, i) => <li class={i < t.plan.now ? 'done' : i === t.plan.now ? 'now' : undefined}>{step}{i === t.plan.now && <span class="pill">{t.plan.nowLbl}</span>}</li>)}</ol>
+  </Letter>
 
   <section class="finale screen" id="finale">
     <div class="oz" aria-hidden="true"><span id="ozw">{t.inbox}</span><span class="n" id="ozn">{n}</span></div>
