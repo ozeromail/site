@@ -274,7 +274,11 @@ export function start() {
     const open = mails.filter(isOpen);
     if (!open.length) return;
     morph(
-      () => open.forEach((m) => collapse(m, true)),
+      () => {
+        open.forEach((m) => collapse(m, true));
+        // Land on the finale in the same frame: otherwise Safari clamps to the page bottom first and then glides back up.
+        $('finale').scrollIntoView({ block: 'center', behavior: 'instant' });
+      },
       () => say(S.allDone),
     );
     showToast(() => restore(open));
