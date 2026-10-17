@@ -202,22 +202,22 @@
         "h": "Signing in",
         "p": [
           "For Gmail, you sign in on Google’s own page, and the app gets a key to your mailbox. For other mailboxes, you give the app your password. Both are kept on your phone, sealed with a key that never leaves the phone’s secure storage.",
-          "Removing an account in the app deletes its mail and its key from the phone. Removing the app deletes everything."
+          "Removing an account in the app deletes its mail and its key from the phone. Removing the app deletes everything, including the list of senders whose images you allowed."
         ]
       },
       {
         "h": "Google user data",
         "p": [
           "With your permission, the app reads, sends and organizes your Gmail. It does this only to show your mail, send what you write and carry out what you do, such as archiving or marking as read.",
-          "The app’s use of information received from Google APIs adheres to the Google API Services User Data Policy, including the Limited Use requirements. Your Gmail data is not passed to anyone, not used for ads and not used to train AI models. I do not read it, unless you send me a letter yourself.",
-          "You can take the access back at any time at myaccount.google.com/permissions."
+          "Ozero Mail’s use and transfer to any other app of information received from Google APIs will adhere to the [Google API Services User Data Policy](https://developers.google.com/terms/api-services-user-data-policy), including the Limited Use requirements. Your Gmail data is not passed to anyone, not used for ads and not used to train AI models. I do not read it, unless you send me a letter yourself.",
+          "You can take the access back at any time in your [Google Account](https://myaccount.google.com/permissions)."
         ]
       },
       {
         "h": "Images in letters",
         "p": [
           "Senders often hide tiny images in letters to learn when you open them. The app holds remote images back, so they learn nothing.",
-          "Images load for letters from people, from senders you allowed, and when you tap Show. Then the phone downloads them from the sender’s server, which sees your IP address, as with any download. Images in junk never load."
+          "Images load for letters from people and from senders you allowed. Tapping Show loads them and allows that sender from now on. Then the phone downloads the images from the sender’s server, which sees your IP address, as with any download. Images in junk never load."
         ]
       },
       {
@@ -229,7 +229,7 @@
       {
         "h": "Crash reports and letters to me",
         "p": [
-          "If the app crashes, it keeps a short report on your phone and asks next time whether to send it. If you agree, it opens an ordinary letter from your own mailbox to me, and you can read it before sending. The report says where the app failed, the app and Android versions and the phone model. It holds no mail.",
+          "If the app crashes, it keeps a short report on your phone and asks next time whether to send it. If you agree, it opens an ordinary letter from your own mailbox to me, and you can read it before sending. The report says where in the code the app failed, the app and system versions and the phone’s maker and model. It holds no mail. Like any letter, it shows me your address and name.",
           "I use your letters only to answer you and to fix the app. Ask, and I will delete them."
         ]
       },
@@ -249,10 +249,11 @@
       {
         "h": "Contact",
         "p": [
-          "Questions about privacy go to {email}."
+          "Questions about privacy go to [{email}](mailto:{email})."
         ]
       }
     ],
-    "home": "Back to Ozero Mail"
+    "home": "Back to Ozero Mail",
+    "description": "What Ozero Mail and its site do with your data: your mail stays between your phone and your mail provider."
   }
 }
