@@ -1,5 +1,5 @@
 ---
-// The page is a short inbox: three letters, one per pain. Clearing them leads to "ozero" and a note to the author.
+// The page is a short inbox: three letters, one per pain, with plenty of air. Clearing them leads to "ozero" and a note to the author.
 import '../../styles/fonts.css';
 import '../../styles/site.css';
 import Mark from '../../components/Mark.astro';
@@ -16,9 +16,7 @@ const lang = Astro.params.lang as Lang;
 const t = strings[lang];
 const c = t.client;
 const tip = TIPS[lang];
-const when = ['09:41', '09:38', t.tYest];
-const letters = t.pains.map((p, i) => ({ tag: p.tag, when: when[i] ?? t.tYest, subject: p.q, body: p.a }));
-const n = letters.length;
+const n = t.pains.length;
 const mailto = `mailto:${CONTACT}?subject=${encodeURIComponent(t.mailSubj)}&body=${encodeURIComponent(t.mailBody)}`;
 
 const stores = [
@@ -26,12 +24,6 @@ const stores = [
   { key: 'googlePlay', url: STORES.googlePlay, small: t.storeGoogle, big: 'Google Play' },
 ].filter((s) => s.url);
 
-const shot = [
-  { c: 'var(--acc-2)', who: t.sh1w, acc: t.aWork, when: '14:05', subj: t.sh1s, unread: true },
-  { c: 'var(--acc-4)', who: t.sh2w, acc: t.aStudio, when: '13:18', subj: t.sh2s, unread: true },
-  { c: 'var(--acc-3)', who: t.sh3w, acc: 'iCloud', when: '11:30', subj: t.sh3s },
-  { c: 'var(--acc-1)', who: t.sh4w, acc: t.aPersonal, when: t.tYest, subj: t.sh4s },
-];
 const site = Astro.site;
 const url = new URL(`/${lang}/`, site);
 ---
@@ -58,7 +50,7 @@ const url = new URL(`/${lang}/`, site);
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="color-scheme" content="light dark">
-  <noscript><style>.tip,.mfoot{display:none}</style></noscript>
+  <noscript><style>.act{display:none}</style></noscript>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -75,35 +67,19 @@ const url = new URL(`/${lang}/`, site);
   </header>
 
   <section class="head">
-    <p class="inboxline"><span>{t.inbox}</span><span class="n" id="count">{n}</span><span class="sr" id="unreadSr"> {plural(lang, c.unread, n)}</span></p>
     <h1>{t.h1}</h1>
     <p class="sub">{t.sub}</p>
     {stores.length > 0 && (
       <div class="stores">{stores.map((s) => <a class="store" href={s.url} target="_blank" rel="noopener"><small>{s.small}</small><b>{s.big}</b></a>)}</div>
     )}
-    <p class="tip">{t.tip}</p>
   </section>
 
-  {letters.map((l, i) => (
-    <Letter t={t} {...l}>
-      <Fragment slot="from">{i === 0 ? <>{t.name}<span class="role">{t.role}</span></> : l.tag}</Fragment>
-      <div class="mbody">
-        <p>{l.body}</p>
-        {i === 0 && (
-          <div class="shot" role="img" aria-label={t.shotLabel}>
-            <div class="top-s"><strong>{t.inbox}</strong><span>{t.shAll}</span></div>
-            {shot.map((r) => (
-              <div class:list={['r', { u: r.unread }]} style={`--rc:${r.c}`}><div class="l1"><b>{r.who}</b><small>{r.acc}</small><small>{r.when}</small></div><div class="s">{r.subj}</div></div>
-            ))}
-            <div class="tabs"><span class="on">{t.tbPeople}</span><span>{t.tbServices}</span><span>{t.tbNews}</span></div>
-          </div>
-        )}
-      </div>
-    </Letter>
+  {t.pains.map((p) => (
+    <Letter t={t} subject={p.q}><p>{p.a}</p></Letter>
   ))}
 
   <section class="finale" id="finale">
-    <div class="oz" aria-hidden="true"><span id="ozw">{t.inbox}</span><span class="n" id="ozn">{n}</span></div>
+    <div class="oz"><span id="ozw">{t.inbox}</span><span class="n" id="ozn">{n}</span><span class="sr" id="unreadSr"> {plural(lang, c.unread, n)}</span></div>
     <p class="calm" id="calm" tabindex="-1" hidden>{t.calm}</p>
     {stores.length === 0 && <><p class="soon">{t.soon}</p><a class="btn" href={mailto}>{t.write}</a></>}
   </section>
