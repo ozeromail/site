@@ -1,5 +1,5 @@
-// The page behaves like the app's inbox: swipe or press Done to clear a letter, Undo in a toast,
-// a bulk "Swipe N letters" strip, and a quiet "ozero" moment at Inbox Zero.
+// The page behaves like the app's inbox: a letter scrolled to its end counts as read, swipe or press Done
+// to clear it with Undo in a toast, a bulk "Swipe N letters" strip, and a quiet "ozero" moment at Inbox Zero.
 
 import type en from '../i18n/en.json';
 import { fill, plural } from '../i18n/format';
@@ -49,8 +49,11 @@ export function start() {
   const app = $('app');
   const mails = [...document.querySelectorAll<HTMLElement>('.mail')];
   const isOpen = (m: Element | null | undefined): m is HTMLElement => !!m && !m.classList.contains('is-done');
-  // Side list links by letter id
-  const side = new Map([...document.querySelectorAll<HTMLAnchorElement>('#sidelist a')].map((a) => [a.hash.slice(1), a]));
+  const isUnread = (m: HTMLElement) => isOpen(m) && !m.classList.contains('is-read');
+  // Phone rows by letter id: the desktop side phone and the one in the mobile header.
+  const rows = new Map<string, HTMLAnchorElement[]>();
+  for (const a of document.querySelectorAll<HTMLAnchorElement>('.ph-list a')) rows.set(a.dataset.id!, [...(rows.get(a.dataset.id!) ?? []), a]);
+  const eachRow = (m: HTMLElement, f: (a: HTMLAnchorElement) => void) => rows.get(m.id)?.forEach(f);
   const el = {
     count: $('count'), unreadSr: $('unreadSr'), left: $('left'), bar: $('bar'), track: $('track'),
     finale: $('finale'), ozw: $('ozw'), ozn: $('ozn'), finaleText: $('finaleText'), lake: $('lake'),
@@ -59,20 +62,34 @@ export function start() {
   // Hidden during the quiet moment, so they leave the tab order too.
   const calm = [...document.querySelectorAll<HTMLElement>('.head,.compose,#bringBack,.bbar,.side')];
   let prevLeft = mails.length;
-  const leftText = (left: number) => (left ? fill(S.left, { n: left }) : S.allClear);
+  let prevUnread = mails.length;
+  const leftText = (unread: number) => (unread ? fill(S.left, { n: unread }) : mails.some(isOpen) ? S.allRead : S.allClear);
 
+  // The count is unread letters; Inbox Zero needs every letter Done.
   function upd() {
     const left = mails.filter(isOpen).length;
+    const unread = mails.filter(isUnread).length;
+    for (const m of mails) {
+      eachRow(m, (a) => {
+        a.parentElement!.classList.toggle('is-done', !isOpen(m));
+        a.parentElement!.classList.toggle('is-read', !isUnread(m));
+      });
+    }
+    if (unread !== prevUnread) {
+      el.count.textContent = String(unread);
+      el.unreadSr.textContent = ' ' + plural(S.lang, S.unread, unread);
+      el.count.classList.add('tick');
+      setTimeout(() => el.count.classList.remove('tick'), 200);
+      el.left.textContent = leftText(unread);
+      el.bar.style.width = ((mails.length - unread) / mails.length) * 100 + '%';
+      el.track.setAttribute('aria-valuenow', String(mails.length - unread));
+      el.ozn.textContent = unread ? String(unread) : '';
+      prevUnread = unread;
+    }
     if (left === prevLeft) return;
-    el.count.textContent = String(left);
-    el.unreadSr.textContent = ' ' + plural(S.lang, S.unread, left);
-    el.count.classList.add('tick');
-    setTimeout(() => el.count.classList.remove('tick'), 200);
-    el.left.textContent = leftText(left);
-    el.bar.style.width = ((mails.length - left) / mails.length) * 100 + '%';
-    el.track.setAttribute('aria-valuenow', String(mails.length - left));
+    el.left.textContent = leftText(unread);
     el.ozw.textContent = left ? S.word : S.wordDone;
-    el.ozn.textContent = left ? String(left) : '';
+    if (!left) el.ozn.textContent = '';
     el.finaleText.textContent = left ? S.fin : S.finDone;
     el.bringBack.hidden = !!left;
     el.bulk.hidden = !left;
@@ -80,7 +97,6 @@ export function start() {
     el.bulkBtn.setAttribute('aria-label', fill(S.bulkLabel, { n: left }));
     el.finale.classList.toggle('clear', !left);
     app.classList.toggle('clear', !left);
-    for (const m of mails) side.get(m.id)?.parentElement!.classList.toggle('is-done', !isOpen(m));
     if (!left) quiet();
     else {
       el.lake.classList.remove('go');
@@ -116,6 +132,7 @@ export function start() {
     quietTimer = window.setTimeout(() => {
       endQuiet();
       el.finaleText.focus({ preventScroll: true });
+      $('wait').scrollIntoView({ block: 'end' });
     }, 3200);
   }
   addEventListener('resize', () => {
@@ -124,6 +141,7 @@ export function start() {
 
   function collapse(m: HTMLElement, done: boolean) {
     m.classList.toggle('is-done', done);
+    if (done) m.classList.add('is-read');
     m.querySelector<HTMLElement>('.sheet')!.style.transform = '';
   }
 
@@ -135,7 +153,7 @@ export function start() {
     if (!done || app.classList.contains('clear')) return;
     m.querySelector<HTMLElement>('.row')!.focus({ preventScroll: true });
     if (silent) return;
-    const left = leftText(prevLeft);
+    const left = leftText(prevUnread);
     say(`${S.done}. ${left[0].toUpperCase()}${left.slice(1)}`);
     showToast(S.done, () => {
       setDone(m, false, true);
@@ -213,19 +231,11 @@ export function start() {
     });
   }
 
-  /* For visitors who scrolled past without clearing: one bulk action, as in the app. Swipe it or just press it. */
+  /* For visitors who scrolled past without clearing: one bulk action, as in the app. Swipe it or just press it.
+     No toast: Inbox Zero follows at once, and "Bring the letters back" undoes it. */
   function doneAll() {
-    const open = mails.filter(isOpen);
-    for (const m of open) collapse(m, true);
+    for (const m of mails) collapse(m, true);
     upd();
-    // Undo after the quiet moment: the toast waits for the page to come back.
-    const back = () => {
-      for (const m of open) collapse(m, false);
-      upd();
-      open[0].scrollIntoView({ block: 'start' });
-      open[0].querySelector<HTMLElement>('.act.done')!.focus({ preventScroll: true });
-    };
-    setTimeout(() => showToast(S.allDone, back), 3200);
   }
   const { bulk, bulkBtn } = el;
   const swiping = swipeable(bulk, bulkBtn, 8, 1.5, () => {
@@ -245,7 +255,10 @@ export function start() {
   });
 
   $('bringBack').addEventListener('click', () => {
-    for (const m of mails) collapse(m, false);
+    for (const m of mails) {
+      collapse(m, false);
+      m.classList.remove('is-read');
+    }
     upd();
     mails[0].scrollIntoView({ block: 'start' });
     mails[0].querySelector<HTMLElement>('.act.done')!.focus({ preventScroll: true });
@@ -255,16 +268,37 @@ export function start() {
   let current: HTMLElement | null = null;
   const io = new IntersectionObserver((entries) => {
     for (const e of entries) {
-      side.get(e.target.id)?.classList.toggle('on', e.isIntersecting);
-      if (e.isIntersecting) current = e.target as HTMLElement;
+      const m = e.target as HTMLElement;
+      eachRow(m, (a) => a.classList.toggle('on', e.isIntersecting));
+      if (e.isIntersecting) current = m;
     }
   }, { rootMargin: '-35% 0px -60% 0px' });
   mails.forEach((m) => io.observe(m));
   for (const m of mails) {
-    side.get(m.id)?.addEventListener('click', () => {
+    eachRow(m, (a) => a.addEventListener('click', () => {
       if (!isOpen(m)) setDone(m, false, true);
-    });
+    }));
   }
+
+  /* Reading: a letter whose end has come into view, above the bottom bar, counts as read. */
+  let frame = 0;
+  const read = () => {
+    frame = 0;
+    const edge = innerHeight - el.bar.closest('nav')!.offsetHeight;
+    let changed = false;
+    for (const m of mails) {
+      if (!isUnread(m)) continue;
+      const r = m.getBoundingClientRect();
+      if (r.bottom <= edge && r.bottom > 0) {
+        m.classList.add('is-read');
+        changed = true;
+      }
+    }
+    if (changed) upd();
+  };
+  addEventListener('scroll', () => {
+    frame ||= requestAnimationFrame(read);
+  }, { passive: true });
 
   /* Keyboard: E marks the letter in view as Done, U or Z undoes. A held key does not repeat. */
   document.addEventListener('keydown', (e) => {

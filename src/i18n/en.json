@@ -7,7 +7,7 @@
   "inbox": "Inbox",
   "h1": "One inbox. No AI. Nothing in between.",
   "sub": "A private mail app for all your accounts, on Android and iOS. This page is an inbox too: read it, then clear it.",
-  "tip": "Swipe a letter left or tap Done.",
+  "tip": "Scroll to read. Swipe a letter left or tap Done to clear it.",
   "doneLbl": "Done",
   "undo": "Undo",
   "reopen": "Open",
@@ -29,7 +29,7 @@
   "s6": "Re: Re: Re: Your questions",
   "s7": "Why not Apple Mail, Spark or Gmail?",
   "m1a": "The private ones felt like settings panels. The friendly ones fed my mail to AI. So I’m building the one I want to use every day.",
-  "m1b": "There’s no corporation, team or investor behind it. If you buy Ozero Deep one day, the money goes to me.",
+  "m1b": "There’s no corporation, team or investor behind it. If you ever pay for it, the money goes to me.",
   "aiFree": "AI free",
   "shotLabel": "The app’s unified inbox: letters from four accounts, each with its own color stripe",
   "shInbox": "Inbox",
@@ -99,7 +99,8 @@
     "word": "Inbox",
     "wordDone": "ozero",
     "allDone": "All marked as done",
-    "phone": "My phone: {os}"
+    "phone": "My phone: {os}",
+    "allRead": "All read"
   },
   "privacy": [
     "No AI summaries, no AI replies. Not now, not in Ozero Deep.",
@@ -176,11 +177,11 @@
   "questions": [
     {
       "q": "Can you read my email?",
-      "a": "No. I never get a copy. Instant alerts for Gmail and Outlook pass through a tiny relay that only hears “something new arrived”."
+      "a": "No. I never get a copy. Instant alerts for Gmail and Outlook pass through a tiny relay. It keeps only a hashed account ID and your phone’s push token, and only hears “something new arrived”."
     },
     {
       "q": "Will my email provider work?",
-      "a": "That’s the plan: Gmail, Outlook, iCloud and any IMAP mail, as many accounts as you like."
+      "a": "That’s the plan: Gmail, Outlook, iCloud, Fastmail and any IMAP mail, as many accounts as you like. Exchange without Microsoft 365 and Proton aren’t in the first version."
     },
     {
       "q": "What if you stop working on it?",
@@ -191,21 +192,54 @@
       "a": "It’s Russian for “lake”, and it ends in “zero”. Calm water, empty inbox."
     },
     {
+      "q": "iPad or Mac?",
+      "a": "Phones first. The core is built so it can come to iPad and Mac later, but there’s no date yet."
+    },
+    {
+      "q": "Does it work offline?",
+      "a": "Yes. Mail you’ve synced opens without a connection, and what you do waits in a queue until you’re back online. Attachments download when you tap them."
+    },
+    {
+      "q": "What are the sorting rules?",
+      "a": "Plain checks of the email’s headers, like “has an unsubscribe link, so it’s a newsletter”. They run on your phone and send nothing anywhere."
+    },
+    {
       "q": "When can I get it?",
       "a": "It’s in development. Here’s the whole plan:"
     }
   ],
   "roadmap": [
     "Prototype",
-    "Now: one account, end to end",
+    "One account, end to end",
     "All accounts at once",
     "Polish and launch"
   ],
-  "roadmapNow": 1,
+  "roadmapNow": 2,
   "doneFor": "Done: {s}",
   "openFor": "Open again: {s}",
-  "tipMouse": "Press Done, or drag a letter left by its header. Keys: E for Done, U to undo.",
+  "tipMouse": "Scroll to read. Press Done or drag a letter left by its header to clear it. Keys: E for Done, U to undo.",
   "skip": "Skip to the letters",
   "ogLocale": "en_US",
-  "lost": "This letter got lost. Back to the inbox"
+  "lost": "This letter got lost. Back to the inbox",
+  "wipHero": "The app isn’t out yet. Below is what it will do, and the plan.",
+  "phoneLabel": "The page’s letters in the app’s inbox",
+  "tag8": "Changes",
+  "s8": "What I built lately",
+  "logRss": "Follow by RSS",
+  "logTitle": "Ozero Mail: changes",
+  "log": [
+    {
+      "date": "2026-10-16",
+      "text": "Swipe to Done with Undo, People, Services and Newsletters tabs, conversations, search, sending with Undo, new mail notifications, and more than one account."
+    },
+    {
+      "date": "2026-10-15",
+      "text": "First real mail on Android and iOS: sign in to an IMAP account, see the inbox, read a letter. HTML mail opens in a locked view with no scripts."
+    },
+    {
+      "date": "2026-10-14",
+      "text": "A clickable prototype, and the plan: one shared core for mail, sync and storage, with a native app for each phone."
+    }
+  ],
+  "now": "Now: {s}"
 }
