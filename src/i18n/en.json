@@ -75,5 +75,6 @@
   "send": "Send",
   "cta": "Notify me",
   "barLabel": "Page controls",
-  "progLabel": "Letters read"
+  "progLabel": "Letters read",
+  "next": "Below is a letter to me, if you like"
 }
