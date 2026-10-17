@@ -31,13 +31,11 @@
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
 
-/* Screens flow into each other: each block rises in as it enters and fades as it leaves */
-@supports (animation-timeline:view()){
-  .head,.mail,.finale>:not(.oz),.wait,footer{animation:rise linear both,sink linear both}
-  /* A separate rule after the shorthand, which resets the timeline; the minifier would fold it into the shorthand otherwise */
-  :is(.head,.mail,.finale>:not(.oz),.wait,footer){animation-timeline:view(),view();animation-range:entry 0% entry 80%,exit 30% exit 100%}}
-@keyframes rise{from{opacity:0;transform:translateY(40px)}}
-@keyframes sink{to{opacity:.15;transform:translateY(-24px)}}
+/* One screen at a time: each block fills the screen, scrolling snaps to it, and the others fade almost away */
+html{scroll-snap-type:y mandatory}
+.screen{min-height:100svh;display:grid;align-content:center;scroll-snap-align:center}
+.stage .screen{opacity:.06;transition:opacity .9s ease}
+.stage .screen.on,.stage .mail.is-done{opacity:1}
 
 /* Letters slide to their new places when one is done or reopened */
 .finale{view-transition-name:finale}
@@ -61,14 +59,14 @@ p{margin:0}
 
 /* One narrow column with a lot of air */
 main{position:relative;z-index:1;max-width:600px;margin:0 auto;padding:24px max(24px,env(safe-area-inset-right,0px)) calc(112px + env(safe-area-inset-bottom,0px)) max(24px,env(safe-area-inset-left,0px));container-type:inline-size}
-.top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.top{position:absolute;z-index:2;top:24px;left:max(24px,env(safe-area-inset-left,0px));right:max(24px,env(safe-area-inset-right,0px));display:flex;align-items:center;justify-content:space-between;gap:12px}
 .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:16px}
 .lang{display:flex;gap:2px}
 .lang a{display:grid;place-items:center;font:500 12px/1 var(--f-body);letter-spacing:.04em;color:var(--fg-3);min-width:44px;min-height:44px;border-radius:999px}
 .lang a:hover{text-decoration:none;color:var(--fg)}
 .lang a[aria-current="page"]{color:var(--fg)}
 
-.head{display:grid;gap:24px;min-height:min(78svh,680px);align-content:center;padding:64px 0}
+.head{gap:24px;padding:96px 0}
 .head h1{font-weight:600;font-size:clamp(32px,8.5cqi,46px);line-height:1.15;letter-spacing:-.02em}
 .head .sub{color:var(--fg-2);max-width:24em}
 .inboxline{display:flex;align-items:baseline;gap:.35em;font-weight:600;font-size:17px;color:var(--fg-2)}
@@ -83,7 +81,10 @@ main{position:relative;z-index:1;max-width:600px;margin:0 auto;padding:24px max(
 .store b{font-size:16px;font-weight:600}
 
 /* A letter: a quiet stripe, a question, one answer */
-.mail{position:relative;overflow:hidden;margin-top:136px}
+.mail{position:relative;overflow:hidden}
+/* The reveal under a swiped letter is as tall as the letter, not the screen */
+.mail>*{grid-area:1/1}
+.mail>.under{position:relative;inset:auto}
 .under{pointer-events:none;position:absolute;inset:0;background:var(--done);color:var(--under-fg);display:flex;align-items:center;justify-content:flex-end;padding-right:28px;font-weight:600;gap:8px;opacity:0}
 .dragging .under{opacity:1}
 .mail .sheet{position:relative;background:var(--bg);padding:4px 0 4px 24px;display:grid;gap:16px;justify-items:start;transition:transform .25s ease;touch-action:pan-y}
@@ -109,14 +110,14 @@ main{position:relative;z-index:1;max-width:600px;margin:0 auto;padding:24px max(
 .mail .row .open{color:var(--accent);font-weight:600;font-size:14px}
 .mail.is-done .sheet{display:none}
 .mail.is-done .row{display:flex}
-.mail.is-done{margin-top:8px}
+.mail.is-done{min-height:0;scroll-snap-align:none}
 @media (max-width:680px){
   /* Letters reach the right edge so a thumb can start a swipe there */
   .mail{margin-right:min(-20px,calc(-1 * env(safe-area-inset-right,0px)))}
   .mail .sheet,.mail .row{padding-right:20px}}
 
 /* Finale: "Inbox N" becomes "ozero", then the note to the author */
-.finale{display:grid;justify-items:center;text-align:center;gap:28px;padding:200px 0 40px}
+.finale{justify-items:center;text-align:center;gap:28px}
 .oz{font-family:var(--f-display);font-weight:700;font-size:clamp(32px,10cqi,56px);line-height:1;letter-spacing:-.03em;display:flex;gap:.25em}
 .oz .n{color:var(--accent);font-variant-numeric:tabular-nums}
 .oz .n:empty{display:none}
@@ -133,7 +134,7 @@ main{position:relative;z-index:1;max-width:600px;margin:0 auto;padding:24px max(
 .back{border:0;background:var(--bg-soft);color:var(--fg-2);font-weight:500;font-size:15px;cursor:pointer;padding:10px 18px;border-radius:999px;min-height:44px}
 
 /* The note to the author, shaped as a letter being written */
-.wait{display:grid;gap:24px;margin-top:180px;scroll-margin-top:24px}
+.wait{gap:24px}
 .wait .soon{color:var(--fg-2)}
 .compose{border:1px solid var(--line);border-radius:20px;overflow:hidden;font-size:16px}
 .field{margin:0;min-width:0;border:0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:minmax(72px,auto) minmax(0,1fr);align-items:center;gap:8px;padding:12px 20px}
@@ -171,7 +172,7 @@ main{position:relative;z-index:1;max-width:600px;margin:0 auto;padding:24px max(
 .bbar .btn{font-size:15px}
 @media (max-width:400px){.bbar .track{display:none}.bbar .btn{padding:0 14px;font-size:14px}}
 
-footer{margin-top:160px;display:flex;flex-wrap:wrap;justify-content:center;gap:8px 20px;font-size:14px;color:var(--fg-3)}
+footer{padding:24px 0 8px;display:flex;flex-wrap:wrap;justify-content:center;gap:8px 20px;font-size:14px;color:var(--fg-3)}
 footer a{text-decoration:underline;text-underline-offset:.2em}
 
 .toast{position:fixed;left:50%;bottom:calc(82px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:21;background:var(--fg);color:var(--bg);border-radius:999px;padding:6px 6px 6px 18px;display:flex;align-items:center;gap:12px;font-size:15px;box-shadow:var(--shadow)}

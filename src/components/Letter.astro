@@ -11,7 +11,7 @@ interface Props {
 }
 const { t, subject, from, when } = Astro.props;
 ---
-<article class="mail">
+<article class="mail screen">
   <div class="under" aria-hidden="true"><span>{t.doneLbl}</span><svg width="18" height="18"><use href="#i-check"/></svg></div>
   <div class="sheet">
     <div class="mhead"><span class="ava" aria-hidden="true">{t.name[0]}</span><span class="from">{from}</span><span class="when">{when}</span></div>

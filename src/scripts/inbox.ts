@@ -66,6 +66,20 @@ export function start() {
   // CSS turns smooth scrolling off for reduced motion.
   const glide = (target: HTMLElement, block: ScrollLogicalPosition) => void settled.then(() => target.scrollIntoView({ block }));
 
+  /* One screen at a time: the screen across the middle of the view is lit, the others fade almost away.
+     The first lit screen is set before fading starts, so nothing blinks on load. */
+  const screens = [...document.querySelectorAll<HTMLElement>('.screen')];
+  const mid = innerHeight / 2;
+  for (const s of screens) {
+    const r = s.getBoundingClientRect();
+    s.classList.toggle('on', r.top <= mid && r.bottom >= mid);
+  }
+  document.documentElement.classList.add('stage');
+  const lit = new IntersectionObserver((entries) => {
+    for (const e of entries) e.target.classList.toggle('on', e.isIntersecting);
+  }, { rootMargin: '-45% 0px -45% 0px' });
+  screens.forEach((s) => lit.observe(s));
+
   /* Letters */
   const mails = [...document.querySelectorAll<HTMLElement>('.mail')];
   mails.forEach((m, i) => (m.style.viewTransitionName = `mail-${i}`));
