@@ -53,6 +53,7 @@ export function start() {
     const apply = () => {
       change();
       upd();
+      relight();
     };
     if (!document.startViewTransition || still.matches) {
       apply();
@@ -67,18 +68,23 @@ export function start() {
   const glide = (target: HTMLElement, block: ScrollLogicalPosition) => void settled.then(() => target.scrollIntoView({ block }));
 
   /* One screen at a time: the screen across the middle of the view is lit, the others fade almost away.
-     The first lit screen is set before fading starts, so nothing blinks on load. */
-  const screens = [...document.querySelectorAll<HTMLElement>('.screen')];
-  const mid = innerHeight / 2;
-  for (const s of screens) {
-    const r = s.getBoundingClientRect();
-    s.classList.toggle('on', r.top <= mid && r.bottom >= mid);
-  }
-  document.documentElement.classList.add('stage');
+     Fading starts only after the first callback has lit a screen, so nothing blinks on load. */
+  const root = document.documentElement;
   const lit = new IntersectionObserver((entries) => {
     for (const e of entries) e.target.classList.toggle('on', e.isIntersecting);
+    root.classList.add('stage');
   }, { rootMargin: '-45% 0px -45% 0px' });
-  screens.forEach((s) => lit.observe(s));
+  document.querySelectorAll('.screen').forEach((s) => lit.observe(s));
+  // After a list change the observer reports a frame late; light the screen in the middle now, without a fade.
+  function relight() {
+    const mid = innerHeight / 2;
+    root.classList.add('still');
+    for (const s of document.querySelectorAll<HTMLElement>('.screen')) {
+      const r = s.getBoundingClientRect();
+      s.classList.toggle('on', r.top <= mid && r.bottom >= mid);
+    }
+    requestAnimationFrame(() => root.classList.remove('still'));
+  }
 
   /* Letters */
   const mails = [...document.querySelectorAll<HTMLElement>('.mail')];
@@ -151,7 +157,7 @@ export function start() {
       () => list.forEach((m) => collapse(m, false, reset)),
       () => doneBtn(list[0]).focus({ preventScroll: true }),
     );
-    glide(list[0], 'start');
+    glide(list[0], 'center');
   }
   const doneBtn = (m: HTMLElement) => m.querySelector<HTMLElement>('.act.done')!;
 
@@ -161,7 +167,7 @@ export function start() {
       () => collapse(m, false),
       () => doneBtn(m).focus({ preventScroll: true }),
     );
-    glide(m, 'nearest');
+    glide(m, 'center');
   }
   function done(m: HTMLElement) {
     morph(
@@ -275,8 +281,8 @@ export function start() {
     const edge = innerHeight - nav.offsetHeight;
     // Measure all first, then write, so layout is read once.
     const seen = mails.filter(isUnread).filter((m) => {
-      const r = m.getBoundingClientRect();
-      return r.bottom <= edge;
+      // The letter fills a screen, so its sheet is what has to be seen.
+      return m.querySelector('.sheet')!.getBoundingClientRect().bottom <= edge;
     });
     for (const m of seen) m.classList.add('is-read');
     if (seen.length) upd();
@@ -296,7 +302,7 @@ export function start() {
     const k = e.code;
     if (k === 'KeyE') {
       const focused = document.activeElement?.closest<HTMLElement>('.mail');
-      const m = isOpen(focused) ? focused : mails.find((x) => isOpen(x) && x.getBoundingClientRect().bottom > 0) ?? mails.find(isOpen);
+      const m = isOpen(focused) ? focused : mails.find((x) => isOpen(x) && x.classList.contains('on')) ?? mails.find(isOpen);
       if (m) {
         e.preventDefault();
         done(m);
