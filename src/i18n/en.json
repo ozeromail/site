@@ -17,25 +17,29 @@
       "q": "1,254 unread?",
       "a": "The inbox is a to-do list, not an archive. Done moves a letter to the archive, nothing is deleted. Snooze brings it back when you need it. The bar at the bottom shows what’s left, and at zero it goes quiet. Try it here: swipe this letter left.",
       "from": "Inbox Zero",
-      "when": "10:12"
+      "when": "10:12",
+      "demo": "zero"
     },
     {
       "q": "One inbox, but five Sent folders?",
       "a": "Most apps merge only the inbox. Here Sent, Archive, Spam and Trash can be shared across accounts too, like in Apple Mail. Gmail, Outlook, iCloud or any IMAP mail.",
       "from": "Accounts",
-      "when": "09:41"
+      "when": "09:41",
+      "demo": "boxes"
     },
     {
       "q": "Who else reads your mail?",
       "a": "Only you and your mail provider. No AI, no ads, no tracking. Images in newsletters stay hidden, so senders can’t tell you opened them.",
       "from": "Privacy",
-      "when": "08:15"
+      "when": "08:15",
+      "demo": "privacy"
     },
     {
       "q": "Real letters lost in the noise?",
       "a": "People get the inbox. Newsletters and notifications wait in their own tabs, sorted by simple rules on your phone.",
       "from": "Focus",
-      "when": "Yesterday"
+      "when": "Yesterday",
+      "demo": "focus"
     },
     {
       "q": "Who’s on the other end?",
@@ -99,5 +103,85 @@
       "Release on Android and iPhone",
       "Ozero Deep"
     ]
+  },
+  "demo": {
+    "zero": {
+      "title": "Inbox",
+      "rows": [
+        [
+          "Anna",
+          "Contract to sign"
+        ],
+        [
+          "Bank",
+          "Your statement is ready"
+        ],
+        [
+          "Shop",
+          "Weekend sale"
+        ]
+      ],
+      "empty": "All clear"
+    },
+    "boxes": {
+      "title": "All accounts",
+      "folders": [
+        "Inbox",
+        "Sent",
+        "Archive",
+        "Spam",
+        "Trash"
+      ],
+      "accounts": [
+        "Personal",
+        "Work",
+        "iCloud"
+      ]
+    },
+    "privacy": {
+      "from": "Shop",
+      "subj": "This week’s deals",
+      "hidden": "Images are hidden. The sender won’t know you opened this.",
+      "show": "Show images"
+    },
+    "focus": {
+      "tabs": [
+        "People",
+        "Updates",
+        "Newsletters"
+      ],
+      "lists": [
+        [
+          [
+            "Mom",
+            "Call me when you’re free"
+          ],
+          [
+            "Anna",
+            "Contract to sign"
+          ]
+        ],
+        [
+          [
+            "Bank",
+            "Your sign-in code"
+          ],
+          [
+            "Delivery",
+            "Your parcel is on its way"
+          ]
+        ],
+        [
+          [
+            "Shop",
+            "This week’s deals"
+          ],
+          [
+            "Blog",
+            "New issue"
+          ]
+        ]
+      ]
+    }
   }
 }
