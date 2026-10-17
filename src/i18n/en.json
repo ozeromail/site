@@ -15,19 +15,24 @@
   "pains": [
     {
       "q": "Five accounts, five apps?",
-      "a": "Gmail, Outlook, iCloud and work mail in one list. Each account keeps its own color."
+      "a": "Gmail, Outlook, iCloud and work mail in one list. Each account keeps its own color.",
+      "from": "Accounts",
+      "when": "09:41"
     },
     {
       "q": "Who else reads your mail?",
-      "a": "Nobody. There’s no AI, and my servers never see your mail: it goes from your provider straight to your phone."
+      "a": "Nobody. There’s no AI, and my servers never see your mail: it goes from your provider straight to your phone.",
+      "from": "Privacy",
+      "when": "08:15"
     },
     {
       "q": "Real letters lost in the noise?",
-      "a": "People come first. Newsletters and notifications wait in their own tabs."
+      "a": "People come first. Newsletters and notifications wait in their own tabs.",
+      "from": "Focus",
+      "when": "Yesterday"
     }
   ],
   "soon": "Ozero Mail is still in the works. Write to me, and I’ll answer on launch day.",
-  "write": "Write to me",
   "mailSubj": "Tell me when Ozero Mail is out",
   "mailBody": "Hi! Write me once, on launch day.",
   "by": "Made by Khizri",
@@ -41,7 +46,31 @@
       "one": "unread letter",
       "other": "unread letters"
     },
-    "wordDone": "ozero"
+    "wordDone": "ozero",
+    "word": "Inbox",
+    "left": "{n} unread",
+    "allRead": "All read",
+    "allClear": "All clear",
+    "bulk": {
+      "one": "Swipe {n} letter",
+      "other": "Swipe {n} letters"
+    },
+    "bulkLabel": "Mark the remaining {n} as done",
+    "allDone": "All marked as done"
   },
-  "calm": "All clear. That’s how the app should feel."
+  "calm": "All clear. That’s how the app should feel.",
+  "avaL": "K",
+  "name": "Khizri",
+  "tip": "Swipe a letter left or tap Done to clear it.",
+  "tipMouse": "Drag a letter left by its subject or press Done. Keys: E for Done, U to undo.",
+  "bringBack": "Bring the letters back",
+  "fTo": "To",
+  "fPhone": "Phone",
+  "fSubj": "Subject",
+  "cPhone": "My phone: {os}",
+  "cFine": "Opens your mail app. Your address stays in my inbox and nowhere else.",
+  "send": "Send",
+  "cta": "Notify me",
+  "barLabel": "Page controls",
+  "progLabel": "Letters read"
 }
