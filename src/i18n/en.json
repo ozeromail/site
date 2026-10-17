@@ -38,7 +38,7 @@
       "when": "Mon"
     }
   ],
-  "soon": "Ozero Mail isn’t out yet. Android comes first, with a small beta, then iPhone. Write to me and I’ll let you know. I answer every letter myself.",
+  "soon": "Ozero Mail isn’t out yet. Write to me and I’ll let you know when the beta opens. I answer every letter myself.",
   "mailSubj": "I’d like to try Ozero Mail",
   "mailBody": "Hi! Let me know when I can try it.",
   "by": "By Khizri",
@@ -78,5 +78,20 @@
   "cta": "Write to me",
   "barLabel": "Page controls",
   "progLabel": "Letters read",
-  "next": "The last letter is yours to write"
+  "next": "The last letter is yours to write",
+  "plan": {
+    "q": "When can I try it?",
+    "a": "Here’s the whole plan. I mark each step as it’s done.",
+    "from": "Plan",
+    "when": "Today",
+    "now": 1,
+    "nowLbl": "now",
+    "steps": [
+      "Prototype",
+      "First version, on my own phone",
+      "Closed beta on Android",
+      "Release on Android and iPhone",
+      "Ozero Deep"
+    ]
+  }
 }
