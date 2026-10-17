@@ -76,7 +76,7 @@
   "foot2": "Made by Khizri",
   "tipFoot": "Support the work",
   "barLabel": "Page controls",
-  "progLabel": "Progress to Inbox Zero",
+  "progLabel": "Letters read",
   "cta": "Notify me",
   "getApp": "Get the app",
   "storeApple": "Download on the",
@@ -98,7 +98,8 @@
     "finDone": "All clear. Calm water. One last note, if you like:",
     "word": "Inbox",
     "wordDone": "ozero",
-    "allRead": "All read"
+    "allRead": "All read",
+    "allDone": "All marked as done"
   },
   "privacy": [
     "No AI summaries, no AI replies. Not now, not in Ozero Deep.",
