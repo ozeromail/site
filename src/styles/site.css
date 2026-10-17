@@ -4,13 +4,12 @@
   --bg-soft:#f4f5f7;
   --fg:#16181d;
   --fg-2:#555c68;
-  --fg-3:#6b717c;
+  --fg-3:#666c77;
   --line:#e6e8ec;
   --accent:#1f66d9;
   --accent-fill:#1f66d9;
   --toast-link:#8ab8ff;
   --under-fg:#ffffff;
-  --err:#c62f41;
   --accent-soft:#e8f0fe;
   --done:#277a3c;
   --acc-1:#ef4a5c;
@@ -27,12 +26,12 @@
 }
 @media (prefers-color-scheme: dark){:root{
   --bg:#0f1318;--bg-soft:#171c23;--fg:#eef1f5;--fg-2:#aab1bc;--fg-3:#8c939e;--line:#252b34;
-  --accent:#6aa3ff;--accent-fill:#2d6fe0;--accent-soft:#18263d;--done:#4fb767;--toast-link:#1f5fc9;--under-fg:#0f1318;--err:#ff7b88;
+  --accent:#6aa3ff;--accent-fill:#2d6fe0;--accent-soft:#18263d;--done:#4fb767;--toast-link:#1f5fc9;--under-fg:#0f1318;
   --ava-bg:#232a34;--ava-fg:#eef1f5;--bar:rgba(23,28,35,.84);
   --shadow:0 18px 40px -18px rgba(0,0,0,.7),0 4px 12px -6px rgba(0,0,0,.5);color-scheme:dark}}
 
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;scroll-padding:24px 0 110px}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
 a{color:var(--accent);text-decoration:none}
@@ -42,6 +41,10 @@ button{font:inherit;color:inherit}
 h1,h2,h3{margin:0;text-wrap:balance}
 p{margin:0}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:fixed;left:12px;top:12px;z-index:30;padding:10px 16px;border-radius:999px;background:var(--fg);color:var(--bg);transform:translateY(-200%)}
+.skip:focus{transform:none}
+/* Links inside text are underlined, not only coloured */
+.mbody a,.note a,footer a{text-decoration:underline;text-underline-offset:.2em;text-decoration-thickness:1px}
 
 /* The mark is the app's accounts button: three overlapping account circles, no tile */
 .mark{height:20px;width:auto;flex:none;display:block}
@@ -59,12 +62,10 @@ p{margin:0}
 .side .s-from{font-weight:600;font-size:14px}
 .side .s-t{font-size:12px;color:var(--fg-3);font-variant-numeric:tabular-nums}
 .side .s-subj{grid-column:1/-1;font-size:14px;color:var(--fg-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.side li.is-done a{opacity:.5}
+.side li.is-done a{opacity:.7}
 .side li.is-done .s-subj{text-decoration:line-through}
 .side .meta{font-family:var(--f-mono);font-size:12px;color:var(--fg-3);text-wrap:balance}
-@media (max-width:920px){.app{grid-template-columns:minmax(0,1fr);gap:0;padding-block:24px 130px}.side{display:none}
-  /* Letters reach the right edge so a thumb can start a swipe there */
-  .mail{margin-right:min(-20px,calc(-1 * env(safe-area-inset-right,0px)))}.mail .sheet{padding-right:20px}}
+@media (max-width:920px){.app{grid-template-columns:minmax(0,1fr);gap:0;padding-block:24px 130px}.side{display:none}}
 
 /* Header: inbox line + the promise */
 .head{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;padding-bottom:30px;border-bottom:1px solid var(--line)}
@@ -75,9 +76,10 @@ p{margin:0}
 .inboxline .n.tick{transform:translateY(-.15em)}
 main{min-width:0}
 .mbody>*{min-width:0}
-.kb{white-space:nowrap}
-@media (hover:none){.kb{display:none}}
-.head h1{font-family:var(--f-display);font-weight:500;font-size:clamp(25px,7.8vw,60px);hyphens:manual;line-height:1.05;letter-spacing:-.02em}
+main{container-type:inline-size}
+.tip .mouse{display:none}
+@media (hover:hover){.tip .touch{display:none}.tip .mouse{display:inline}}
+.head h1{font-family:var(--f-display);font-weight:500;font-size:clamp(25px,8cqi,60px);hyphens:manual;line-height:1.05;letter-spacing:-.02em}
 .head .sub{font-size:clamp(18px,2.1vw,21px);color:var(--fg-2);max-width:34em}
 .head .tip{font-size:14px;color:var(--fg-3)}
 /* Store buttons: shown only for stores listed in STORES; the visitor's own platform comes first */
@@ -120,6 +122,10 @@ main{min-width:0}
 .mail.is-done .sheet{display:none}
 .mail.is-done .row{display:flex}
 .app.clear .mail.is-done{display:none}
+@media (max-width:920px){
+  /* Letters reach the right edge so a thumb can start a swipe there */
+  .mail{margin-right:min(-20px,calc(-1 * env(safe-area-inset-right,0px)))}
+  .mail .sheet,.mail .row{padding-right:20px}}
 
 /* Letter contents */
 .links{display:flex;flex-wrap:wrap;gap:8px 18px;font-weight:500}
@@ -180,7 +186,7 @@ main{min-width:0}
 
 /* Finale: "Inbox N" becomes "Ozero". Ripples are a fixed full-screen layer, not tied to the word. */
 .finale{scroll-margin-top:24px;min-height:62vh;align-content:center;margin-top:56px;display:grid;grid-template-columns:minmax(0,1fr);justify-items:center;text-align:center;gap:14px;padding:30px 0 10px}
-.oz{position:relative;font-family:var(--f-display);font-weight:700;font-size:clamp(28px,9vw,120px);line-height:1;letter-spacing:-.03em;display:flex;align-items:baseline}
+.oz{position:relative;font-family:var(--f-display);font-weight:700;font-size:clamp(28px,10cqi,120px);line-height:1;letter-spacing:-.03em;display:flex;align-items:baseline;gap:.25em}
 .oz .w{transition:opacity .4s ease}
 .oz .n{color:var(--accent);font-variant-numeric:tabular-nums}
 .oz .n:empty{display:none}
@@ -196,29 +202,26 @@ main{min-width:0}
 @media (prefers-reduced-motion:reduce){.lake{display:none}}
 /* Stillness first: for a few seconds after Inbox Zero only the word and the water are on screen */
 .head,.compose,#bringBack,.bbar,.side,.finale p{transition:opacity 1.2s ease}
-body.quiet .head,body.quiet .compose,body.quiet #bringBack,body.quiet .bbar,body.quiet .side,body.quiet .finale p,body.quiet .toast{opacity:0;pointer-events:none}
+body.quiet .head,body.quiet .compose,body.quiet #bringBack,body.quiet .bbar,body.quiet .side,body.quiet .finale p{opacity:0;pointer-events:none}
 .app.clear ~ .bbar .cta{display:none}
 /* "Swipe N letters": the app's bulk strip. Swipe it left to clear everything left. */
 .bulk{position:relative;width:min(100%,460px);border-radius:16px;overflow:hidden;margin-top:6px}
-.bulk .under{position:absolute;inset:2px;border-radius:14px;background:var(--done);color:var(--under-fg);display:flex;align-items:center;justify-content:flex-end;padding-right:22px;font-weight:600;gap:8px}
+.bulk .under{pointer-events:none;position:absolute;inset:2px;border-radius:14px;background:var(--done);color:var(--under-fg);display:flex;align-items:center;justify-content:flex-end;padding-right:22px;font-weight:600;gap:8px}
 .bulk .bs{position:relative;width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 14px;background:var(--bg);border:1px solid var(--line);border-radius:16px;color:var(--fg);font:inherit;font-size:16px;font-weight:600;cursor:grab;touch-action:pan-y;transition:transform .25s ease}
-.bulk:not(.dragging):not(.nudge) .under{opacity:0}
+.bulk:not(.dragging) .under{opacity:0}
 .bulk.dragging .bs{transition:none;cursor:grabbing}
 .bulk .grip{display:grid;grid-template-columns:repeat(2,4px);gap:3px}
 .bulk .grip i{width:4px;height:4px;border-radius:50%;background:var(--fg-3)}
-.bulk.nudge .bs{animation:nudge .6s ease}
-@keyframes nudge{30%{transform:translateX(-36px)}60%{transform:translateX(0)}80%{transform:translateX(-10px)}}
 #finaleText:focus{outline:none}
 .finale p{color:var(--fg-2);font-size:18px;max-width:28em}
 #bringBack{border:0;background:none;color:var(--accent);font-weight:600;cursor:pointer;padding:8px}
 
 /* Compose window: the waitlist */
 .compose{background:var(--bg);margin-top:28px;border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:var(--shadow);scroll-margin-top:24px}
-.compose form{display:grid;grid-template-columns:minmax(0,1fr)}
-.field{display:grid;grid-template-columns:minmax(76px,auto) minmax(0,1fr);align-items:center;gap:8px;padding:12px 22px;border-bottom:1px solid var(--line);font-size:16px}
-.field .lbl,.field label{color:var(--fg-3)}
-.field input[type=email]{border:1.5px solid var(--line);border-radius:10px;background:var(--bg);font:16px var(--f-body);color:var(--fg);padding:9px 12px;min-width:0}
-.field input[type=email]:focus{outline:none;border-color:var(--accent)}
+.field{margin:0;min-width:0;border-width:0 0 1px;display:grid;grid-template-columns:minmax(76px,auto) minmax(0,1fr);align-items:center;gap:8px;padding:12px 22px;border-style:solid;border-color:var(--line);font-size:16px}
+.field legend{float:left;padding:0}
+.field h2{font:inherit}
+.field .lbl{color:var(--fg-3)}
 .seg{display:flex;gap:6px;flex-wrap:wrap}
 .seg label{display:inline-flex}
 .seg input{position:absolute;opacity:0;pointer-events:none}
@@ -228,13 +231,9 @@ body.quiet .head,body.quiet .compose,body.quiet #bringBack,body.quiet .bbar,body
 .compose .text{padding:18px 22px;color:var(--fg-2);font-size:17px;min-height:84px}
 .compose .send{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px 14px 22px;border-top:1px solid var(--line)}
 .compose .send .fine{flex:1 1 150px;font-size:13px;color:var(--fg-3)}
+.sendbtn:hover{text-decoration:none;filter:brightness(1.06)}
 .sendbtn{display:inline-flex;align-items:center;gap:8px;height:46px;border-radius:999px;border:0;background:var(--accent-fill);color:#fff;padding:0 18px 0 20px;cursor:pointer;font-weight:600;flex:none}
 .sendbtn svg{width:18px;height:18px}
-.compose .msg{padding:14px 22px;font-size:15px}
-.compose .msg:empty{display:none}
-.compose .msg.ok{color:var(--done);font-weight:600}
-.compose .msg.bad{color:var(--err)}
-.compose.sent form{display:none}
 
 footer{margin-top:40px;display:flex;flex-wrap:wrap;gap:8px 20px;font-size:14px;color:var(--fg-3)}
 
@@ -244,7 +243,7 @@ footer{margin-top:40px;display:flex;flex-wrap:wrap;gap:8px 20px;font-size:14px;c
 .bbar .cap{pointer-events:auto;display:flex;align-items:center;gap:8px;width:min(640px,100%);padding:6px;border-radius:999px;background:var(--bar);
   backdrop-filter:saturate(1.6) blur(18px);-webkit-backdrop-filter:saturate(1.6) blur(18px);box-shadow:var(--shadow);border:1px solid var(--line)}
 .bbar .prog{flex:1;min-width:0;display:flex;align-items:center;gap:10px;padding-left:12px;font-size:14px;color:var(--fg-2);font-variant-numeric:tabular-nums}
-.bbar .prog b{white-space:nowrap;font-weight:600;color:var(--fg)}
+.bbar .prog b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;color:var(--fg)}
 .bbar .track{flex:1;height:5px;border-radius:5px;background:var(--line);overflow:hidden;min-width:40px}
 .bbar .track i{display:block;height:100%;width:0;background:var(--done);transition:width .35s ease}
 @media (max-width:430px){.bbar .track{display:none}}
@@ -256,8 +255,11 @@ footer{margin-top:40px;display:flex;flex-wrap:wrap;gap:8px 20px;font-size:14px;c
 .lang a[aria-current="page"]{background:var(--bg);color:var(--fg);box-shadow:0 1px 3px rgba(0,0,0,.08)}
 .cta{display:inline-flex;align-items:center;min-height:46px;border-radius:999px;padding:0 18px;background:var(--accent-fill);color:#fff;font-weight:600;font-size:14px;white-space:nowrap}
 .cta:hover{text-decoration:none;filter:brightness(1.06)}
+@media (max-width:400px){.bbar .cap{gap:4px}.cta{padding:0 12px;font-size:13px}.bbar .prog{padding-left:8px}}
 .toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:21;background:var(--fg);color:var(--bg);border-radius:999px;padding:6px 6px 6px 18px;display:flex;align-items:center;gap:12px;font-size:15px;box-shadow:var(--shadow);max-width:calc(100% - 32px)}
 .toast[hidden]{display:none}
+#toastText{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .toast button{border:0;background:transparent;color:var(--toast-link);font-weight:700;cursor:pointer;padding:0 12px;min-height:40px}
-.toast .cd{font-family:var(--f-mono);font-size:13px;opacity:.6}
-.toast .cd:empty{display:none}
+
+.lost{min-height:100vh;display:grid;place-content:center;justify-items:center;gap:12px;padding:20px;text-align:center}
+.lost .oz{color:var(--accent)}

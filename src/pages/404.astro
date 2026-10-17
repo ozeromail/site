@@ -1,0 +1,24 @@
+---
+// Netlify serves this for unknown paths. Both languages, since the path tells us neither.
+import '../styles/fonts.css';
+import '../styles/site.css';
+import { strings } from '../i18n';
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>404 · Ozero Mail</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="color-scheme" content="light dark">
+</head>
+<body>
+  <main class="lost">
+    <p class="oz">404</p>
+    <p><a href="/en/">{strings.en.lost}</a></p>
+    <p lang="ru"><a href="/ru/">{strings.ru.lost}</a></p>
+  </main>
+</body>
+</html>

@@ -11,40 +11,36 @@ const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getEleme
 export function start() {
   const S: Strings = JSON.parse($('strings').textContent ?? '{}');
 
-  /* Toast with Undo, shared by Done and Send. onEnd runs when the countdown ends or another toast replaces it. */
+  /* One live region speaks for the page, so each action is announced once. */
+  const live = $('live');
+  const say = (text: string) => {
+    live.textContent = '';
+    requestAnimationFrame(() => (live.textContent = text));
+  };
+
+  /* Toast with Undo. It waits while the pointer or focus is on it. */
   const toast = $('toast');
   const undoBtn = $<HTMLButtonElement>('toastUndo');
+  const toastText = $('toastText');
   let timer: number | undefined;
   let undo: (() => void) | null = null;
-  let onEnd: (() => void) | null = null;
-  const toastText = $('toastText');
-  const toastCd = $('toastCd');
   function hideToast() {
     clearInterval(timer);
     toast.hidden = true;
     undo = null;
-    const f = onEnd;
-    onEnd = null;
-    f?.();
   }
-  function showToast(text: string, undoFn: (() => void) | null, seconds: number, end?: () => void) {
+  function showToast(text: string, undoFn: () => void, seconds = 8) {
     hideToast();
     undo = undoFn;
-    onEnd = end ?? null;
-    undoBtn.style.display = undoFn ? '' : 'none';
-    let n = seconds;
     toastText.textContent = text;
-    toastCd.textContent = end ? String(n) : '';
     toast.hidden = false;
+    let n = seconds;
     timer = window.setInterval(() => {
-      n--;
-      if (end) toastCd.textContent = String(n);
-      if (n <= 0) hideToast();
+      if (!toast.matches(':hover,:focus-within') && --n <= 0) hideToast();
     }, 1000);
   }
   undoBtn.addEventListener('click', () => {
     const f = undo;
-    onEnd = null;
     hideToast();
     f?.();
   });
@@ -57,10 +53,13 @@ export function start() {
   const side = new Map([...document.querySelectorAll<HTMLAnchorElement>('#sidelist a')].map((a) => [a.hash.slice(1), a]));
   const el = {
     count: $('count'), unreadSr: $('unreadSr'), left: $('left'), bar: $('bar'), track: $('track'),
-    finale: $('finale'), ozw: $('ozw'), ozn: $('ozn'), finaleText: $('finaleText'),
+    finale: $('finale'), ozw: $('ozw'), ozn: $('ozn'), finaleText: $('finaleText'), lake: $('lake'),
     bringBack: $('bringBack'), bulk: $('bulk'), bulkText: $('bulkText'), bulkBtn: $('bulkBtn'),
   };
+  // Hidden during the quiet moment, so they leave the tab order too.
+  const calm = [...document.querySelectorAll<HTMLElement>('.head,.compose,#bringBack,.bbar,.side')];
   let prevLeft = mails.length;
+  const leftText = (left: number) => (left ? fill(S.left, { n: left }) : S.allClear);
 
   function upd() {
     const left = mails.filter(isOpen).length;
@@ -69,7 +68,7 @@ export function start() {
     el.unreadSr.textContent = ' ' + plural(S.lang, S.unread, left);
     el.count.classList.add('tick');
     setTimeout(() => el.count.classList.remove('tick'), 200);
-    el.left.textContent = left ? fill(S.left, { n: left }) : S.allClear;
+    el.left.textContent = leftText(left);
     el.bar.style.width = ((mails.length - left) / mails.length) * 100 + '%';
     el.track.setAttribute('aria-valuenow', String(mails.length - left));
     el.ozw.textContent = left ? S.word : S.wordDone;
@@ -83,43 +82,45 @@ export function start() {
     app.classList.toggle('clear', !left);
     for (const m of mails) side.get(m.id)?.parentElement!.classList.toggle('is-done', !isOpen(m));
     if (!left) quiet();
-    else if (document.body.classList.contains('quiet')) {
-      clearTimeout(quietTimer);
-      document.body.classList.remove('quiet');
-      afterQuiet = null;
+    else {
+      el.lake.classList.remove('go');
+      if (document.body.classList.contains('quiet')) endQuiet();
     }
     prevLeft = left;
   }
 
   /* Inbox Zero: centre the word, clear the screen, let the water move, then bring the note back */
   let quietTimer: number | undefined;
-  let afterQuiet: (() => void) | null = null;
-  // A toast raised during the quiet moment would be invisible, so it waits until the page comes back.
-  function toastWhenCalm(show: () => void) {
-    if (document.body.classList.contains('quiet')) afterQuiet = show;
-    else show();
+  const oz = document.querySelector<HTMLElement>('.oz')!;
+  function centreLake() {
+    const r = oz.getBoundingClientRect();
+    el.lake.style.setProperty('--cx', r.left + r.width / 2 + 'px');
+    el.lake.style.setProperty('--cy', r.top + r.height / 2 + 'px');
+  }
+  function endQuiet() {
+    clearTimeout(quietTimer);
+    document.body.classList.remove('quiet');
+    for (const e of calm) e.inert = false;
   }
   function quiet() {
-    const lake = $('lake');
     hideToast();
     document.body.classList.add('quiet');
-    const oz = document.querySelector<HTMLElement>('.oz')!;
+    for (const e of calm) e.inert = true;
     oz.scrollIntoView({ block: 'center', behavior: 'instant' });
-    const r = oz.getBoundingClientRect();
-    lake.style.setProperty('--cx', r.left + r.width / 2 + 'px');
-    lake.style.setProperty('--cy', r.top + r.height / 2 + 'px');
-    lake.classList.remove('go');
-    void lake.offsetWidth;
-    lake.classList.add('go');
+    centreLake();
+    el.lake.classList.remove('go');
+    void el.lake.offsetWidth;
+    el.lake.classList.add('go');
+    say(S.finDone);
     clearTimeout(quietTimer);
     quietTimer = window.setTimeout(() => {
-      document.body.classList.remove('quiet');
-      const f = afterQuiet;
-      afterQuiet = null;
-      f?.();
+      endQuiet();
+      el.finaleText.focus({ preventScroll: true });
     }, 3200);
-    el.finaleText.focus({ preventScroll: true });
   }
+  addEventListener('resize', () => {
+    if (el.lake.classList.contains('go')) centreLake();
+  });
 
   function collapse(m: HTMLElement, done: boolean) {
     m.classList.toggle('is-done', done);
@@ -131,14 +132,15 @@ export function start() {
     collapse(m, done);
     upd();
     if (!done || above) m.scrollIntoView({ block: 'start' });
-    if (!done) return;
-    if (!app.classList.contains('clear')) m.querySelector<HTMLElement>('.row')!.focus({ preventScroll: true });
-    if (!silent) {
-      toastWhenCalm(() => showToast(S.done, () => {
-        setDone(m, false, true);
-        m.querySelector<HTMLElement>('.act.done')!.focus({ preventScroll: true });
-      }, 4));
-    }
+    if (!done || app.classList.contains('clear')) return;
+    m.querySelector<HTMLElement>('.row')!.focus({ preventScroll: true });
+    if (silent) return;
+    const left = leftText(prevLeft);
+    say(`${S.done}. ${left[0].toUpperCase()}${left.slice(1)}`);
+    showToast(S.done, () => {
+      setDone(m, false, true);
+      m.querySelector<HTMLElement>('.act.done')!.focus({ preventScroll: true });
+    });
   }
 
   /* A left swipe that passes 45% of the width fires onSwipe. Only clearly horizontal gestures count, so scrolling still works. */
@@ -203,7 +205,7 @@ export function start() {
       subj.tabIndex = -1;
       subj.focus({ preventScroll: true });
     });
-    // Touch swipes anywhere on the letter; a mouse drags by the header.
+    // Touch swipes anywhere on the letter; a mouse drags by the header, so text stays selectable.
     swipeable(m, m.querySelector<HTMLElement>('.sheet')!, 12, 2, () => setDone(m, true), (e) => {
       const target = e.target as Element;
       if (target.closest('a,button,input,label')) return false;
@@ -211,48 +213,42 @@ export function start() {
     });
   }
 
-  /* For visitors who scrolled past without clearing: one bulk action, as in the app */
+  /* For visitors who scrolled past without clearing: one bulk action, as in the app. Swipe it or just press it. */
   function doneAll() {
     const open = mails.filter(isOpen);
     for (const m of open) collapse(m, true);
     upd();
-    toastWhenCalm(() => showToast(S.allDone, () => {
+    // Undo after the quiet moment: the toast waits for the page to come back.
+    const back = () => {
       for (const m of open) collapse(m, false);
       upd();
       open[0].scrollIntoView({ block: 'start' });
-    }, 5));
+      open[0].querySelector<HTMLElement>('.act.done')!.focus({ preventScroll: true });
+    };
+    setTimeout(() => showToast(S.allDone, back), 3200);
   }
   const { bulk, bulkBtn } = el;
-  const swiped = swipeable(bulk, bulkBtn, 8, 1.5, () => {
+  const swiping = swipeable(bulk, bulkBtn, 8, 1.5, () => {
     bulkBtn.style.transform = '';
     doneAll();
   }, () => true);
-  // Keyboard (Enter or Space) clears at once; a tap only shows which way to swipe.
-  let moved = false;
+  let swiped = false;
   bulkBtn.addEventListener('pointerdown', () => {
-    moved = false;
+    swiped = false;
   });
   bulkBtn.addEventListener('pointermove', () => {
-    if (swiped()) moved = true;
+    if (swiping()) swiped = true;
   });
-  bulkBtn.addEventListener('click', (e) => {
-    if (moved) {
-      moved = false;
-      return;
-    }
-    if (e.detail === 0) {
-      doneAll();
-      return;
-    }
-    bulk.classList.remove('nudge');
-    void bulk.offsetWidth;
-    bulk.classList.add('nudge');
+  bulkBtn.addEventListener('click', () => {
+    if (swiped) swiped = false;
+    else doneAll();
   });
 
   $('bringBack').addEventListener('click', () => {
     for (const m of mails) collapse(m, false);
     upd();
     mails[0].scrollIntoView({ block: 'start' });
+    mails[0].querySelector<HTMLElement>('.act.done')!.focus({ preventScroll: true });
   });
 
   /* Side list: highlight the letter being read; clicking a done letter reopens it */
@@ -270,9 +266,9 @@ export function start() {
     });
   }
 
-  /* Keyboard: E marks the letter in view as Done, U or Z undoes */
+  /* Keyboard: E marks the letter in view as Done, U or Z undoes. A held key does not repeat. */
   document.addEventListener('keydown', (e) => {
-    if (e.metaKey || e.ctrlKey || e.altKey || (e.target as Element).closest('input,textarea')) return;
+    if (e.repeat || e.metaKey || e.ctrlKey || e.altKey || (e.target as Element).closest('a,input,textarea')) return;
     const k = e.key.toLowerCase();
     if (k === 'e') {
       const focused = document.activeElement?.closest<HTMLElement>('.mail');
@@ -291,30 +287,12 @@ export function start() {
     }
   });
 
-  /* Compose: send with a 5-second undo, like the app. Nothing is sent until the waitlist opens. */
-  $('wf').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const form = e.target as HTMLFormElement;
-    const email = $<HTMLInputElement>('email');
-    const msg = $('wmsg');
-    if (!email.checkValidity()) {
-      msg.className = 'msg bad';
-      msg.textContent = S.bad;
-      email.focus();
-      return;
-    }
-    msg.className = 'msg';
-    msg.textContent = '';
-    const btn = form.querySelector<HTMLButtonElement>('.sendbtn')!;
-    btn.disabled = true;
-    showToast(S.sent, () => {
-      btn.disabled = false;
-      msg.textContent = S.undone;
-    }, 5, () => {
-      form.closest('.compose')!.classList.add('sent');
-      msg.className = 'msg ok';
-      msg.textContent = S.ok;
-    });
+  /* Compose: Send opens the visitor's mail app with a note to the author; the phone goes into the text. */
+  const send = $<HTMLAnchorElement>('send');
+  const template = send.dataset.href!;
+  $('wait').addEventListener('change', (e) => {
+    const os = (e.target as HTMLInputElement).value;
+    send.href = template.replace(encodeURIComponent('{os}'), encodeURIComponent(os));
   });
 
   /* Store buttons: the visitor's own platform first */
@@ -326,10 +304,9 @@ export function start() {
     own.parentElement!.prepend(own);
     cta.href = own.href;
   } else if (mine && cta.target) {
-    // Not out on this visitor's platform yet: offer the waitlist instead of the other store.
+    // Not out on this visitor's platform yet: offer the launch note instead of the other store.
     cta.href = '#wait';
     cta.removeAttribute('target');
     cta.textContent = S.cta;
   }
-
 }
