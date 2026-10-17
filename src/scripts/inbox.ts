@@ -60,8 +60,9 @@ export function start() {
 
   function centreLake() {
     const r = oz.getBoundingClientRect();
-    el.lake.style.setProperty('--cx', r.left + r.width / 2 + 'px');
-    el.lake.style.setProperty('--cy', r.top + r.height / 2 + 'px');
+    // Page coordinates: the lake covers the whole page, so the rings stay on the word while it scrolls.
+    el.lake.style.setProperty('--cx', r.left + scrollX + r.width / 2 + 'px');
+    el.lake.style.setProperty('--cy', r.top + scrollY + r.height / 2 + 'px');
   }
   addEventListener('resize', () => {
     if (el.lake.classList.contains('go')) centreLake();
