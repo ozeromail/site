@@ -50,10 +50,9 @@ export function start() {
   const mails = [...document.querySelectorAll<HTMLElement>('.mail')];
   const isOpen = (m: Element | null | undefined): m is HTMLElement => !!m && !m.classList.contains('is-done');
   const isUnread = (m: HTMLElement) => isOpen(m) && !m.classList.contains('is-read');
-  // Phone rows by letter id: the desktop side phone and the one in the mobile header.
-  const rows = new Map<string, HTMLAnchorElement[]>();
-  for (const a of document.querySelectorAll<HTMLAnchorElement>('.ph-list a')) rows.set(a.dataset.id!, [...(rows.get(a.dataset.id!) ?? []), a]);
-  const eachRow = (m: HTMLElement, f: (a: HTMLAnchorElement) => void) => rows.get(m.id)?.forEach(f);
+  // Phone rows of a letter: the desktop side phone and the one in the mobile header.
+  const eachRow = (m: HTMLElement, f: (a: HTMLAnchorElement) => void) =>
+    document.querySelectorAll<HTMLAnchorElement>(`.ph-list a[href="#${m.id}"]`).forEach(f);
   const el = {
     count: $('count'), unreadSr: $('unreadSr'), left: $('left'), bar: $('bar'), track: $('track'),
     finale: $('finale'), ozw: $('ozw'), ozn: $('ozn'), finaleText: $('finaleText'), lake: $('lake'),
@@ -62,34 +61,31 @@ export function start() {
   // Hidden during the quiet moment, so they leave the tab order too.
   const calm = [...document.querySelectorAll<HTMLElement>('.head,.compose,#bringBack,.bbar,.side')];
   let prevLeft = mails.length;
-  let prevUnread = mails.length;
+  let unread = mails.length;
   const leftText = (unread: number) => (unread ? fill(S.left, { n: unread }) : mails.some(isOpen) ? S.allRead : S.allClear);
 
   // The count is unread letters; Inbox Zero needs every letter Done.
   function upd() {
     const left = mails.filter(isOpen).length;
-    const unread = mails.filter(isUnread).length;
+    const was = unread;
+    unread = mails.filter(isUnread).length;
     for (const m of mails) {
       eachRow(m, (a) => {
-        a.parentElement!.classList.toggle('is-done', !isOpen(m));
-        a.parentElement!.classList.toggle('is-read', !isUnread(m));
+        a.classList.toggle('is-done', !isOpen(m));
+        a.classList.toggle('is-read', !isUnread(m));
       });
     }
-    if (unread !== prevUnread) {
-      el.count.textContent = String(unread);
-      el.unreadSr.textContent = ' ' + plural(S.lang, S.unread, unread);
+    if (unread !== was) {
       el.count.classList.add('tick');
       setTimeout(() => el.count.classList.remove('tick'), 200);
-      el.left.textContent = leftText(unread);
-      el.bar.style.width = ((mails.length - unread) / mails.length) * 100 + '%';
-      el.track.setAttribute('aria-valuenow', String(mails.length - unread));
-      el.ozn.textContent = unread ? String(unread) : '';
-      prevUnread = unread;
     }
-    if (left === prevLeft) return;
+    el.count.textContent = String(unread);
+    el.unreadSr.textContent = ' ' + plural(S.lang, S.unread, unread);
     el.left.textContent = leftText(unread);
+    el.bar.style.width = ((mails.length - unread) / mails.length) * 100 + '%';
+    el.track.setAttribute('aria-valuenow', String(mails.length - unread));
     el.ozw.textContent = left ? S.word : S.wordDone;
-    if (!left) el.ozn.textContent = '';
+    el.ozn.textContent = unread ? String(unread) : '';
     el.finaleText.textContent = left ? S.fin : S.finDone;
     el.bringBack.hidden = !!left;
     el.bulk.hidden = !left;
@@ -97,12 +93,13 @@ export function start() {
     el.bulkBtn.setAttribute('aria-label', fill(S.bulkLabel, { n: left }));
     el.finale.classList.toggle('clear', !left);
     app.classList.toggle('clear', !left);
+    if (left === prevLeft) return;
+    prevLeft = left;
     if (!left) quiet();
     else {
       el.lake.classList.remove('go');
       if (document.body.classList.contains('quiet')) endQuiet();
     }
-    prevLeft = left;
   }
 
   /* Inbox Zero: centre the word, clear the screen, let the water move, then bring the note back */
@@ -139,9 +136,11 @@ export function start() {
     if (el.lake.classList.contains('go')) centreLake();
   });
 
-  function collapse(m: HTMLElement, done: boolean) {
+  // Done implies read; reset also forgets reading, for "Bring the letters back".
+  function collapse(m: HTMLElement, done: boolean, reset = false) {
     m.classList.toggle('is-done', done);
     if (done) m.classList.add('is-read');
+    if (reset) m.classList.remove('is-read');
     m.querySelector<HTMLElement>('.sheet')!.style.transform = '';
   }
 
@@ -153,7 +152,7 @@ export function start() {
     if (!done || app.classList.contains('clear')) return;
     m.querySelector<HTMLElement>('.row')!.focus({ preventScroll: true });
     if (silent) return;
-    const left = leftText(prevUnread);
+    const left = leftText(unread);
     say(`${S.done}. ${left[0].toUpperCase()}${left.slice(1)}`);
     showToast(S.done, () => {
       setDone(m, false, true);
@@ -167,7 +166,9 @@ export function start() {
     let y0 = 0;
     let dx = 0;
     let axis: 'x' | 'y' | null = null;
+    let moved = false;
     el.addEventListener('pointerdown', (e) => {
+      moved = false;
       if (e.button || !canStart(e)) return;
       x0 = e.clientX;
       y0 = e.clientY;
@@ -189,6 +190,7 @@ export function start() {
           x0 = null;
           return;
         }
+        moved = true;
         el.setPointerCapture(e.pointerId);
         box.classList.add('dragging');
       }
@@ -211,7 +213,8 @@ export function start() {
     };
     el.addEventListener('pointerup', end);
     el.addEventListener('pointercancel', end);
-    return () => axis === 'x';
+    // Whether the last press became a swipe, so its click can be ignored.
+    return () => moved;
   }
 
   for (const m of mails) {
@@ -238,27 +241,16 @@ export function start() {
     upd();
   }
   const { bulk, bulkBtn } = el;
-  const swiping = swipeable(bulk, bulkBtn, 8, 1.5, () => {
+  const swiped = swipeable(bulk, bulkBtn, 8, 1.5, () => {
     bulkBtn.style.transform = '';
     doneAll();
   }, () => true);
-  let swiped = false;
-  bulkBtn.addEventListener('pointerdown', () => {
-    swiped = false;
-  });
-  bulkBtn.addEventListener('pointermove', () => {
-    if (swiping()) swiped = true;
-  });
   bulkBtn.addEventListener('click', () => {
-    if (swiped) swiped = false;
-    else doneAll();
+    if (!swiped()) doneAll();
   });
 
   $('bringBack').addEventListener('click', () => {
-    for (const m of mails) {
-      collapse(m, false);
-      m.classList.remove('is-read');
-    }
+    for (const m of mails) collapse(m, false, true);
     upd();
     mails[0].scrollIntoView({ block: 'start' });
     mails[0].querySelector<HTMLElement>('.act.done')!.focus({ preventScroll: true });
@@ -281,20 +273,19 @@ export function start() {
   }
 
   /* Reading: a letter whose end has come into view, above the bottom bar, counts as read. */
+  const nav = el.bar.closest('nav')!;
   let frame = 0;
   const read = () => {
     frame = 0;
-    const edge = innerHeight - el.bar.closest('nav')!.offsetHeight;
-    let changed = false;
-    for (const m of mails) {
-      if (!isUnread(m)) continue;
+    if (!unread) return;
+    const edge = innerHeight - nav.offsetHeight;
+    // Measure all first, then write, so layout is read once.
+    const seen = mails.filter(isUnread).filter((m) => {
       const r = m.getBoundingClientRect();
-      if (r.bottom <= edge && r.bottom > 0) {
-        m.classList.add('is-read');
-        changed = true;
-      }
-    }
-    if (changed) upd();
+      return r.bottom <= edge && r.bottom > 0;
+    });
+    for (const m of seen) m.classList.add('is-read');
+    if (seen.length) upd();
   };
   addEventListener('scroll', () => {
     frame ||= requestAnimationFrame(read);
@@ -323,10 +314,8 @@ export function start() {
 
   /* Compose: Send opens the visitor's mail app with a note to the author; the phone goes into the text. */
   const send = $<HTMLAnchorElement>('send');
-  const template = send.dataset.href!;
   $('wait').addEventListener('change', (e) => {
-    const os = (e.target as HTMLInputElement).value;
-    send.href = template.replace(encodeURIComponent('{os}'), encodeURIComponent(os));
+    send.href = send.dataset[(e.target as HTMLInputElement).value]!;
   });
 
   /* Store buttons: the visitor's own platform first */

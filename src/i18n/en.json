@@ -98,8 +98,6 @@
     "finDone": "All clear. Calm water. One last note, if you like:",
     "word": "Inbox",
     "wordDone": "ozero",
-    "allDone": "All marked as done",
-    "phone": "My phone: {os}",
     "allRead": "All read"
   },
   "privacy": [
@@ -241,5 +239,6 @@
       "text": "A clickable prototype, and the plan: one shared core for mail, sync and storage, with a native app for each phone."
     }
   ],
-  "now": "Now: {s}"
+  "now": "Now: {s}",
+  "cPhone": "My phone: {os}"
 }
