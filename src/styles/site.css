@@ -32,10 +32,14 @@ html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
 
 /* One screen at a time: each block fills the screen, scrolling snaps to it, and the others fade almost away */
-html{scroll-snap-type:y mandatory}
+/* Short views (phones in landscape) only lean towards a screen, so content taller than the view still scrolls freely */
+html{scroll-snap-type:y proximity}
+@media (min-height:600px){html{scroll-snap-type:y mandatory}}
 .screen{min-height:100svh;display:grid;align-content:center;scroll-snap-align:center}
 .stage .screen{opacity:.06;transition:opacity .9s ease}
 .stage .screen.on,.stage .mail.is-done{opacity:1}
+.still .screen{transition:none}
+footer{scroll-snap-align:end}
 
 /* Letters slide to their new places when one is done or reopened */
 .finale{view-transition-name:finale}
@@ -58,7 +62,7 @@ p{margin:0}
 .mark{height:20px;width:auto;flex:none;display:block}
 
 /* One narrow column with a lot of air */
-main{position:relative;z-index:1;max-width:600px;margin:0 auto;padding:24px max(24px,env(safe-area-inset-right,0px)) calc(112px + env(safe-area-inset-bottom,0px)) max(24px,env(safe-area-inset-left,0px));container-type:inline-size}
+main{position:relative;z-index:1;max-width:600px;margin:0 auto;padding:0 max(24px,env(safe-area-inset-right,0px)) calc(112px + env(safe-area-inset-bottom,0px)) max(24px,env(safe-area-inset-left,0px));container-type:inline-size}
 .top{position:absolute;z-index:2;top:24px;left:max(24px,env(safe-area-inset-left,0px));right:max(24px,env(safe-area-inset-right,0px));display:flex;align-items:center;justify-content:space-between;gap:12px}
 .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:16px}
 .lang{display:flex;gap:2px}
