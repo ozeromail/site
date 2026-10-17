@@ -4,7 +4,7 @@
 import type en from '../i18n/en.json';
 import { fill, plural } from '../i18n/format';
 
-type Strings = typeof en.client & { lang: string; done: string };
+type Strings = typeof en.client & { lang: string; word: string; done: string };
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 
@@ -74,8 +74,9 @@ export function start() {
     el.count.textContent = String(unread);
     el.unreadSr.textContent = ' ' + plural(S.lang, S.unread, unread);
     el.left.textContent = leftText();
-    el.bar.style.width = ((mails.length - unread) / mails.length) * 100 + '%';
-    el.track.setAttribute('aria-valuenow', String(mails.length - unread));
+    const read = mails.length - unread;
+    el.bar.style.width = (read / mails.length) * 100 + '%';
+    el.track.setAttribute('aria-valuenow', String(read));
     el.ozw.textContent = left ? S.word : S.wordDone;
     el.ozn.textContent = unread ? String(unread) : '';
     el.bulk.hidden = !left;
@@ -107,7 +108,13 @@ export function start() {
     m.classList.toggle('is-done', done);
     if (done) m.classList.add('is-read');
     if (reset) m.classList.remove('is-read');
-    m.querySelector<HTMLElement>('.sheet')!.style.transform = '';
+  }
+  // Reopens a group of letters and brings the reader back to the first one.
+  function restore(list: HTMLElement[], reset = false) {
+    for (const m of list) collapse(m, false, reset);
+    upd();
+    list[0].scrollIntoView({ block: 'start' });
+    doneBtn(list[0]).focus({ preventScroll: true });
   }
   const doneBtn = (m: HTMLElement) => m.querySelector<HTMLElement>('.act.done')!;
 
@@ -170,7 +177,10 @@ export function start() {
       box.classList.remove('dragging');
       if (axis === 'x' && dx < -box.offsetWidth * 0.45) {
         sheet.style.transform = 'translateX(-110%)';
-        setTimeout(onSwipe, 200);
+        setTimeout(() => {
+          onSwipe();
+          sheet.style.transform = '';
+        }, 200);
       } else {
         sheet.style.transform = '';
       }
@@ -197,29 +207,17 @@ export function start() {
     for (const m of open) collapse(m, true);
     upd();
     say(S.allDone);
-    showToast(() => {
-      for (const m of open) collapse(m, false);
-      upd();
-      open[0].scrollIntoView({ block: 'start' });
-      doneBtn(open[0]).focus({ preventScroll: true });
-    });
+    showToast(() => restore(open));
   }
-  const bulkBtn = el.bulkBtn;
-  const swiped = swipeable(el.bulk, bulkBtn, () => {
-    bulkBtn.style.transform = '';
-    doneAll();
-  }, () => true);
+  const swiped = swipeable(el.bulk, el.bulkBtn, doneAll, () => true);
   // A keyboard click (detail 0) has no press of its own, so an old swipe must not cancel it.
-  bulkBtn.addEventListener('click', (e) => {
+  el.bulkBtn.addEventListener('click', (e) => {
     if (!e.detail || !swiped()) doneAll();
   });
 
   el.bringBack.addEventListener('click', () => {
     hideToast();
-    for (const m of mails) collapse(m, false, true);
-    upd();
-    mails[0].scrollIntoView({ block: 'start' });
-    doneBtn(mails[0]).focus({ preventScroll: true });
+    restore(mails, true);
   });
 
   /* Reading: a letter whose end has come into view, above the bottom bar, counts as read. */

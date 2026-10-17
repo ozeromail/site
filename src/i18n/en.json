@@ -47,7 +47,6 @@
       "other": "unread letters"
     },
     "wordDone": "ozero",
-    "word": "Inbox",
     "left": "{n} unread",
     "allRead": "All read",
     "allClear": "All clear",
@@ -59,7 +58,6 @@
     "allDone": "All marked as done"
   },
   "calm": "All clear. That’s how the app should feel.",
-  "avaL": "K",
   "name": "Khizri",
   "tip": "Swipe a letter left or tap Done to clear it.",
   "tipMouse": "Drag a letter left by its subject or press Done. Keys: E for Done, U to undo.",
