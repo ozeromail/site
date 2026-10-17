@@ -1,47 +1,47 @@
 {
-  "title": "Ozero Mail",
+  "title": "Ozero Mail: email app for Android, no AI",
   "inbox": "Inbox",
   "storeApple": "Download on the",
   "storeGoogle": "Get it on",
   "langLabel": "Language",
   "ogLocale": "en_US",
   "lost": "This letter got lost. Back to the inbox",
-  "tipFoot": "Support the work",
+  "tipFoot": "Support me",
   "statsText": "This site counts visits without cookies.",
   "statsLink": "The numbers are public",
-  "description": "Ozero Mail: one calm inbox for all your email on Android and iOS. No AI reading your mail, no subscription.",
+  "description": "Ozero Mail puts Gmail, iCloud and any IMAP mail in one calm inbox. No AI, no ads, no tracking. Android first, then iPhone.",
   "h1": "All your email. One calm inbox.",
-  "sub": "I’m making the mail app I couldn’t find for myself. Native, fast and free of AI.",
+  "sub": "I’m making the email app I couldn’t find for myself. No AI. Android first, then iPhone.",
   "pains": [
     {
       "q": "Five accounts, five apps?",
-      "a": "Gmail, Outlook, iCloud and work mail in one list, like in Apple Mail. Each account keeps its color, and every swipe answers at once.",
+      "a": "Gmail, iCloud, Fastmail and any IMAP mail in one list, each account in its own color. Swipes work instantly, even offline. Outlook comes later.",
       "from": "Accounts",
       "when": "09:41"
     },
     {
       "q": "Who else reads your mail?",
-      "a": "Nobody. No AI, no ads, no tracking. Mail goes from your provider straight to your phone, my servers never see it.",
+      "a": "Only you and your mail provider. No AI, no ads, no tracking. Mail goes from your provider straight to your phone, never through my servers.",
       "from": "Privacy",
       "when": "08:15"
     },
     {
       "q": "Real letters lost in the noise?",
-      "a": "People come first. Newsletters and notifications wait in their own tabs, sorted by simple rules on your phone.",
+      "a": "People get the inbox. Newsletters and notifications wait in their own tabs, sorted by simple rules on your phone.",
       "from": "Focus",
       "when": "Yesterday"
     },
     {
-      "q": "Who’s behind it?",
-      "a": "Just me, Khizri, a designer and developer. The app is free forever; extras are a one-time purchase that pays me, not a corporation.",
+      "q": "Who’s on the other end?",
+      "a": "Me, Khizri. I design and build it alone, for my own inbox. The mail stays free. Later there will be extras for a one-time price: you pay me, not a corporation. No ads, ever.",
       "from": "Khizri",
       "when": "Mon"
     }
   ],
-  "soon": "Ozero Mail is still in the works. I answer every letter myself. Write, and I’ll tell you on launch day.",
-  "mailSubj": "Tell me when Ozero Mail is out",
-  "mailBody": "Hi! Write me once, on launch day.",
-  "by": "Made by Khizri",
+  "soon": "Ozero Mail isn’t out yet. Android comes first, with a small beta, then iPhone. Write to me and I’ll let you know. I answer every letter myself.",
+  "mailSubj": "I’d like to try Ozero Mail",
+  "mailBody": "Hi! Let me know when I can try it.",
+  "by": "By Khizri",
   "doneLbl": "Done",
   "undo": "Undo",
   "reopen": "Open",
@@ -53,7 +53,9 @@
       "other": "unread letters"
     },
     "wordDone": "ozero",
-    "left": "{n} unread",
+    "left": {
+      "other": "{n} unread"
+    },
     "allRead": "All read",
     "allClear": "All clear",
     "bulk": {
@@ -62,10 +64,10 @@
     },
     "allDone": "All marked as done"
   },
-  "calm": "All clear. That’s how the app should feel.",
+  "calm": "Empty and quiet. That’s the feeling I’m building.",
   "name": "Khizri",
   "tip": "Swipe a letter left or tap Done to clear it.",
-  "tipMouse": "Drag a letter left by its subject or press Done. Keys: E for Done, U to undo.",
+  "tipMouse": "Drag a letter left by its top or press Done. Keys: E for Done, U to undo.",
   "bringBack": "Bring the letters back",
   "fTo": "To",
   "fPhone": "Phone",
@@ -73,8 +75,8 @@
   "cPhone": "My phone: {os}",
   "cFine": "Opens your mail app. Your address stays in my inbox and nowhere else.",
   "send": "Send",
-  "cta": "Notify me",
+  "cta": "Write to me",
   "barLabel": "Page controls",
   "progLabel": "Letters read",
-  "next": "Below is a letter to me, if you like"
+  "next": "The last letter is yours to write"
 }

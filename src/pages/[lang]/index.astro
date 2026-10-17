@@ -97,13 +97,13 @@ const url = new URL(`/${lang}/`, site);
         <div class="field"><span class="lbl">{t.fTo}</span><span>{t.name}</span></div>
         <fieldset class="field"><legend class="lbl">{t.fPhone}</legend>
           <div class="seg">
-            <label><input type="radio" name="os" value="iphone" checked><span>iPhone</span></label>
-            <label><input type="radio" name="os" value="android"><span>Android</span></label>
+            <label><input type="radio" name="os" value="android" checked><span>Android</span></label>
+            <label><input type="radio" name="os" value="iphone"><span>iPhone</span></label>
           </div>
         </fieldset>
         <div class="field"><span class="lbl">{t.fSubj}</span><h2 id="waitTitle">{t.mailSubj}</h2></div>
         <p class="text">{t.mailBody}</p>
-        <div class="send"><span class="fine">{t.cFine}</span><a class="btn" id="send" href={mailto('iPhone')} data-iphone={mailto('iPhone')} data-android={mailto('Android')}>{t.send}</a></div>
+        <div class="send"><span class="fine">{t.cFine}</span><a class="btn" id="send" href={mailto('Android')} data-iphone={mailto('iPhone')} data-android={mailto('Android')}>{t.send}</a></div>
       </div>
     </section>
   )}
@@ -117,7 +117,7 @@ const url = new URL(`/${lang}/`, site);
 
 <nav class="bbar" aria-label={t.barLabel}>
   <div class="cap">
-    <div class="prog"><b id="left">{fill(c.left, { n })}</b><span class="track" role="progressbar" aria-valuemin="0" aria-valuemax={n} aria-valuenow="0" id="track" aria-label={t.progLabel}><i id="bar"></i></span></div>
+    <div class="prog"><b id="left">{plural(lang, c.left, n)}</b><span class="track" role="progressbar" aria-valuemin="0" aria-valuemax={n} aria-valuenow="0" id="track" aria-label={t.progLabel}><i id="bar"></i></span></div>
     {!released && <a class="btn" href="#wait">{t.cta}</a>}
   </div>
 </nav>
