@@ -183,5 +183,76 @@
         ]
       ]
     }
+  },
+  "privacyLink": "Privacy",
+  "privacy": {
+    "title": "Privacy · Ozero Mail",
+    "h1": "Privacy",
+    "updated": "Updated on 17 October 2026",
+    "lead": "Ozero Mail is made by one person, Khizri Makhmudov. This page says what the app and this site do with your data. In short: your mail stays between your phone and your mail provider. I never see it.",
+    "sections": [
+      {
+        "h": "Your mail",
+        "p": [
+          "The app connects straight from your phone to your mail provider: Gmail, or any server that speaks IMAP and SMTP. Messages, addresses and settings are stored only on your phone, in an encrypted database.",
+          "None of it passes through a server of mine. I have no copy and no way to read it."
+        ]
+      },
+      {
+        "h": "Signing in",
+        "p": [
+          "For Gmail, you sign in on Google’s own page, and the app gets a key to your mailbox. For other mailboxes, you give the app your password. Both are kept on your phone, sealed with a key that never leaves the phone’s secure storage.",
+          "Removing an account in the app deletes its mail and its key from the phone. Removing the app deletes everything."
+        ]
+      },
+      {
+        "h": "Google user data",
+        "p": [
+          "With your permission, the app reads, sends and organizes your Gmail. It does this only to show your mail, send what you write and carry out what you do, such as archiving or marking as read.",
+          "The app’s use of information received from Google APIs adheres to the Google API Services User Data Policy, including the Limited Use requirements. Your Gmail data is not passed to anyone, not used for ads and not used to train AI models. I do not read it, unless you send me a letter yourself.",
+          "You can take the access back at any time at myaccount.google.com/permissions."
+        ]
+      },
+      {
+        "h": "Images in letters",
+        "p": [
+          "Senders often hide tiny images in letters to learn when you open them. The app holds remote images back, so they learn nothing.",
+          "Images load for letters from people, from senders you allowed, and when you tap Show. Then the phone downloads them from the sender’s server, which sees your IP address, as with any download. Images in junk never load."
+        ]
+      },
+      {
+        "h": "No tracking",
+        "p": [
+          "The app has no analytics, no ads and no third-party code that collects data. It sends nothing to me."
+        ]
+      },
+      {
+        "h": "Crash reports and letters to me",
+        "p": [
+          "If the app crashes, it keeps a short report on your phone and asks next time whether to send it. If you agree, it opens an ordinary letter from your own mailbox to me, and you can read it before sending. The report says where the app failed, the app and Android versions and the phone model. It holds no mail.",
+          "I use your letters only to answer you and to fix the app. Ask, and I will delete them."
+        ]
+      },
+      {
+        "h": "This site",
+        "p": [
+          "This site sets no cookies and loads nothing from other services; even the fonts come from here. The host, Netlify, keeps ordinary server logs (IP address, page and time) to deliver and protect the site.",
+          "The “Write to me” button opens your own mail app. The site stores nothing."
+        ]
+      },
+      {
+        "h": "Changes",
+        "p": [
+          "If anything here changes, I will update this page and its date, and say so in the app’s release notes."
+        ]
+      },
+      {
+        "h": "Contact",
+        "p": [
+          "Questions about privacy go to {email}."
+        ]
+      }
+    ],
+    "home": "Back to Ozero Mail"
   }
 }

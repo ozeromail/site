@@ -245,3 +245,14 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .focus .tabs input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
 .focus .fl{display:none;gap:3px}
 .focus:has([value="0"]:checked) .f0,.focus:has([value="1"]:checked) .f1,.focus:has([value="2"]:checked) .f2{display:grid}
+
+/* Privacy: plain reading, no snapping */
+.doc{scroll-snap-type:none}
+.policy{padding-top:32px;padding-bottom:64px}
+.policy h1{font-family:var(--f-display);font-size:clamp(20px,6.2cqi,44px);line-height:1.15;letter-spacing:-.02em;margin:28px 0 6px}
+.policy h2{font-size:21px;line-height:1.3;margin:40px 0 10px}
+.policy p+p{margin-top:12px}
+.policy .date,.policy .home,.policy .other{font-size:15px;color:var(--fg-3)}
+.policy .lead{margin-top:22px;font-size:21px}
+.policy .other{margin-top:48px}
+
