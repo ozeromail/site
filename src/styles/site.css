@@ -59,7 +59,7 @@ h1,h2{margin:0;text-wrap:balance}
 p{margin:0}
 [hidden]{display:none!important}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.mark{height:20px;width:auto;flex:none;display:block}
+.mark{width:22px;height:22px;flex:none;display:block}
 
 /* One narrow column with a lot of air */
 main{position:relative;z-index:1;max-width:600px;margin:0 auto;padding:0 max(24px,env(safe-area-inset-right,0px)) calc(112px + env(safe-area-inset-bottom,0px)) max(24px,env(safe-area-inset-left,0px));container-type:inline-size}
