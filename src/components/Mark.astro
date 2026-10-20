@@ -1,11 +1,6 @@
 ---
-// The logo: the app's accounts button, three overlapping account circles. Mask ids must be unique per page.
+import { markSvg } from './mark';
 interface Props { id: string }
 const { id } = Astro.props;
-// Each circle is cut by a gap from the one on top of it.
-const cuts = [56, 88];
 ---
-<svg class="mark" viewBox="0 0 112 48" aria-hidden="true">
-  <defs>{cuts.map((cx, i) => <mask id={`${id}${i}`} maskUnits="userSpaceOnUse"><rect x="-10" y="-10" width="132" height="68" fill="#fff"/><circle cx={cx} cy="24" r="27.5" fill="#000"/></mask>)}</defs>
-  <circle cx="24" cy="24" r="24" fill="var(--acc-1)" mask={`url(#${id}0)`}/><circle cx="56" cy="24" r="24" fill="var(--acc-2)" mask={`url(#${id}1)`}/><circle cx="88" cy="24" r="24" fill="var(--acc-3)"/>
-</svg>
+<Fragment set:html={markSvg(id, 'class="mark" aria-hidden="true"')} />
