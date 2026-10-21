@@ -9,7 +9,7 @@
   "tipFoot": "Support me",
   "statsText": "This site counts visits without cookies.",
   "statsLink": "The numbers are public",
-  "description": "Ozero Mail: one calm inbox for Gmail, Outlook, iCloud and any IMAP mail, with shared folders and people first. No AI, no ads, no tracking.",
+  "description": "Ozero Mail: one calm inbox for Gmail, iCloud and any IMAP mail (Outlook soon), with shared folders and people first. No AI, no ads, no tracking.",
   "h1": "All your email. One calm inbox.",
   "sub": "I’m making the email app I couldn’t find for myself. For Android and iPhone, no AI.",
   "pains": [
@@ -22,7 +22,7 @@
     },
     {
       "q": "One inbox, but five Sent folders?",
-      "a": "Most apps merge only the inbox. Here Sent, Archive, Spam and Trash can be shared across accounts too, like in Apple Mail. Gmail, Outlook, iCloud or any IMAP mail.",
+      "a": "Most apps merge only the inbox. Here Sent, Archive and Flagged can be shared across accounts too, like in Apple Mail. Gmail, iCloud or any IMAP mail; Outlook is coming.",
       "from": "Accounts",
       "when": "09:41",
       "demo": "boxes"
@@ -129,8 +129,7 @@
         "Inbox",
         "Sent",
         "Archive",
-        "Spam",
-        "Trash"
+        "Flagged"
       ],
       "accounts": [
         "Personal",
