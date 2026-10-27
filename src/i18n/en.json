@@ -9,7 +9,7 @@
   "tipFoot": "Support me",
   "statsText": "This site counts visits without cookies.",
   "statsLink": "The numbers are public",
-  "description": "Ozero Mail: one calm inbox for Gmail, iCloud and any IMAP mail (Outlook soon), with shared folders and people first. No AI, no ads, no tracking.",
+  "description": "Ozero Mail: one calm inbox for Gmail, iCloud, Exchange and any IMAP mail (Outlook soon), with shared folders and people first. No AI, no ads, no tracking.",
   "h1": "All your email. One calm inbox.",
   "sub": "I’m making the email app I couldn’t find for myself. For Android and iPhone, no AI.",
   "pains": [
@@ -22,7 +22,7 @@
     },
     {
       "q": "One inbox, but five Sent folders?",
-      "a": "Most apps merge only the inbox. Here Sent, Archive and Flagged can be shared across accounts too, like in Apple Mail. Gmail, iCloud or any IMAP mail; Outlook is coming.",
+      "a": "Most apps merge only the inbox. Here Sent, Archive, Spam and Trash are shared across accounts too, like in Apple Mail. Gmail, iCloud, Exchange at work or any IMAP mail; Outlook is coming.",
       "from": "Accounts",
       "when": "09:41",
       "demo": "boxes"
@@ -36,7 +36,7 @@
     },
     {
       "q": "Real letters lost in the noise?",
-      "a": "People get the inbox. Newsletters and notifications wait in their own tabs, sorted by simple rules on your phone.",
+      "a": "People get the inbox. Newsletters and notifications wait in their own tabs, sorted by simple rules on your phone. You can leave a newsletter right from a letter.",
       "from": "Focus",
       "when": "Yesterday",
       "demo": "focus"
@@ -187,20 +187,20 @@
   "privacy": {
     "title": "Privacy · Ozero Mail",
     "h1": "Privacy",
-    "updated": "Updated on 17 October 2026",
+    "updated": "Updated on 27 October 2026",
     "lead": "Ozero Mail is made by one person, Khizri Makhmudov. This page says what the app and this site do with your data. In short: your mail stays between your phone and your mail provider. I never see it.",
     "sections": [
       {
         "h": "Your mail",
         "p": [
-          "The app connects straight from your phone to your mail provider: Gmail, or any server that speaks IMAP and SMTP. Messages, addresses and settings are stored only on your phone, in an encrypted database.",
+          "The app connects straight from your phone to your mail provider: Gmail, your company’s Exchange server, or any server that speaks IMAP and SMTP. Messages, addresses and settings are stored only on your phone, in an encrypted database.",
           "None of it passes through a server of mine. I have no copy and no way to read it."
         ]
       },
       {
         "h": "Signing in",
         "p": [
-          "For Gmail, you sign in on Google’s own page, and the app gets a key to your mailbox. For other mailboxes, you give the app your password. Both are kept on your phone, sealed with a key that never leaves the phone’s secure storage.",
+          "For Gmail, you sign in on Google’s own page, and the app gets a key to your mailbox. For other mailboxes, Exchange included, you give the app your password, and a certificate if your company asks for one. All of it is kept on your phone, sealed with a key that never leaves the phone’s secure storage.",
           "Removing an account in the app deletes its mail and its key from the phone. Removing the app deletes everything, including the list of senders whose images you allowed."
         ]
       },
@@ -210,6 +210,13 @@
           "With your permission, the app reads, sends and organizes your Gmail. It does this only to show your mail, send what you write and carry out what you do, such as archiving or marking as read.",
           "Ozero Mail’s use and transfer to any other app of information received from Google APIs will adhere to the [Google API Services User Data Policy](https://developers.google.com/terms/api-services-user-data-policy), including the Limited Use requirements. Your Gmail data is not passed to anyone, not used for ads and not used to train AI models. I do not read it, unless you send me a letter yourself.",
           "You can take the access back at any time in your [Google Account](https://myaccount.google.com/permissions)."
+        ]
+      },
+      {
+        "h": "Meeting invitations",
+        "p": [
+          "Your answer to an invitation goes from your own mailbox, or straight to your Exchange server. The day strip next to it is built from invitations in your mail.",
+          "Add to calendar opens your phone’s calendar with the meeting filled in. The app does not read your calendar."
         ]
       },
       {
