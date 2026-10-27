@@ -49,3 +49,18 @@ const d = t.demo;
     </div>
   </div>
 )}
+{kind === 'work' && (
+  <div class="demo work">
+    <div class="card">
+      <p class="wt">{d.work.title}</p>
+      <p class="ws">{d.work.time}</p>
+      <p class="ws">{d.work.place}</p>
+      <div class="day" aria-hidden="true"><i class="lunch"></i><i class="this"></i><i class="other"></i></div>
+      <p class="clash">{d.work.clash}</p>
+    </div>
+    <div class="answers">
+      {d.work.answers.map((a, i) => <label><input type="radio" name="answer" value={i} /><span>{a}</span></label>)}
+    </div>
+    <p class="sent">{d.work.sent}</p>
+  </div>
+)}
