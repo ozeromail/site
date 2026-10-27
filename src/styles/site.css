@@ -236,13 +236,13 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .privacy .pic:has(input:focus-visible) .btnish{outline:2px solid var(--accent);outline-offset:2px}
 .privacy .pic:has(input:checked){background:linear-gradient(135deg,var(--acc-1),var(--acc-3) 55%,var(--acc-2));color:transparent}
 .privacy .pic:has(input:checked) > span{visibility:hidden}
-/* Focus: tabs, each with its own list */
-.focus .tabs{display:flex;gap:4px;padding:4px;margin-bottom:6px;border-radius:999px;background:var(--bg)}
-.focus .tabs label{flex:1;position:relative}
-.focus .tabs input{position:absolute;opacity:0}
-.focus .tabs span{display:grid;place-items:center;min-height:36px;padding:0 8px;border-radius:999px;font-size:14px;font-weight:600;color:var(--fg-3);cursor:pointer;white-space:nowrap}
-.focus .tabs input:checked+span{background:var(--accent-fill);color:#fff}
-.focus .tabs input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+/* Focus: tabs, each with its own list; the invitation answers share the pill control */
+.focus .tabs,.work .answers{display:flex;gap:4px;padding:4px;margin-bottom:6px;border-radius:999px;background:var(--bg)}
+.focus .tabs label,.work .answers label{flex:1;position:relative}
+.focus .tabs input,.work .answers input{position:absolute;opacity:0}
+.focus .tabs span,.work .answers span{display:grid;place-items:center;min-height:36px;padding:0 8px;border-radius:999px;font-size:14px;font-weight:600;color:var(--fg-3);cursor:pointer;white-space:nowrap}
+.focus .tabs input:checked+span,.work .answers input:checked+span{background:var(--accent-fill);color:#fff}
+.focus .tabs input:focus-visible+span,.work .answers input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
 .focus .fl{display:none;gap:3px}
 .focus:has([value="0"]:checked) .f0,.focus:has([value="1"]:checked) .f1,.focus:has([value="2"]:checked) .f2{display:grid}
 
@@ -256,3 +256,17 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .policy .lead{margin-top:22px;font-size:21px}
 .policy .other{margin-top:48px}
 
+/* Work mail: an invitation card, answered in place, with the day strip */
+.work .card{display:grid;gap:2px;padding:14px;border-radius:14px;background:var(--bg)}
+.demo.work .wt{font-weight:600;color:var(--fg)}
+.demo.work .ws{color:var(--fg-3)}
+.work .day{position:relative;height:14px;margin:12px 0 8px;border-radius:7px;background:repeating-linear-gradient(90deg,var(--bg-soft) 0 calc(20% - 1px),var(--line) calc(20% - 1px) 20%)}
+.work .day i{position:absolute;top:2px;bottom:2px;border-radius:5px;background:var(--stripe)}
+.work .day .lunch{left:10%;width:15%}
+.work .day .this{left:40%;width:20%;background:var(--accent-fill);z-index:1}
+.work .day .other{left:50%;width:20%;background:var(--acc-1);top:6px;bottom:-2px}
+.demo.work .clash{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--fg-2)}
+.demo.work .clash::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--acc-1)}
+.work .answers{margin:6px 0 0}
+.demo.work .sent{display:grid;place-items:center;min-height:0;height:0;opacity:0;overflow:hidden;font-size:14px;font-weight:600;color:var(--done);transition:opacity .4s ease,min-height .3s ease}
+.demo.work:has(.answers input:checked) .sent{min-height:36px;opacity:1}

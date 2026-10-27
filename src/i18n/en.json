@@ -28,6 +28,13 @@
       "demo": "boxes"
     },
     {
+      "q": "Work mail too?",
+      "a": "Your company’s Exchange sits next to your own mail; the address and password are enough. An invitation comes as a card: answer right in the letter, and the day strip shows what it clashes with.",
+      "from": "Work",
+      "when": "09:02",
+      "demo": "work"
+    },
+    {
       "q": "Who else reads your mail?",
       "a": "Only you and your mail provider. No AI, no ads, no tracking. Images in newsletters stay hidden, so senders can’t tell you opened them.",
       "from": "Privacy",
@@ -136,6 +143,18 @@
         "Work",
         "iCloud"
       ]
+    },
+    "work": {
+      "title": "Design review",
+      "time": "Thu, 14:00–15:00",
+      "place": "Room 4 · video link",
+      "clash": "Clashes with “Call with the bank” at 14:30",
+      "answers": [
+        "No",
+        "Maybe",
+        "Yes"
+      ],
+      "sent": "Answer sent to Anna"
     },
     "privacy": {
       "from": "Shop",
