@@ -15,7 +15,7 @@
   "pains": [
     {
       "q": "1,254 unread?",
-      "a": "The inbox is a to-do list, not an archive. Done moves a letter to the archive, nothing is deleted. Snooze brings it back when you need it. The bar at the bottom shows what’s left, and at zero it goes quiet. Try it here: swipe this letter left.",
+      "a": "The inbox is a to-do list, not an archive. Done moves a letter to the archive, nothing is deleted. Snooze brings it back when you need it. When nothing is left, it goes quiet. Try it here: swipe this letter left.",
       "from": "Inbox Zero",
       "when": "10:12",
       "demo": "zero"
@@ -23,7 +23,7 @@
     {
       "q": "One inbox, but five Sent folders?",
       "a": "Most apps merge only the inbox. Here Sent, Archive, Spam and Trash are shared across accounts too, like in Apple Mail. Gmail, iCloud, Exchange at work or any IMAP mail; Outlook is coming.",
-      "from": "Accounts",
+      "from": "Mailboxes",
       "when": "09:41",
       "demo": "boxes"
     },
@@ -60,6 +60,7 @@
   "mailBody": "Hi! Let me know when I can try it.",
   "by": "By Khizri",
   "doneLbl": "Done",
+  "archived": "Moved to Archive",
   "undo": "Undo",
   "reopen": "Open",
   "doneFor": "Done: {s}",
@@ -109,7 +110,8 @@
       "Closed beta on Android",
       "Release on Android and iPhone",
       "Ozero Deep"
-    ]
+    ],
+    "doneLbl": "done"
   },
   "demo": {
     "zero": {
@@ -117,96 +119,125 @@
       "rows": [
         [
           "Anna",
-          "Contract to sign"
+          "Contract to sign",
+          "10:04"
         ],
         [
           "Bank",
-          "Your statement is ready"
+          "Your statement is ready",
+          "09:30"
         ],
         [
           "Shop",
-          "Weekend sale"
+          "Weekend sale",
+          "08:12"
         ]
       ],
-      "empty": "All clear"
+      "empty": "Inbox is empty",
+      "emptyText": "All sorted. New mail will show up here.",
+      "back": "Bring them back"
     },
     "boxes": {
-      "title": "All accounts",
+      "title": "Mailboxes",
       "folders": [
-        "Inbox",
+        "All inboxes",
         "Sent",
-        "Archive",
-        "Flagged"
+        "Archive"
       ],
       "accounts": [
         "Personal",
         "Work",
         "iCloud"
-      ]
+      ],
+      "modes": [
+        "Usually",
+        "In Ozero Mail"
+      ],
+      "label": "Mailboxes view",
+      "merged": [
+        "All sent",
+        "All archived"
+      ],
+      "caption": "All accounts"
     },
     "work": {
       "title": "Design review",
       "time": "Thu, 14:00–15:00",
       "place": "Room 4 · video link",
-      "clash": "Clashes with “Call with the bank” at 14:30",
+      "day": "Thursday",
+      "fromMail": "from invitations in your mail",
+      "other": "Call with the bank · 14:30",
       "answers": [
         "No",
         "Maybe",
         "Yes"
       ],
-      "sent": "Answer sent to Anna"
+      "results": [
+        "You’re not going",
+        "You might go",
+        "You’re going"
+      ],
+      "change": "Change",
+      "label": "Your answer"
     },
     "privacy": {
       "from": "Shop",
       "subj": "This week’s deals",
-      "hidden": "Images are hidden. The sender won’t know you opened this.",
-      "show": "Show images"
+      "hidden": "Images are hidden, so the sender can’t tell you opened this.",
+      "show": "Show"
     },
     "focus": {
       "tabs": [
         "People",
-        "Updates",
+        "Notifications",
         "Newsletters"
       ],
       "lists": [
         [
           [
             "Mom",
-            "Call me when you’re free"
+            "Call me when you’re free",
+            "10:20"
           ],
           [
             "Anna",
-            "Contract to sign"
+            "Contract to sign",
+            "10:04"
           ]
         ],
         [
           [
             "Bank",
-            "Your sign-in code"
+            "Your sign-in code",
+            "09:58"
           ],
           [
             "Delivery",
-            "Your parcel is on its way"
+            "Your parcel is on its way",
+            "09:12"
           ]
         ],
         [
           [
             "Shop",
-            "This week’s deals"
+            "This week’s deals",
+            "08:00"
           ],
           [
             "Blog",
-            "New issue"
+            "New issue",
+            "Mon"
           ]
         ]
-      ]
+      ],
+      "label": "Inbox tab"
     }
   },
   "privacyLink": "Privacy",
   "privacy": {
     "title": "Privacy · Ozero Mail",
     "h1": "Privacy",
-    "updated": "Updated on 27 October 2026",
+    "updated": "Updated on 30 October 2026",
     "lead": "Ozero Mail is made by one person, Khizri Makhmudov. This page says what the app and this site do with your data. In short: your mail stays between your phone and your mail provider. I never see it.",
     "sections": [
       {
@@ -221,6 +252,13 @@
         "p": [
           "For Gmail, you sign in on Google’s own page, and the app gets a key to your mailbox. For other mailboxes, Exchange included, you give the app your password, and a certificate if your company asks for one. All of it is kept on your phone, sealed with a key that never leaves the phone’s secure storage.",
           "Removing an account in the app deletes its mail and its key from the phone. Removing the app deletes everything, including the list of senders whose images you allowed."
+        ]
+      },
+      {
+        "h": "Contacts",
+        "p": [
+          "When you type an address, the app suggests people from your mail and, if you allow it, from your phone’s contacts, and shows their names as you saved them. Your contacts stay on the phone.",
+          "For an Exchange account, the app also searches your company’s directory, so what you type goes to your company’s server, as in any work mail app."
         ]
       },
       {

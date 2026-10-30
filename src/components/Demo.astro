@@ -1,6 +1,8 @@
 ---
-// A small live piece of the app inside a letter, so the point is seen, not only read.
+// A small live piece of the app inside a letter, so the point is seen, not only read. It moves only when touched.
 import type { Strings } from '../i18n';
+import { fill } from '../i18n/format';
+import Row from './Row.astro';
 
 interface Props {
   t: Strings;
@@ -10,57 +12,84 @@ const { t, kind } = Astro.props;
 const d = t.demo;
 ---
 {kind === 'zero' && (
-  <div class="demo zero" aria-hidden="true">
+  <div class="demo zero">
     <p class="dh">{d.zero.title}<span class="dc">{d.zero.rows.length}</span></p>
     <div class="dl">
-      {d.zero.rows.map(([who, what]) => <p class="di"><span class="dn">{who}</span><span class="ds">{what}</span></p>)}
-      <p class="de">{d.zero.empty}</p>
+      {d.zero.rows.map(([who, what, when]) => (
+        <div class="swipe">
+          <div class="under" aria-hidden="true"><span class="word">{t.doneLbl}</span><span class="bead"><svg width="18" height="18"><use href="#i-check"/></svg></span></div>
+          <Row who={who} what={what} when={when} unread />
+          <button type="button" class="rowdone" aria-label={fill(t.doneFor, { s: `${who}, ${what}` })}><svg><use href="#i-check"/></svg></button>
+        </div>
+      ))}
+      <div class="de">
+        <canvas aria-hidden="true"></canvas>
+        <p class="det">{d.zero.empty}</p>
+        <p class="des">{d.zero.emptyText}</p>
+        <button type="button" class="deb">{d.zero.back}</button>
+      </div>
     </div>
   </div>
 )}
 {kind === 'boxes' && (
-  <div class="demo boxes" aria-hidden="true">
-    <p class="dh">{d.boxes.title}<span class="dots"><i></i><i></i><i></i></span></p>
-    <div class="dl">
-      {d.boxes.folders.map((f, i) => i === 1 ? (
-        <div class="sent">
-          {d.boxes.accounts.map((a, j) => <p class="di one"><span class="dn">{f}</span><span class="ds">{a}</span><span class="dots"><i class={`a${j + 1}`}></i></span></p>)}
-          <p class="di all"><span class="dn">{f}</span><span class="ds"></span><span class="dots"><i></i><i></i><i></i></span></p>
+  <div class="demo boxes">
+    <div class="tabs" role="radiogroup" aria-label={d.boxes.label}>
+      {d.boxes.modes.map((mode, i) => <label><input type="radio" name="boxes" value={i} checked={i === 0} /><span>{mode}</span></label>)}
+    </div>
+    <div class="sheetish" aria-hidden="true">
+      <p class="dh">{d.boxes.title}</p>
+      <p class="bx inbox"><span class="dots"><i></i><i></i><i></i></span><span class="bn">{d.boxes.folders[0]}</span><span class="bc">12</span></p>
+      <p class="cap">{d.boxes.caption}</p>
+      {d.boxes.merged.map((all, i) => (
+        <div class="grp">
+          {d.boxes.accounts.map((a, j) => <p class="bx one"><svg class="ic"><use href={i ? '#i-archive' : '#i-sent'}/></svg><span class="bn">{d.boxes.folders[i + 1]}</span><span class="ds">{a}</span><i class={`dot a${j + 1}`}></i></p>)}
+          <p class="bx all"><svg class="ic"><use href={i ? '#i-archive' : '#i-sent'}/></svg><span class="bn">{all}</span></p>
         </div>
-      ) : (
-        <p class="di"><span class="dn">{f}</span><span class="ds"></span><span class="dots"><i></i><i></i><i></i></span></p>
       ))}
     </div>
   </div>
 )}
 {kind === 'privacy' && (
   <div class="demo privacy">
-    <p class="di"><span class="dn">{d.privacy.from}</span><span class="ds">{d.privacy.subj}</span></p>
-    <label class="pic"><input type="checkbox" /><span class="ph">{d.privacy.hidden}</span><span class="btnish">{d.privacy.show}</span></label>
+    <Row who={d.privacy.from} what={d.privacy.subj} when="08:00" />
+    <label class="pic">
+      <input type="checkbox" aria-label={d.privacy.show} />
+      <span class="bar"><span>{d.privacy.hidden}</span><span class="btnish">{d.privacy.show}</span></span>
+      <span class="img" aria-hidden="true"></span>
+    </label>
   </div>
 )}
 {kind === 'focus' && (
   <div class="demo focus">
-    <div class="tabs">
-      {d.focus.tabs.map((tab, i) => <label><input type="radio" name="focus" value={i} checked={i === 0} /><span>{tab}</span></label>)}
+    <div class="tabs" role="radiogroup" aria-label={d.focus.label}>
+      {d.focus.tabs.map((tab, i) => <label><input type="radio" name="focus" value={i} checked={i === 0} /><span>{tab}<b class="n">{d.focus.lists[i].length}</b></span></label>)}
     </div>
     <div class="dl">
-      {d.focus.lists.map((list, i) => <div class={`fl f${i}`}>{list.map(([who, what]) => <p class="di"><span class="dn">{who}</span><span class="ds">{what}</span></p>)}</div>)}
+      {d.focus.lists.map((list, i) => <div class={`fl f${i}`}>{list.map(([who, what, when], j) => <Row who={who} what={what} when={when} unread={j === 0} />)}</div>)}
     </div>
   </div>
 )}
 {kind === 'work' && (
-  <div class="demo work">
+  <form class="demo work">
     <div class="card">
       <p class="wt">{d.work.title}</p>
       <p class="ws">{d.work.time}</p>
       <p class="ws">{d.work.place}</p>
-      <div class="day" aria-hidden="true"><i class="lunch"></i><i class="this"></i><i class="other"></i></div>
-      <p class="clash">{d.work.clash}</p>
+      <div class="day" aria-hidden="true">
+        <p class="dayh">{d.work.day}<span>{d.work.fromMail}</span></p>
+        <div class="hours">
+          {['13', '14', '15'].map((h) => <span class="h">{h}</span>)}
+          <span class="ev this">{d.work.title}</span>
+          <span class="ev other">{d.work.other}</span>
+        </div>
+      </div>
+      <div class="answers" role="radiogroup" aria-label={d.work.label}>
+        {d.work.answers.map((a, i) => <label class={i === 2 ? 'yes' : undefined}><input type="radio" name="answer" value={i} /><span>{a}</span></label>)}
+      </div>
+      <p class="result" role="status">
+        {d.work.results.map((r, i) => <span class={`r r${i}`}>{r}</span>)}
+        <button type="reset" class="chg">{d.work.change}</button>
+      </p>
     </div>
-    <div class="answers">
-      {d.work.answers.map((a, i) => <label><input type="radio" name="answer" value={i} /><span>{a}</span></label>)}
-    </div>
-    <p class="sent">{d.work.sent}</p>
-  </div>
+  </form>
 )}

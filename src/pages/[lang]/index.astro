@@ -8,6 +8,8 @@ import Demo from '../../components/Demo.astro';
 import { LANGS, strings, type Lang } from '../../i18n';
 import { fill, plural } from '../../i18n/format';
 import { CONTACT, INDEXABLE, STATS_URL, STORES, TIPS } from '../../config';
+import interLatin from '@fontsource-variable/inter/files/inter-latin-standard-normal.woff2?url';
+import interCyrillic from '@fontsource-variable/inter/files/inter-cyrillic-standard-normal.woff2?url';
 
 export function getStaticPaths() {
   return LANGS.map((lang) => ({ params: { lang } }));
@@ -38,6 +40,7 @@ const url = new URL(`/${lang}/`, site);
   <title>{t.title}</title>
   <meta name="description" content={t.description}>
   {!INDEXABLE && <meta name="robots" content="noindex, nofollow">}
+  {(lang === 'ru' ? [interLatin, interCyrillic] : [interLatin]).map((href) => <link rel="preload" as="font" type="font/woff2" href={href} crossorigin>)}
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   {LANGS.map((l) => <link rel="alternate" hreflang={l} href={new URL(`/${l}/`, site)}>)}
@@ -57,10 +60,11 @@ const url = new URL(`/${lang}/`, site);
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-sent" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-archive" viewBox="0 0 24 24"><path d="M4 7h16v3H4zM5.5 10v8.5h13V10M10 13.5h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 </svg>
 
-<div class="lake" id="lake" aria-hidden="true"><i></i><i></i><i></i></div>
 <main id="app">
   <header class="top">
     <span class="brand"><Mark id="mk" />ozero mail</span>
@@ -84,12 +88,13 @@ const url = new URL(`/${lang}/`, site);
   ))}
   <Letter t={t} subject={t.plan.q} from={t.plan.from} when={t.plan.when}>
     <p>{t.plan.a}</p>
-    <ol class="plan">{t.plan.steps.map((step, i) => <li class={i < t.plan.now ? 'done' : i === t.plan.now ? 'now' : undefined}>{step}{i === t.plan.now && <span class="pill">{t.plan.nowLbl}</span>}</li>)}</ol>
+    <ol class="plan">{t.plan.steps.map((step, i) => <li class={i < t.plan.now ? 'done' : i === t.plan.now ? 'now' : undefined} aria-current={i === t.plan.now ? 'step' : undefined}>{step}{i < t.plan.now && <span class="sr">, {t.plan.doneLbl}</span>}{i === t.plan.now && <> <span class="pill">{t.plan.nowLbl}</span></>}</li>)}</ol>
   </Letter>
 
   <section class="finale screen" id="finale">
     <div class="oz" aria-hidden="true"><span id="ozw">{t.inbox}</span><span class="n" id="ozn">{n}</span></div>
-    <div class="bulk" id="bulk"><div class="under" aria-hidden="true"><svg width="18" height="18"><use href="#i-check"/></svg><span>{t.doneLbl}</span></div><button type="button" class="bs" id="bulkBtn"><span class="grip" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span><span id="bulkText">{plural(lang, c.bulk, n)}</span><span class="grip" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span></button></div>
+    <canvas class="lake" id="lake" aria-hidden="true"></canvas>
+    <div class="bulk" id="bulk"><div class="under" aria-hidden="true"><span class="word">{t.doneLbl}</span><span class="bead"><svg width="20" height="20"><use href="#i-check"/></svg></span></div><button type="button" class="bs" id="bulkBtn"><span class="grip" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span><span id="bulkText">{plural(lang, c.bulk, n)}</span><span class="grip" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span></button></div>
     <p class="calm" id="calm" tabindex="-1" hidden>{t.calm}</p>
     <button type="button" class="back" id="bringBack" hidden>{t.bringBack}</button>
     {!released && <a class="next" href="#wait">{t.next}<span class="drift" aria-hidden="true">↓</span></a>}
@@ -128,7 +133,7 @@ const url = new URL(`/${lang}/`, site);
   </div>
 </nav>
 <p class="sr" id="live" aria-live="polite"></p>
-<div class="toast" id="toast" hidden><span>{t.doneLbl}</span><button type="button" id="toastUndo">{t.undo}</button></div>
+<div class="toast gone" id="toast" hidden><span>{t.archived}</span><button type="button" id="toastUndo">{t.undo}</button></div>
 
 <script type="application/json" id="strings" set:html={JSON.stringify({ lang, word: t.inbox, done: t.doneLbl, ...c }).replace(/</g, '\\u003c')} />
 <script>
