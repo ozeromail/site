@@ -3,6 +3,7 @@
 import type { Strings } from '../i18n';
 import { fill } from '../i18n/format';
 import Row from './Row.astro';
+import Under from './Under.astro';
 
 interface Props {
   t: Strings;
@@ -17,7 +18,7 @@ const d = t.demo;
     <div class="dl">
       {d.zero.rows.map(([who, what, when]) => (
         <div class="swipe">
-          <div class="under" aria-hidden="true"><span class="word">{t.doneLbl}</span><span class="bead"><svg aria-hidden="true" width="18" height="18"><use href="#i-check"/></svg></span></div>
+          <Under label={t.doneLbl} size={18} />
           <Row who={who} what={what} when={when} unread />
           <button type="button" class="rowdone" aria-label={fill(t.doneFor, { s: `${who}, ${what}` })}><svg aria-hidden="true"><use href="#i-check"/></svg></button>
         </div>
@@ -86,7 +87,7 @@ const d = t.demo;
           <span class="ev other">{d.work.other}</span>
         </div>
       </div>
-      <div class="answers">
+      <div class="answers" role="group" aria-label={d.work.label}>
         {d.work.answers.map((a, i) => <button type="button" class={i === 2 ? 'yes' : undefined} data-answer={i} data-result={d.work.results[i]}>{a}</button>)}
       </div>
       <p class="result"><span class="rs">{['#i-close', '#i-maybe', '#i-check'].map((i, n) => <svg aria-hidden="true" class={`ri r${n}`}><use href={i}/></svg>)}<span class="rtext" role="status"></span></span><button type="button" class="chg">{d.work.change}</button></p>

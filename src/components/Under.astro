@@ -1,0 +1,9 @@
+---
+// What a swipe reveals: the action's word and its bead by the edge.
+interface Props {
+  label: string;
+  size?: number;
+}
+const { label, size = 20 } = Astro.props;
+---
+<div class="under" aria-hidden="true"><span class="word">{label}</span><span class="bead"><svg width={size} height={size}><use href="#i-check"/></svg></span></div>
