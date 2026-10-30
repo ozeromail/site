@@ -45,17 +45,22 @@ function spring(from: number, to: number, v: number, apply: (x: number) => void,
 
 /* Springs an element's height from what it was before `change` to what it is after, so what is below
    moves up or down instead of jumping. */
+const resizing = new WeakMap<HTMLElement, () => void>();
 function resize(box: HTMLElement, change: () => void, done?: () => void) {
+  // A resize caught midway starts from where it is.
   const h0 = box.offsetHeight;
+  resizing.get(box)?.();
+  box.style.height = '';
   change();
   const h1 = box.offsetHeight;
   const end = () => {
+    resizing.delete(box);
     box.style.height = '';
     done?.();
   };
   if (h0 === h1) return end();
   box.style.height = `${h0}px`;
-  spring(h0, h1, 0, (h) => (box.style.height = `${h}px`), end);
+  resizing.set(box, spring(h0, h1, 0, (h) => (box.style.height = `${h}px`), end));
 }
 
 interface Swipe {
@@ -99,6 +104,8 @@ function swipeable(box: HTMLElement, sheet: HTMLElement, onSwipe: (reset: () => 
     place(0);
   };
   const fly = (from: number, speed: number) => {
+    if (box.classList.contains('flying')) return;
+    stop();
     const width = box.offsetWidth;
     box.classList.add('flying', 'armed');
     // Aimed past the edge and done once out of sight, so it never lingers there.
@@ -240,6 +247,7 @@ export function start() {
   let gliding = false;
   function glide(target: HTMLElement, block: ScrollLogicalPosition, then?: () => void) {
     gliding = true;
+    const y0 = scrollY;
     target.scrollIntoView({ block });
     let ended = false;
     const over = () => {
@@ -249,9 +257,22 @@ export function start() {
       readSoon();
       then?.();
     };
-    addEventListener('scrollend', over, { once: true });
-    // No scroll at all, or no scrollend in this browser.
-    setTimeout(over, 900);
+    if ('onscrollend' in window) {
+      addEventListener('scrollend', over, { once: true });
+      // No scroll at all.
+      setTimeout(() => scrollY === y0 && over(), 150);
+    } else {
+      // Safari: over once the page has been still for a moment.
+      let quiet = setTimeout(over, 200);
+      const wait = () => {
+        clearTimeout(quiet);
+        quiet = setTimeout(() => {
+          removeEventListener('scroll', wait);
+          over();
+        }, 150);
+      };
+      addEventListener('scroll', wait, { passive: true });
+    }
   }
   // Brings a letter into view only if it is out of it.
   const reveal = (m: HTMLElement) => {
@@ -282,7 +303,12 @@ export function start() {
   const lake = new Lake($<HTMLCanvasElement>('lake'), 90);
   lake.onOpen = () => el.calm.classList.remove('wait-drop');
   const lakes = [lake];
-  addEventListener('resize', () => lakes.forEach((l) => l.redraw()));
+  // The URL bar coming and going resizes the page too, so redraw once it settles.
+  let redrawing = 0;
+  addEventListener('resize', () => {
+    clearTimeout(redrawing);
+    redrawing = window.setTimeout(() => lakes.forEach((l) => l.redraw()), 120);
+  });
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => lakes.forEach((l) => l.redraw()));
 
   // The counters show unread letters; Inbox Zero needs every letter Done.
@@ -346,13 +372,17 @@ export function start() {
   // Called once the letter has flown out: it closes into a row and the letters below move up.
   function done(m: HTMLElement, reset: () => void) {
     if (!isOpen(m)) return reset();
+    const row = m.querySelector<HTMLElement>('.row')!;
     resize(m, () => {
       collapse(m, true);
       reset();
       upd();
+    }, () => {
+      // A keyboard user follows focus, so the row comes into view for them.
+      if (row.matches(':focus-visible')) row.scrollIntoView({ block: 'nearest' });
     });
-    if (mails.some(isOpen)) m.querySelector<HTMLElement>('.row')!.focus({ preventScroll: true });
-    say(`${S.done}. ${leftText()}`);
+    if (mails.some(isOpen)) row.focus({ preventScroll: true });
+    say(`${S.done}. ${leftText()}. ${S.undoHint}`);
     if (mails.some(isOpen)) showToast(() => reopen(m));
     else hideToast();
   }
@@ -420,9 +450,12 @@ export function start() {
     const zeroLake = new Lake(zero.querySelector('canvas')!, 72, 120);
     lakes.push(zeroLake);
     zeroLake.onOpen = () => zero.classList.remove('falling');
-    const left = () => rows.filter((x) => !x.classList.contains('gone'));
+    const deb = zero.querySelector<HTMLElement>('.deb')!;
+    // A row on its way out is already gone for focus.
+    const left = () => rows.filter((x) => !x.inert);
+    let toDeb = false;
     const gone = (r: HTMLElement, reset: () => void) => {
-      r.classList.add('gone');
+      r.inert = true;
       const n = left().length;
       count.textContent = n ? String(n) : '';
       // The rows below close the gap; the last row leaves the water.
@@ -430,18 +463,25 @@ export function start() {
       if (n) return;
       zero.classList.add('clear', 'falling');
       zeroLake.open();
+      if (toDeb) deb.focus({ preventScroll: true });
+      toDeb = false;
     };
     for (const r of rows) {
-      const swipe = swipeable(r, r.querySelector<HTMLElement>('.di')!, (reset) => gone(r, reset), () => !r.classList.contains('gone'));
+      const swipe = swipeable(r, r.querySelector<HTMLElement>('.di')!, (reset) => gone(r, reset), () => !r.inert);
       // Keyboards clear a row with its button, which shows only when focused.
       r.querySelector('.rowdone')!.addEventListener('click', () => {
         const next = left().find((x) => x !== r);
+        if (next) next.querySelector<HTMLElement>('.rowdone')!.focus();
+        else toDeb = true;
+        r.inert = true;
         swipe.fly();
-        (next?.querySelector<HTMLElement>('.rowdone') ?? zero.querySelector<HTMLElement>('.deb'))!.focus();
       });
     }
-    zero.querySelector('.deb')!.addEventListener('click', () => {
-      rows.forEach((r) => r.classList.remove('gone', 'shut'));
+    deb.addEventListener('click', () => {
+      rows.forEach((r) => {
+        r.inert = false;
+        r.classList.remove('shut');
+      });
       count.textContent = String(rows.length);
       zero.classList.remove('clear', 'falling');
       zeroLake.hide();
@@ -450,16 +490,29 @@ export function start() {
   }
 
   /* The invitation: once answered, its answer and Change take the buttons' place, so focus moves along. */
-  const work = document.querySelector<HTMLFormElement>('.demo.work');
-  work?.addEventListener('change', () => work.querySelector<HTMLElement>('.chg')!.focus());
-  work?.addEventListener('reset', () => requestAnimationFrame(() => work.querySelector<HTMLElement>('input')!.focus()));
+  const work = document.querySelector<HTMLElement>('.demo.work');
+  if (work) {
+    const result = work.querySelector<HTMLElement>('.rtext')!;
+    for (const b of work.querySelectorAll<HTMLElement>('.answers button')) {
+      b.addEventListener('click', () => {
+        result.textContent = b.dataset.result!;
+        work.classList.add('answered');
+        work.querySelector<HTMLElement>('.chg')!.focus();
+      });
+    }
+    work.querySelector('.chg')!.addEventListener('click', () => {
+      result.textContent = '';
+      work.classList.remove('answered');
+      work.querySelector<HTMLElement>('.answers button')!.focus();
+    });
+  }
 
   /* Keyboard: E marks the focused letter, or the first open one in view, as Done; U or Z undoes. */
   document.addEventListener('keydown', (e) => {
     if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
     // Only where a letter or the toast has focus, or nothing does, so a key pressed elsewhere does nothing.
     const at = document.activeElement;
-    if (at && at !== document.body && !at.closest('.mail,.toast,.finale')) return;
+    if (!at?.closest('.mail,.toast,.finale')) return;
     if ((e.target as Element).closest('input,textarea')) return;
     // By physical key, so the shortcuts work on any keyboard layout.
     const k = e.code;

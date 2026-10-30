@@ -17,9 +17,9 @@ const d = t.demo;
     <div class="dl">
       {d.zero.rows.map(([who, what, when]) => (
         <div class="swipe">
-          <div class="under" aria-hidden="true"><span class="word">{t.doneLbl}</span><span class="bead"><svg width="18" height="18"><use href="#i-check"/></svg></span></div>
+          <div class="under" aria-hidden="true"><span class="word">{t.doneLbl}</span><span class="bead"><svg aria-hidden="true" width="18" height="18"><use href="#i-check"/></svg></span></div>
           <Row who={who} what={what} when={when} unread />
-          <button type="button" class="rowdone" aria-label={fill(t.doneFor, { s: `${who}, ${what}` })}><svg><use href="#i-check"/></svg></button>
+          <button type="button" class="rowdone" aria-label={fill(t.doneFor, { s: `${who}, ${what}` })}><svg aria-hidden="true"><use href="#i-check"/></svg></button>
         </div>
       ))}
       <div class="de">
@@ -42,8 +42,8 @@ const d = t.demo;
       <p class="cap">{d.boxes.caption}</p>
       {d.boxes.merged.map((all, i) => (
         <div class="grp">
-          {d.boxes.accounts.map((a, j) => <p class="bx one"><svg class="ic"><use href={i ? '#i-archive' : '#i-sent'}/></svg><span class="bn">{d.boxes.folders[i + 1]}</span><span class="ds">{a}</span><i class={`dot a${j + 1}`}></i></p>)}
-          <p class="bx all"><svg class="ic"><use href={i ? '#i-archive' : '#i-sent'}/></svg><span class="bn">{all}</span></p>
+          {d.boxes.accounts.map((a, j) => <p class="bx one"><svg aria-hidden="true" class="ic"><use href={i ? '#i-archive' : '#i-sent'}/></svg><span class="bn">{d.boxes.folders[i + 1]}</span><span class="ds">{a}</span><i class={`dot a${j + 1}`}></i></p>)}
+          <p class="bx all"><svg aria-hidden="true" class="ic"><use href={i ? '#i-archive' : '#i-sent'}/></svg><span class="bn">{all}</span></p>
         </div>
       ))}
     </div>
@@ -53,7 +53,7 @@ const d = t.demo;
   <div class="demo privacy">
     <Row who={d.privacy.from} what={d.privacy.subj} when="08:00" />
     <label class="pic">
-      <input type="checkbox" aria-label={d.privacy.show} />
+      <input type="checkbox" aria-label={d.privacy.showLabel} />
       <span class="bar"><span>{d.privacy.hidden}</span><span class="btnish">{d.privacy.show}</span></span>
       <span class="img" aria-hidden="true"></span>
     </label>
@@ -70,7 +70,7 @@ const d = t.demo;
   </div>
 )}
 {kind === 'work' && (
-  <form class="demo work">
+  <div class="demo work">
     <div class="card">
       <p class="wt">{d.work.title}</p>
       <p class="ws">{d.work.time}</p>
@@ -83,13 +83,10 @@ const d = t.demo;
           <span class="ev other">{d.work.other}</span>
         </div>
       </div>
-      <div class="answers" role="radiogroup" aria-label={d.work.label}>
-        {d.work.answers.map((a, i) => <label class={i === 2 ? 'yes' : undefined}><input type="radio" name="answer" value={i} /><span>{a}</span></label>)}
+      <div class="answers">
+        {d.work.answers.map((a, i) => <button type="button" class={i === 2 ? 'yes' : undefined} data-result={d.work.results[i]}>{a}</button>)}
       </div>
-      <p class="result" role="status">
-        {d.work.results.map((r, i) => <span class={`r r${i}`}>{r}</span>)}
-        <button type="reset" class="chg">{d.work.change}</button>
-      </p>
+      <p class="result"><span class="rtext" role="status"></span><button type="button" class="chg">{d.work.change}</button></p>
     </div>
-  </form>
+  </div>
 )}

@@ -64,7 +64,7 @@
   "undo": "Undo",
   "reopen": "Open",
   "doneFor": "Done: {s}",
-  "openFor": "Open again: {s}",
+  "openFor": "Open: {s}",
   "client": {
     "unread": {
       "one": "unread letter",
@@ -80,7 +80,8 @@
       "one": "Swipe {n} letter",
       "other": "Swipe {n} letters"
     },
-    "allDone": "All marked as done"
+    "allDone": "All marked as done",
+    "undoHint": "Undo with U"
   },
   "calm": "Empty and quiet. That’s the feeling I’m building.",
   "name": "Khizri",
@@ -184,7 +185,8 @@
       "from": "Shop",
       "subj": "This week’s deals",
       "hidden": "Images are hidden, so the sender can’t tell you opened this.",
-      "show": "Show"
+      "show": "Show",
+      "showLabel": "Show images"
     },
     "focus": {
       "tabs": [

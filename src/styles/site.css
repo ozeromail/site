@@ -5,7 +5,7 @@
   --bg-soft:#f2f5fa;
   --fg:#142036;
   --fg-2:#3d4a63;
-  --fg-3:#647089;
+  --fg-3:#5b6680;
   --line:#e9eef5;
   --stripe:#c9d2e0;
   /* The morning blue: water, marks and Done; the darker tone for text and filled buttons, so both read */
@@ -78,7 +78,7 @@ main{position:relative;z-index:1;max-width:620px;margin:0 auto;padding:0 max(24p
 .store b{font-size:16px;font-weight:600}
 
 /* A letter, set like an open message: who and when, the subject, then text to read */
-.mail{position:relative;display:grid;overflow:hidden;margin-left:-16px;padding-left:16px}
+.mail{position:relative;display:grid;overflow:hidden;margin-left:-20px;padding-left:20px}
 .mail>*{grid-area:1/1}
 .mail .sheet{position:relative;background:var(--bg);display:grid;gap:16px;justify-items:start;touch-action:pan-y pinch-zoom}
 .dragging>.sheet,.flying>.sheet{will-change:transform}
@@ -221,7 +221,7 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .zero .swipe>*{grid-area:1/1}
 .zero .swipe .di{touch-action:pan-y pinch-zoom;cursor:grab;user-select:none;-webkit-user-select:none}
 .zero .flying .di,.zero .dragging .di{will-change:transform}
-.zero .swipe.shut{height:0}
+.zero .swipe.shut{height:0;visibility:hidden}
 .zero .under{padding-right:12px;gap:8px}
 .zero .under .word{font-size:14px}
 .zero .bead{width:30px;height:30px}
@@ -244,9 +244,9 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .seg{background:var(--bg-soft);max-width:260px}
 .focus .tabs label,.boxes .tabs label,.seg label{flex:1 1 0;min-width:0;position:relative;display:flex}
 .focus .tabs input,.boxes .tabs input,.seg input{position:absolute;opacity:0;pointer-events:none}
-.focus .tabs span,.boxes .tabs span,.seg span{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;min-height:38px;padding:0 6px;border-radius:11px;font-size:14px;font-weight:500;color:var(--fg-3);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background-color .25s var(--ease),color .25s var(--ease),box-shadow .25s var(--ease)}
+.focus .tabs span,.boxes .tabs span,.seg span{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;min-height:38px;padding:2px 6px;border-radius:11px;font-size:14px;line-height:1.15;text-align:center;font-weight:500;color:var(--fg-3);cursor:pointer;flex-wrap:wrap;column-gap:5px;row-gap:0;transition:background-color .25s var(--ease),color .25s var(--ease),box-shadow .25s var(--ease)}
 .focus .tabs input:checked+span,.boxes .tabs input:checked+span,.seg input:checked+span{background:var(--bg);color:var(--fg);font-weight:600;box-shadow:0 1px 2px rgba(10,20,40,.12)}
-.focus .tabs input:focus-visible+span,.boxes .tabs input:focus-visible+span,.seg input:focus-visible+span{outline:2px solid var(--water);outline-offset:1px}
+.focus .tabs input:focus-visible+span,.boxes .tabs input:focus-visible+span,.seg input:focus-visible+span{outline:2px solid var(--accent);outline-offset:-2px}
 .tabs .n{font-size:11px;font-weight:700;color:var(--accent)}
 .focus .fl{display:none}
 .focus:has([value="0"]:checked) .f0,.focus:has([value="1"]:checked) .f1,.focus:has([value="2"]:checked) .f2{display:grid;animation:pour .4s var(--ease)}
@@ -304,16 +304,12 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .work .ev.other{top:43px;left:52%;right:0;background:color-mix(in srgb,#df5260 14%,var(--bg));color:#c23745;box-shadow:inset 3px 0 #df5260}
 @media (prefers-color-scheme: dark){.work .ev.other{color:#f08a94}}
 .work .answers{display:flex;gap:8px;margin-top:4px}
-.work .answers label{flex:1 1 0;min-width:0;display:flex}
-.work .answers input{position:absolute;opacity:0;pointer-events:none}
-.work .answers span{flex:1;display:grid;place-items:center;min-height:48px;border-radius:14px;border:1px solid var(--line);font-size:15px;font-weight:600;color:var(--fg);cursor:pointer;white-space:nowrap;transition:background-color .15s ease}
-.work .answers span:hover{background:var(--bg-soft)}
-.work .answers .yes span{background:var(--accent-fill);border-color:var(--accent-fill);color:#fff}
-.work .answers input:focus-visible+span{outline:2px solid var(--water);outline-offset:2px}
+.work .answers button{flex:1 1 0;min-width:0;min-height:48px;padding:0 6px;border-radius:14px;border:1px solid var(--line);background:none;font-size:15px;font-weight:600;line-height:1.15;color:var(--fg);cursor:pointer;transition:background-color .15s ease}
+.work .answers button:hover{background:var(--bg-soft)}
+.work .answers .yes{background:var(--accent-fill);border-color:var(--accent-fill);color:#fff}
+.work .answers .yes:hover{background:var(--accent-fill);filter:brightness(1.06)}
 .work .result{display:none;align-items:center;justify-content:space-between;gap:8px;min-height:48px;margin-top:4px;font-weight:600;color:var(--fg)}
-.work .result .r{display:none}
-.work:has(.answers :checked) .answers{display:none}
-.work:has(.answers :checked) .result{display:flex;animation:pour .3s var(--ease)}
-.work:has([value="0"]:checked) .r0,.work:has([value="1"]:checked) .r1,.work:has([value="2"]:checked) .r2{display:inline}
+.work.answered .answers{display:none}
+.work.answered .result{display:flex;animation:pour .3s var(--ease)}
 .work .chg{border:0;background:none;color:var(--accent);font-weight:600;font-size:15px;min-height:44px;padding:0 12px;border-radius:999px;cursor:pointer}
 .work .chg:hover{background:var(--bg-soft)}
