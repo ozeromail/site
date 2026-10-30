@@ -382,15 +382,17 @@ export function start() {
   // The row comes into view first, if it is out of it, and then opens where the reader looks.
   function reopen(m: HTMLElement) {
     hideToast();
-    const open = () => resize(m, () => {
-      collapse(m, false);
-      swipes.get(m)!.back();
-      upd();
-    });
+    const open = () => {
+      resize(m, () => {
+        collapse(m, false);
+        swipes.get(m)!.back();
+        upd();
+      });
+      follow(doneBtn(m));
+    };
     const r = m.getBoundingClientRect();
     if (r.top < 0 || r.top > innerHeight * 0.6) glide(m, 'start', open);
     else open();
-    follow(doneBtn(m));
     say(leftText());
   }
   // Called once the letter has flown out: it closes into a row and the letters below move up.
@@ -418,10 +420,15 @@ export function start() {
       // A keyboard user follows focus, so the row comes into view for them.
       if (row.matches(':focus-visible')) row.scrollIntoView({ block: 'nearest' });
     }, top < 0 ? (k) => scrollTo(0, y0 + top * k) : undefined);
-    if (mails.some(isOpen)) follow(row);
-    say(`${S.done}. ${leftText()}. ${S.undoHint}`);
-    if (mails.some(isOpen)) showToast(() => reopen(m));
-    else hideToast();
+    // The last letter has no Undo: "Bring the letters back" takes its place.
+    if (mails.some(isOpen)) {
+      follow(row);
+      say(`${S.done}. ${leftText()}. ${S.undoHint}`);
+      showToast(() => reopen(m));
+    } else {
+      say(`${S.done}. ${leftText()}`);
+      hideToast();
+    }
   }
 
   // Touch swipes anywhere on the letter; a mouse drags by the header, the subject or the margins, so text stays selectable.
@@ -498,13 +505,17 @@ export function start() {
       const n = left().length;
       count.textContent = n ? String(n) : '';
       // The rows below close the gap; once the last one has closed, the water opens.
+      // A keyboard user gets Back at once, hidden until the water settles, so focus never drops.
+      if (!n && toDeb) {
+        zero.classList.add('clear', 'falling');
+        deb.focus({ preventScroll: true });
+        toDeb = false;
+      }
       resize(r, () => r.classList.add('shut'), () => {
         reset();
         if (n || left().length) return;
         resize(zero, () => zero.classList.add('clear', 'falling'));
         zeroLake.open();
-        if (toDeb) deb.focus({ preventScroll: true });
-        toDeb = false;
       });
     };
     for (const r of rows) {
@@ -528,7 +539,7 @@ export function start() {
       });
       count.textContent = String(rows.length);
       zeroLake.hide();
-      rows[0].querySelector<HTMLElement>('.rowdone')!.focus();
+      follow(rows[0].querySelector<HTMLElement>('.rowdone')!);
     });
   }
 
@@ -567,7 +578,7 @@ export function start() {
     if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
     // Only where a letter or the toast has focus, or nothing does, so a key pressed elsewhere does nothing.
     const at = document.activeElement;
-    if (!at?.closest('.mail,.toast,.finale')) return;
+    if (at && at !== document.body && !at.closest('.mail,.toast,.finale')) return;
     if ((e.target as Element).closest('input,textarea')) return;
     // By physical key, so the shortcuts work on any keyboard layout.
     const k = e.code;
