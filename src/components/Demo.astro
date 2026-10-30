@@ -62,10 +62,10 @@ const d = t.demo;
 {kind === 'focus' && (
   <div class="demo focus">
     <div class="tabs" role="radiogroup" aria-label={d.focus.label}>
-      {d.focus.tabs.map((tab, i) => <label><input type="radio" name="focus" value={i} checked={i === 0} /><span><span class="tl">{tab}</span><b class="n">{d.focus.lists[i].filter((_, j) => j === 0).length}</b></span></label>)}
+      {d.focus.tabs.map((tab, i) => <label><input type="radio" name="focus" value={i} checked={i === 0} /><span><span class="tl">{tab}</span>{i === 0 && <b class="n">1</b>}</span></label>)}
     </div>
     <div class="dl">
-      {d.focus.lists.map((list, i) => <div class={`fl f${i}`}>{list.map(([who, what, when], j) => <Row who={who} what={what} when={when} unread={j === 0} />)}</div>)}
+      {d.focus.lists.map((list, i) => <div class={`fl f${i}`}>{list.map(([who, what, when], j) => <Row who={who} what={what} when={when} unread={i === 0 && j === 0} />)}</div>)}
     </div>
   </div>
 )}
@@ -76,7 +76,8 @@ const d = t.demo;
         <p class="leaf" aria-hidden="true"><span>{d.work.leaf[0]}</span><b>{d.work.leaf[1]}</b></p>
         <div><p class="wt">{d.work.title}</p><p class="ws">{d.work.time}</p></div>
       </div>
-      <p class="meta"><svg aria-hidden="true"><use href="#i-pin"/></svg><span>{d.work.place}</span><span class="join">{d.work.join}</span></p>
+      <p class="meta"><svg aria-hidden="true"><use href="#i-pin"/></svg><span>{d.work.place}</span></p>
+      <p class="meta join"><svg aria-hidden="true"><use href="#i-video"/></svg><span>{d.work.join}</span></p>
       <div class="day" aria-hidden="true">
         <p class="dayh">{d.work.day}<span>{d.work.fromMail}</span></p>
         <div class="hours">
@@ -88,7 +89,7 @@ const d = t.demo;
       <div class="answers">
         {d.work.answers.map((a, i) => <button type="button" class={i === 2 ? 'yes' : undefined} data-answer={i} data-result={d.work.results[i]}>{a}</button>)}
       </div>
-      <p class="result"><span class="rs"><svg aria-hidden="true"><use href="#i-check"/></svg><span class="rtext" role="status"></span></span><button type="button" class="chg">{d.work.change}</button></p>
+      <p class="result"><span class="rs">{['#i-close', '#i-maybe', '#i-check'].map((i, n) => <svg aria-hidden="true" class={`ri r${n}`}><use href={i}/></svg>)}<span class="rtext" role="status"></span></span><button type="button" class="chg">{d.work.change}</button></p>
     </div>
   </div>
 )}
