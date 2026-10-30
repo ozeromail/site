@@ -51,7 +51,7 @@ const d = t.demo;
 )}
 {kind === 'privacy' && (
   <div class="demo privacy">
-    <Row who={d.privacy.from} what={d.privacy.subj} when="08:00" />
+    <div class="lh"><p class="ls">{d.privacy.subj}</p><p class="lf"><b>{d.privacy.from}</b><span>08:00</span></p></div>
     <label class="pic">
       <input type="checkbox" aria-label={d.privacy.showLabel} />
       <span class="bar"><span>{d.privacy.hidden}</span><span class="btnish">{d.privacy.show}</span></span>
@@ -62,7 +62,7 @@ const d = t.demo;
 {kind === 'focus' && (
   <div class="demo focus">
     <div class="tabs" role="radiogroup" aria-label={d.focus.label}>
-      {d.focus.tabs.map((tab, i) => <label><input type="radio" name="focus" value={i} checked={i === 0} /><span>{tab}<b class="n">{d.focus.lists[i].length}</b></span></label>)}
+      {d.focus.tabs.map((tab, i) => <label><input type="radio" name="focus" value={i} checked={i === 0} /><span><span class="tl">{tab}</span><b class="n">{d.focus.lists[i].filter((_, j) => j === 0).length}</b></span></label>)}
     </div>
     <div class="dl">
       {d.focus.lists.map((list, i) => <div class={`fl f${i}`}>{list.map(([who, what, when], j) => <Row who={who} what={what} when={when} unread={j === 0} />)}</div>)}
@@ -72,9 +72,11 @@ const d = t.demo;
 {kind === 'work' && (
   <div class="demo work">
     <div class="card">
-      <p class="wt">{d.work.title}</p>
-      <p class="ws">{d.work.time}</p>
-      <p class="ws">{d.work.place}</p>
+      <div class="wtop">
+        <p class="leaf" aria-hidden="true"><span>{d.work.leaf[0]}</span><b>{d.work.leaf[1]}</b></p>
+        <div><p class="wt">{d.work.title}</p><p class="ws">{d.work.time}</p></div>
+      </div>
+      <p class="meta"><svg aria-hidden="true"><use href="#i-pin"/></svg><span>{d.work.place}</span><span class="join">{d.work.join}</span></p>
       <div class="day" aria-hidden="true">
         <p class="dayh">{d.work.day}<span>{d.work.fromMail}</span></p>
         <div class="hours">
@@ -84,9 +86,9 @@ const d = t.demo;
         </div>
       </div>
       <div class="answers">
-        {d.work.answers.map((a, i) => <button type="button" class={i === 2 ? 'yes' : undefined} data-result={d.work.results[i]}>{a}</button>)}
+        {d.work.answers.map((a, i) => <button type="button" class={i === 2 ? 'yes' : undefined} data-answer={i} data-result={d.work.results[i]}>{a}</button>)}
       </div>
-      <p class="result"><span class="rtext" role="status"></span><button type="button" class="chg">{d.work.change}</button></p>
+      <p class="result"><span class="rs"><svg aria-hidden="true"><use href="#i-check"/></svg><span class="rtext" role="status"></span></span><button type="button" class="chg">{d.work.change}</button></p>
     </div>
   </div>
 )}
