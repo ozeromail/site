@@ -1,82 +1,74 @@
-/* A short inbox: a letter per pain, then one from the author. Clearing them leaves "ozero" and calm water. */
+/* A short inbox: a letter per pain, then one from the author. Clearing them leaves "ozero" and still water. */
+/* Colours and type are the app's: white paper and the icon's lake, Inter around, Literata for reading. */
 :root{
   --bg:#ffffff;
-  --bg-soft:#f4f5f7;
-  --fg:#16181d;
-  --fg-2:#555c68;
-  --fg-3:#666c77;
-  --line:#e6e8ec;
-  --stripe:#c9cdd4;
-  --accent:#1f66d9;
-  --accent-fill:#1f66d9;
-  --toast-link:#8ab8ff;
-  --under-fg:#ffffff;
-  --done:#277a3c;
-  --ava-bg:#16181d;
-  --ava-fg:#ffffff;
-  --bar:rgba(255,255,255,.86);
-  --acc-1:#ef4a5c;
-  --acc-2:#14a38b;
-  --acc-3:#8a5cf6;
-  --shadow:0 18px 40px -18px rgba(22,30,50,.30),0 4px 12px -6px rgba(22,30,50,.14);
-  --f-display:"Unbounded Variable","Onest Variable",system-ui,sans-serif;
-  --f-body:"Onest Variable",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --bg-soft:#f2f5fa;
+  --fg:#142036;
+  --fg-2:#3d4a63;
+  --fg-3:#647089;
+  --line:#e9eef5;
+  --stripe:#c9d2e0;
+  /* The morning blue: water, marks and Done; the darker tone for text and filled buttons, so both read */
+  --water:#2f8cff;
+  --accent:#1766d4;
+  --accent-fill:#1a6fe0;
+  --accent-soft:#e6f1ff;
+  --toast-link:#8cc2ff;
+  --toast-bg:#1b2639;
+  --toast-fg:#f2f5fa;
+  /* The first three account colours of the app */
+  --acc-1:#e2605a;
+  --acc-2:#1f9c8a;
+  --acc-3:#7b66e0;
+  --shadow:0 18px 40px -18px rgba(10,20,40,.28),0 4px 12px -6px rgba(10,20,40,.12);
+  --f-ui:"Inter Variable",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-read:"Literata Variable",Georgia,serif;
+  /* One curve for what eases out, as in the app */
+  --ease:cubic-bezier(.25,.1,.1,1);
 }
 @media (prefers-color-scheme: dark){:root{
-  --bg:#0f1318;--bg-soft:#171c23;--fg:#eef1f5;--fg-2:#aab1bc;--fg-3:#8c939e;--line:#252b34;--stripe:#3a424e;
-  --accent:#6aa3ff;--accent-fill:#2d6fe0;--done:#4fb767;--toast-link:#1f5fc9;--under-fg:#0f1318;--ava-bg:#2a313c;--ava-fg:#eef1f5;--bar:rgba(23,28,35,.86);
+  --bg:#141923;--bg-soft:#1f2532;--fg:#e5e9f1;--fg-2:#b9c2d3;--fg-3:#8792a7;--line:#242b39;--stripe:#4b566c;
+  --accent:#6ab2ff;--accent-fill:#1a6fe0;--accent-soft:#15325a;--toast-link:#0b4fb3;--toast-bg:#e5e9f1;--toast-fg:#141923;
   --shadow:0 18px 40px -18px rgba(0,0,0,.7),0 4px 12px -6px rgba(0,0,0,.5);color-scheme:dark}}
 
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;scroll-padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
 
-/* One screen at a time: each block fills the screen, scrolling snaps to it, and the others fade almost away */
-/* Short views (phones in landscape) only lean towards a screen, so content taller than the view still scrolls freely */
-html{scroll-snap-type:y proximity}
-@media (min-height:600px){html{scroll-snap-type:y mandatory}}
-.screen{min-height:100svh;display:grid;align-content:center;scroll-snap-align:center}
-.stage .screen{opacity:.06;transition:opacity .9s ease}
-.stage .screen.on,.stage .mail.is-done{opacity:1}
-.still .screen{transition:none}
-footer{scroll-snap-align:end;scroll-margin-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+/* The first screen and the finale fill the view; letters follow one another like a list, with air between */
+.head,.finale{min-height:100svh;display:grid;align-content:center}
+.mail{padding:clamp(56px,12vh,120px) 0}
+.mail.is-done{padding:0}
 
-/* Letters slide to their new places when one is done or reopened */
-.finale{view-transition-name:finale}
-.wait{view-transition-name:wait}
-footer{view-transition-name:footer}
-.bbar{view-transition-name:bar}
-.toast{view-transition-name:toast}
-/* The page stays clickable while letters slide */
-:root::view-transition{pointer-events:none}
-::view-transition-group(*){animation-duration:.45s;animation-timing-function:cubic-bezier(.3,.1,.3,1)}
-body{position:relative;margin:0;background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:19px;line-height:1.6;-webkit-font-smoothing:antialiased}
+body{position:relative;margin:0;background:var(--bg);color:var(--fg);font-family:var(--f-ui);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;font-feature-settings:"cv11"}
 a{color:var(--accent);text-decoration:none}
 a:hover{text-decoration:underline}
 button{font:inherit;color:inherit}
-:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+button,a,label{-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:2px solid var(--water);outline-offset:3px;border-radius:6px}
 h1,h2{margin:0;text-wrap:balance}
 p{margin:0}
 [hidden]{display:none!important}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .mark{width:22px;height:22px;flex:none;display:block}
 
-/* One narrow column with a lot of air */
-main{position:relative;z-index:1;max-width:600px;margin:0 auto;padding:0 max(24px,env(safe-area-inset-right,0px)) calc(112px + env(safe-area-inset-bottom,0px)) max(24px,env(safe-area-inset-left,0px));container-type:inline-size}
+/* One narrow column, like a message on a phone */
+main{position:relative;z-index:1;max-width:620px;margin:0 auto;padding:0 max(24px,env(safe-area-inset-right,0px)) calc(112px + env(safe-area-inset-bottom,0px)) max(24px,env(safe-area-inset-left,0px));container-type:inline-size}
 .top{position:absolute;z-index:2;top:24px;left:max(24px,env(safe-area-inset-left,0px));right:max(24px,env(safe-area-inset-right,0px));display:flex;align-items:center;justify-content:space-between;gap:12px}
-.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:16px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:16px;letter-spacing:-.01em}
 .lang{display:flex;gap:2px}
-.lang a{display:grid;place-items:center;font:500 12px/1 var(--f-body);letter-spacing:.04em;color:var(--fg-3);min-width:44px;min-height:44px;border-radius:999px}
+.lang a{display:grid;place-items:center;font:500 12px/1 var(--f-ui);letter-spacing:.04em;color:var(--fg-3);min-width:44px;min-height:44px;border-radius:999px}
 .lang a:hover{text-decoration:none;color:var(--fg)}
 .lang a[aria-current="page"]{color:var(--fg)}
 
 .head{gap:24px;padding:96px 0}
-.head h1{font-weight:600;font-size:clamp(32px,8.5cqi,46px);line-height:1.15;letter-spacing:-.02em}
-.head .sub{color:var(--fg-2);max-width:24em}
+/* Inter's display cut, as the app's screen titles */
+.head h1,.oz,.policy h1{font-variation-settings:"opsz" 32}
+.head h1{font-weight:700;font-size:clamp(32px,8.5cqi,46px);line-height:1.15;letter-spacing:-.022em}
+.head .sub{color:var(--fg-2);font-size:19px;max-width:24em}
 .inboxline{display:flex;align-items:baseline;gap:.35em;font-weight:600;font-size:17px;color:var(--fg-2)}
 .inboxline .n{color:var(--accent);font-variant-numeric:tabular-nums}
 .tip{display:grid;justify-items:start;gap:10px;font-size:15px;color:var(--fg-3);max-width:28em}
-.tip .drift{animation-delay:1.6s}
 .tip .mouse{display:none}
 @media (hover:hover) and (pointer:fine){.tip .touch{display:none}.tip .mouse{display:inline}}
 .stores{display:flex;flex-wrap:wrap;gap:10px}
@@ -85,188 +77,243 @@ main{position:relative;z-index:1;max-width:600px;margin:0 auto;padding:0 max(24p
 .store small{font-size:11px;opacity:.75}
 .store b{font-size:16px;font-weight:600}
 
-/* A letter: a quiet stripe, a question, one answer */
-.mail{position:relative;overflow:hidden}
-/* The reveal under a swiped letter is as tall as the letter, not the screen */
+/* A letter, set like an open message: who and when, the subject, then text to read */
+.mail{position:relative;display:grid;overflow:hidden;margin-left:-16px;padding-left:16px}
 .mail>*{grid-area:1/1}
-.mail>.under{position:relative;inset:auto}
-.under{pointer-events:none;position:absolute;inset:0;background:var(--done);color:var(--under-fg);display:flex;align-items:center;justify-content:flex-end;padding-right:28px;font-weight:600;gap:8px;opacity:0}
-.dragging .under{opacity:1}
-.mail .sheet{position:relative;background:var(--bg);padding:4px 0 4px 24px;display:grid;gap:16px;justify-items:start;transition:transform .25s ease;touch-action:pan-y}
-.mail.dragging .sheet{transition:none}
-.mail .sheet::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:2px;background:var(--stripe)}
-.mhead,.subj{cursor:grab;user-select:none;-webkit-user-select:none}
-.mhead{display:flex;align-items:center;gap:12px;width:100%;font-size:15px;color:var(--fg-3)}
-.ava{width:32px;height:32px;border-radius:50%;background:var(--ava-bg);color:var(--ava-fg);display:grid;place-items:center;font-weight:600;font-size:14px;flex:none}
-.from{flex:1;min-width:0;display:flex;align-items:center;gap:8px;font-weight:600;color:var(--fg-2)}
-.mail:not(.is-read) .from::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent)}
-.when{font-variant-numeric:tabular-nums}
-.subj{font-weight:600;font-size:clamp(22px,5.5cqi,26px);line-height:1.3;letter-spacing:-.01em}
-.mail .sheet p{color:var(--fg-2)}
+.mail .sheet{position:relative;background:var(--bg);display:grid;gap:16px;justify-items:start;touch-action:pan-y pinch-zoom}
+.dragging>.sheet,.flying>.sheet{will-change:transform}
+.mhead,.subj{cursor:grab;user-select:none;-webkit-user-select:none;width:100%}
+.dragging .mhead,.dragging .subj{cursor:grabbing}
+.mhead{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--fg-3)}
+.from{flex:1;min-width:0;display:flex;align-items:center;gap:8px;font-weight:600;color:var(--fg)}
+/* Unread: the app's blue dot, going out quietly once read */
+.from{position:relative}
+.from::before{content:"";position:absolute;left:-15px;top:50%;margin-top:-3.5px;width:7px;height:7px;border-radius:50%;background:var(--water);transition:opacity .15s ease}
+.mail.is-read .from::before{opacity:0}
+.when{font-size:14px;font-variant-numeric:tabular-nums}
+.subj{font-weight:650;font-size:clamp(24px,6cqi,28px);line-height:1.25;letter-spacing:-.017em;font-variation-settings:"opsz" 32}
+.mail .sheet>p{font-family:var(--f-read);font-size:17.5px;line-height:28px;color:var(--fg)}
 /* The plan: steps on a line, done ones ticked, the current one marked */
 .plan{list-style:none;margin:0;padding:0 0 0 2px;display:grid;gap:14px;color:var(--fg-3)}
 .plan li{position:relative;padding-left:26px}
-.plan li::before{content:"";position:absolute;left:0;top:.5lh;width:10px;height:10px;margin-top:-6px;border-radius:50%;border:1.5px solid var(--line)}
+.plan li::before{content:"";position:absolute;left:0;top:.5lh;width:10px;height:10px;margin-top:-6px;border-radius:50%;border:1.5px solid var(--fg-3)}
 .plan li:not(:last-child)::after{content:"";position:absolute;left:5.5px;top:calc(.5lh + 7px);height:calc(100% + 2px);width:1.5px;background:var(--line)}
 .plan .done{color:var(--fg-2)}
-.plan .done::before{background:var(--done);border-color:var(--done)}
+.plan .done::before{background:var(--water);border-color:var(--water)}
 .plan .now{color:var(--fg);font-weight:600}
-.plan .now::before{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 4px var(--bg-soft)}
-.plan .pill{margin-left:8px;vertical-align:2px;white-space:nowrap;font-size:12px;font-weight:600;color:var(--accent);background:var(--bg-soft);border-radius:999px;padding:2px 8px}
-.act{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:999px;margin:4px 0 0 -12px;padding:8px 12px;font-weight:500;font-size:15px;cursor:pointer;background:none;color:var(--fg-3);min-height:44px}
+.plan .now::before{background:var(--bg);border:2.5px solid var(--water);box-shadow:0 0 0 4px var(--accent-soft)}
+.plan .pill{margin-left:8px;vertical-align:2px;white-space:nowrap;font-size:12px;font-weight:600;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:2px 8px}
+.act{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:999px;margin:4px 0 0 -12px;padding:8px 14px 8px 12px;font-weight:600;font-size:15px;cursor:pointer;background:none;color:var(--fg-3);min-height:44px;transition:background-color .15s ease,color .15s ease}
 .act svg{width:16px;height:16px}
-.act:hover{background:var(--bg-soft);color:var(--done)}
+.act:hover{background:var(--accent-soft);color:var(--accent)}
+
+/* What a swipe reveals, as in the app: the strip stays paper, the action waits in a bead by the edge.
+   Pale before the threshold, full blue past it, and its word slides out. */
+.under{pointer-events:none;position:absolute;inset:0;display:flex;align-items:center;justify-content:flex-end;gap:12px;padding-right:18px;opacity:0;--seen:0}
+.mail>.under{position:relative;inset:auto;align-items:flex-start}
+.mail>.under>*{margin-top:calc(var(--by,50%) - 18px)}
+.dragging>.under,.flying>.under{opacity:1}
+.bead{width:36px;height:36px;flex:none;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--water) 16%,var(--bg));color:var(--water);transform:scale(var(--seen));transition:background-color .15s ease,color .15s ease}
+.under .word{font-weight:600;font-size:14px;color:var(--water);opacity:0;transform:translateX(8px);transition:opacity .15s ease,transform .2s var(--ease)}
+.armed>.under .bead{background:var(--water);color:#fff}
+.armed>.under .word{opacity:1;transform:none}
+.bead svg{width:20px;height:20px}
 
 /* A done letter collapses into one row; the row reopens it */
-.mail .row{display:none;width:100%;align-items:center;gap:12px;padding:10px 0 10px 24px;font-size:16px;color:var(--fg-3);border:0;background:none;text-align:left;cursor:pointer}
+.mail .row{display:none;width:calc(100% + 12px);margin-left:-12px;align-items:center;gap:12px;padding:10px 0 10px 12px;font-size:16px;color:var(--fg-3);border:0;background:none;text-align:left;cursor:pointer;border-radius:12px}
 .mail .row:hover{background:var(--bg-soft)}
-.mail .row .rs{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:line-through}
-.mail .row .ok{color:var(--done);display:flex}
-.mail .row .open{color:var(--accent);font-weight:600;font-size:14px}
-.mail.is-done .sheet{display:none}
-.mail.is-done .row{display:flex}
-.mail.is-done{min-height:0;scroll-snap-align:none}
+.mail .row .rs{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mail .row .ok{color:var(--water);display:flex}
+.mail .row .open{color:var(--accent);font-weight:600;font-size:14px;padding-right:4px}
+.mail.is-done .sheet,.mail.is-done>.under{display:none}
+.mail.is-done .row{display:flex;animation:pour .25s var(--ease)}
 @media (max-width:680px){
   /* Letters reach the right edge so a thumb can start a swipe there */
-  .mail{margin-right:min(-20px,calc(-1 * env(safe-area-inset-right,0px)))}
-  .mail .sheet,.mail .row{padding-right:20px}}
+  .mail{margin-right:min(-24px,calc(-1 * env(safe-area-inset-right,0px)))}
+  .mail .sheet,.mail .row{padding-right:24px}}
 
-/* Finale: "Inbox N" becomes "ozero", then the note to the author */
-.finale{justify-items:center;text-align:center;gap:28px}
-.oz{font-family:var(--f-display);font-weight:700;font-size:clamp(32px,10cqi,56px);line-height:1;letter-spacing:-.03em;display:flex;gap:.25em}
+/* Finale: "Inbox N" becomes "ozero", a drop falls from the word and opens still water under it */
+.finale{justify-items:center;text-align:center;gap:24px;padding:64px 0}
+.oz{position:relative;z-index:1;font-weight:700;font-size:clamp(34px,10cqi,56px);line-height:1;letter-spacing:-.03em;display:flex;gap:.25em}
 .oz .n{color:var(--accent);font-variant-numeric:tabular-nums}
 .oz .n:empty{display:none}
-.oz.clear{color:var(--accent);animation:calm 2.4s ease both}
-@keyframes calm{from{opacity:0}to{opacity:1}}
+.oz.clear{color:var(--accent)}
+/* The lake's horizon lies 90px down the canvas, so the drop has room to fall from the word */
+.lake{display:block;width:min(100%,420px);height:0;margin:-24px 0 -24px;touch-action:manipulation}
+.finale.clear .lake{height:190px;margin:-74px 0 -40px}
 .finale p{color:var(--fg-2);max-width:26em}
+.calm{transition:opacity .4s var(--ease),transform .4s var(--ease)}
+.calm.wait-drop{opacity:0;transform:translateY(8px)}
 [tabindex="-1"]:focus{outline:none}
 .bulk{position:relative;width:min(100%,420px);border-radius:16px;overflow:hidden}
-.bulk .under{inset:2px;border-radius:14px;padding-right:22px}
-.bulk .bs{position:relative;width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px;background:var(--bg);border:1px solid var(--line);border-radius:16px;font-size:16px;font-weight:600;cursor:grab;touch-action:pan-y;transition:transform .25s ease}
-.bulk.dragging .bs{transition:none;cursor:grabbing}
+.bulk .bs{position:relative;width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px;background:var(--bg);border:1px solid var(--line);border-radius:16px;font-size:16px;font-weight:600;cursor:grab;touch-action:pan-y pinch-zoom}
+.bulk .bs:focus-visible,.mail .row:focus-visible{outline-offset:-2px}
+.bulk.dragging .bs{cursor:grabbing}
 .bulk .grip{display:grid;grid-template-columns:repeat(2,4px);gap:3px}
 .bulk .grip i{width:4px;height:4px;border-radius:50%;background:var(--fg-3)}
 .back{border:0;background:var(--bg-soft);color:var(--fg-2);font-weight:500;font-size:15px;cursor:pointer;padding:10px 18px;border-radius:999px;min-height:44px}
+.back:hover{color:var(--fg)}
 /* A quiet pointer to the note below, once the inbox is clear */
-.next{display:grid;justify-items:center;gap:6px;margin-top:12px;color:var(--fg-3);font-size:15px;animation:calm 2.4s ease 2.4s both}
+.next{display:grid;justify-items:center;gap:6px;margin-top:12px;color:var(--fg-3);font-size:15px;animation:calm .6s var(--ease) 1.6s both}
+@keyframes calm{from{opacity:0;transform:translateY(8px)}}
 .tip:hover,.next:hover{text-decoration:none;color:var(--fg-2)}
 .calm[hidden]~.next{display:none}
-.drift{display:inline-block;font-size:18px;animation:drift 3.2s ease-in-out 4.8s 3}
-@keyframes drift{50%{transform:translateY(6px)}}
+.drift{display:inline-block;font-size:18px}
 
 /* The note to the author, shaped as a letter being written */
-.wait{gap:24px}
+.wait{display:grid;gap:24px;padding:clamp(56px,12vh,120px) 0}
 .wait .soon{color:var(--fg-2)}
 .compose{border:1px solid var(--line);border-radius:20px;overflow:hidden;font-size:16px}
 .field{margin:0;min-width:0;border:0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:minmax(72px,auto) minmax(0,1fr);align-items:center;gap:8px;padding:12px 20px}
 .field legend{float:left;padding:0}
 .field h2{font:inherit}
 .field .lbl{color:var(--fg-3)}
-.seg{display:flex;gap:6px;flex-wrap:wrap}
-.seg label{display:inline-flex}
-.seg input{position:absolute;opacity:0;pointer-events:none}
-.seg span{padding:6px 14px;border-radius:999px;background:var(--bg-soft);color:var(--fg-2);cursor:pointer;font-size:15px;min-height:36px;display:inline-flex;align-items:center}
-.seg input:checked + span{background:var(--accent-fill);color:#fff}
-.seg input:focus-visible + span{outline:2px solid var(--accent);outline-offset:2px}
-.compose .text{padding:18px 20px 28px;color:var(--fg-2)}
+.compose .text{padding:18px 20px 28px;color:var(--fg);font-family:var(--f-read);font-size:17.5px;line-height:28px}
 .compose .send{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding:12px 12px 12px 20px;border-top:1px solid var(--line)}
 .compose .fine{flex:1 1 160px;font-size:13px;line-height:1.45;color:var(--fg-3)}
 .btn{display:inline-flex;align-items:center;min-height:44px;border-radius:999px;padding:0 20px;white-space:nowrap;background:var(--accent-fill);color:#fff;font-weight:600}
 .btn:hover{text-decoration:none;filter:brightness(1.06)}
-/* The water spreads from the word and scrolls with it */
-.lake{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
-.lake i{position:absolute;left:var(--cx,50%);top:var(--cy,50%);width:120vmax;height:120vmax;margin:-60vmax 0 0 -60vmax;border:2px solid var(--accent);border-radius:50%;opacity:0;transform:scale(.02)}
-.lake.go i{animation:ripple 11s cubic-bezier(.3,.1,.4,1) infinite}
-.lake.go i:nth-child(2){animation-delay:2.6s}
-.lake.go i:nth-child(3){animation-delay:5.2s}
-@keyframes ripple{0%{transform:scale(.02);opacity:0}12%{opacity:.5}70%{opacity:.18}100%{transform:scale(1);opacity:0}}
 
-/* Bottom bar, in thumb reach, like the app */
-.bbar{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;justify-content:center;pointer-events:none;
-  padding:0 max(12px,env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
-.bbar .cap{pointer-events:auto;display:flex;align-items:center;gap:8px;width:min(560px,100%);min-height:56px;padding:6px;border-radius:999px;background:var(--bar);
-  backdrop-filter:saturate(1.6) blur(18px);-webkit-backdrop-filter:saturate(1.6) blur(18px);box-shadow:var(--shadow);border:1px solid var(--line)}
-.bbar .prog{flex:1;min-width:0;display:flex;align-items:center;gap:12px;padding-left:14px;font-size:14px;font-variant-numeric:tabular-nums}
+/* Bottom bar, in thumb reach: the app's dock, edge to edge under a hairline, with a grey pill and a blue tile */
+.bbar{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;justify-content:center;background:color-mix(in srgb,var(--bg) 94%,transparent);border-top:1px solid var(--line);
+  padding:8px max(12px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
+.bbar .cap{display:flex;align-items:center;gap:8px;width:min(620px,100%)}
+.bbar .prog{flex:1;min-width:0;display:flex;align-items:center;gap:12px;min-height:48px;padding:0 16px;border-radius:999px;background:var(--bg-soft);font-size:14px;font-variant-numeric:tabular-nums}
 .bbar .prog b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
 .bbar .track{flex:1;height:4px;border-radius:4px;background:var(--line);overflow:hidden;min-width:40px}
-.bbar .track i{display:block;height:100%;width:0;background:var(--done);transition:width .35s ease}
-.bbar .btn{font-size:15px}
+.bbar .track i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s var(--ease)}
+.bbar .btn{min-height:48px;border-radius:16px;font-size:15px}
 @media (max-width:400px){.bbar .track{display:none}.bbar .btn{padding:0 14px;font-size:14px}}
 
 footer{padding:24px 0 8px;display:flex;flex-wrap:wrap;justify-content:center;gap:8px 20px;font-size:14px;color:var(--fg-3)}
 footer a{text-decoration:underline;text-underline-offset:.2em}
 
-.toast{position:fixed;left:50%;bottom:calc(82px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:21;background:var(--fg);color:var(--bg);border-radius:999px;padding:6px 6px 6px 18px;display:flex;align-items:center;gap:12px;font-size:15px;box-shadow:var(--shadow)}
+/* The toast rises from the bar, as notes do in the app */
+.toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom,0px));width:min(calc(100% - 24px),420px);transform:translateX(-50%);z-index:21;background:var(--toast-bg);color:var(--toast-fg);border-radius:14px;padding:6px 6px 6px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:15px;box-shadow:var(--shadow);transition:opacity .4s var(--ease),transform .4s var(--ease)}
+.toast.gone{opacity:0;transform:translate(-50%,12px);pointer-events:none}
+.toast :focus-visible{outline-color:var(--toast-fg)}
 .toast button{border:0;background:transparent;color:var(--toast-link);font-weight:700;cursor:pointer;padding:0 12px;min-height:40px}
 
-.lost{min-height:100vh;display:grid;place-content:center;justify-items:center;gap:12px;padding:20px;text-align:center}
+.lost{min-height:100svh;display:grid;place-content:center;justify-items:center;gap:12px;padding:20px;text-align:center}
 .lost .oz{color:var(--accent)}
 
-/* Demos: a small live piece of the app inside a letter */
+/* Demos: a small live piece of the app inside a letter, drawn as the app draws it */
 .demo{width:100%;max-width:380px;margin:6px 0 4px;padding:6px;border-radius:20px;background:var(--bg-soft);font-size:15px;line-height:1.3}
 .demo p{margin:0}
 .demo .dh{display:flex;align-items:center;gap:8px;padding:8px 10px 10px;font-weight:600;color:var(--fg)}
 .demo .dc{color:var(--accent);font-variant-numeric:tabular-nums}
-.demo .dl{display:grid;gap:3px}
-.demo .di{display:flex;align-items:center;gap:10px;min-height:44px;padding:0 14px;border-radius:14px;background:var(--bg);overflow:hidden}
-.demo .dn{font-weight:600;color:var(--fg);white-space:nowrap}
-.demo .ds{flex:1;min-width:0;color:var(--fg-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.dots{display:inline-flex;padding-left:2px}
-.dots i{width:10px;height:10px;margin-left:-3px;border-radius:50%;border:2px solid var(--bg);background:var(--acc-1)}
-.demo .dh .dots i{border-color:var(--bg-soft)}
-.dots i:nth-child(2),.dots .a2{background:var(--acc-2)}
-.dots i:nth-child(3),.dots .a3{background:var(--acc-3)}
-/* Inbox Zero: the rows go one by one, then it is quiet */
-.zero .di{transition:transform .6s ease,opacity .6s ease,min-height .5s ease .3s}
-.zero .di.gone{transform:translateX(-105%);opacity:0;min-height:0;height:0}
-.zero .de{display:grid;place-items:center;min-height:0;height:0;opacity:0;color:var(--accent);font-weight:600;transition:opacity .9s ease,min-height .5s ease}
-.zero.clear .de{min-height:132px;opacity:1}
-/* Accounts: three Sent folders become one */
-.boxes .sent{display:grid}
-.boxes .sent .di+.di{margin-top:3px}
-.boxes.merged .sent .di{margin-top:0}
-.boxes .sent .di{transition:min-height .6s ease,opacity .5s ease}
-.boxes .sent .all,.boxes.merged .sent .one{min-height:0;height:0;opacity:0}
-.boxes.merged .sent .all{min-height:44px;height:auto;opacity:1}
-/* Privacy: an image that waits for permission */
-.privacy .pic{position:relative;display:grid;place-items:center;gap:10px;margin-top:3px;min-height:150px;padding:18px;border-radius:14px;text-align:center;cursor:pointer;
-  background:repeating-linear-gradient(-45deg,var(--bg),var(--bg) 10px,var(--bg-soft) 10px,var(--bg-soft) 20px);color:var(--fg-2)}
+.demo .dl{display:grid;gap:0;border-radius:16px;background:var(--bg);overflow:hidden}
+/* A row: sender and time, then the subject; unread hangs a 7px dot before the sender */
+.demo .di{position:relative;display:grid;gap:2px;padding:10px 14px 10px 26px;background:var(--bg)}
+.demo .di.unread::before{content:"";position:absolute;left:11px;top:17px;width:7px;height:7px;border-radius:50%;background:var(--water)}
+.demo .l1{display:flex;align-items:baseline;gap:8px}
+.demo .dn{flex:1;min-width:0;font-weight:500;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.demo .unread .dn{font-weight:650}
+.demo .dt{font-size:13px;color:var(--fg-3);font-variant-numeric:tabular-nums}
+.demo .l2{font-size:14px;color:var(--fg-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.demo .unread .l2{font-weight:550;color:var(--fg)}
+.dots{display:inline-flex;padding-left:3px}
+.dots i{width:11px;height:11px;margin-left:-3px;border-radius:50%;border:2px solid var(--bg);background:var(--acc-1)}
+.dots i:nth-child(2){background:var(--acc-2)}
+.dots i:nth-child(3){background:var(--acc-3)}
+/* Inbox Zero: rows are swiped away as letters are; the last one leaves still water */
+.zero .swipe{position:relative;display:grid;overflow:hidden}
+.zero .swipe>*{grid-area:1/1}
+.zero .swipe .di{touch-action:pan-y pinch-zoom;cursor:grab;user-select:none;-webkit-user-select:none}
+.zero .flying .di,.zero .dragging .di{will-change:transform}
+.zero .swipe.shut{height:0}
+.zero .under{padding-right:12px;gap:8px}
+.zero .under .word{font-size:14px}
+.zero .bead{width:30px;height:30px}
+.zero .bead svg{width:16px;height:16px}
+.zero .de{display:none;justify-items:center;text-align:center;padding:0 12px 16px}
+.zero.clear .de{display:grid}
+.zero .de canvas{display:block;width:100%;height:150px;margin-bottom:-62px}
+.demo.zero .det{font-weight:650;font-size:19px;line-height:25px;letter-spacing:-.01em;color:var(--fg)}
+.demo.zero .des{color:var(--fg-3);margin-top:4px;max-width:20em}
+.zero .det,.zero .des,.zero .deb{transition:opacity .4s var(--ease),transform .4s var(--ease)}
+.zero.falling .det,.zero.falling .des,.zero.falling .deb{opacity:0;transform:translateY(8px)}
+.zero .rowdone{position:absolute;right:8px;top:50%;translate:0 -50%;width:36px;height:36px;border:0;border-radius:50%;display:grid;place-items:center;background:var(--water);color:#fff;opacity:0;pointer-events:none;cursor:pointer}
+.zero .rowdone:focus-visible{opacity:1;pointer-events:auto}
+.zero .rowdone svg{width:16px;height:16px}
+.zero .deb{margin-top:10px;border:0;background:none;color:var(--accent);font-weight:600;font-size:14px;min-height:44px;padding:0 12px;cursor:pointer;border-radius:999px}
+.zero .deb:hover{background:var(--bg-soft)}
+/* The app's segmented control: a grey track, a paper thumb, the label firms up when chosen */
+.focus .tabs,.boxes .tabs,.seg{position:relative;display:flex;gap:0;padding:3px;border-radius:14px;background:var(--line)}
+.focus .tabs,.boxes .tabs{margin-bottom:6px}
+.seg{background:var(--bg-soft);max-width:260px}
+.focus .tabs label,.boxes .tabs label,.seg label{flex:1 1 0;min-width:0;position:relative;display:flex}
+.focus .tabs input,.boxes .tabs input,.seg input{position:absolute;opacity:0;pointer-events:none}
+.focus .tabs span,.boxes .tabs span,.seg span{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;min-height:38px;padding:0 6px;border-radius:11px;font-size:14px;font-weight:500;color:var(--fg-3);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background-color .25s var(--ease),color .25s var(--ease),box-shadow .25s var(--ease)}
+.focus .tabs input:checked+span,.boxes .tabs input:checked+span,.seg input:checked+span{background:var(--bg);color:var(--fg);font-weight:600;box-shadow:0 1px 2px rgba(10,20,40,.12)}
+.focus .tabs input:focus-visible+span,.boxes .tabs input:focus-visible+span,.seg input:focus-visible+span{outline:2px solid var(--water);outline-offset:1px}
+.tabs .n{font-size:11px;font-weight:700;color:var(--accent)}
+.focus .fl{display:none}
+.focus:has([value="0"]:checked) .f0,.focus:has([value="1"]:checked) .f1,.focus:has([value="2"]:checked) .f2{display:grid;animation:pour .4s var(--ease)}
+@keyframes pour{from{opacity:0;transform:translateY(6px)}}
+/* Mailboxes: as in the app's sheet; three Sent folders become one "All sent" */
+.boxes .sheetish{border-radius:16px;background:var(--bg);padding:4px 0 6px}
+.boxes .dh{padding:10px 14px 4px;font-size:17px;font-weight:650}
+.boxes .bx{display:flex;align-items:center;gap:12px;min-height:44px;padding:0 14px;color:var(--fg);overflow:hidden}
+.boxes .bx .bn{white-space:nowrap}
+.boxes .bx .ds{flex:1;min-width:0;color:var(--fg-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.boxes .inbox{color:var(--accent);font-weight:600}
+.boxes .inbox .dots{width:24px}
+.boxes .inbox .bn{flex:1}
+.boxes .bc{font-size:14px;font-variant-numeric:tabular-nums;color:var(--fg-3);font-weight:400}
+.boxes .cap{padding:10px 14px 2px;font-size:13px;color:var(--fg-3)}
+.boxes .ic{width:20px;height:20px;flex:none;margin:0 2px;color:var(--fg-3)}
+.boxes .dot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--acc-1)}
+.boxes .dot.a2{background:var(--acc-2)}
+.boxes .dot.a3{background:var(--acc-3)}
+.boxes .grp{display:grid}
+.boxes .grp .bx{transition:min-height .35s var(--ease),opacity .25s ease}
+.boxes .grp .all,.boxes:has([value="1"]:checked) .grp .one{min-height:0;height:0;opacity:0}
+.boxes:has([value="1"]:checked) .grp .all{min-height:44px;height:auto;opacity:1}
+/* Hidden images: the app's grey bar with Show; the image comes when asked */
+.privacy .dl,.privacy>.di{border-radius:14px}
+.privacy .pic{display:grid;gap:6px;margin-top:6px;cursor:pointer}
 .privacy input{position:absolute;opacity:0;pointer-events:none}
-.privacy .btnish{padding:8px 16px;border-radius:999px;background:var(--bg);box-shadow:0 0 0 1px var(--line);font-weight:600;color:var(--accent)}
-.privacy .pic:has(input:focus-visible) .btnish{outline:2px solid var(--accent);outline-offset:2px}
-.privacy .pic:has(input:checked){background:linear-gradient(135deg,var(--acc-1),var(--acc-3) 55%,var(--acc-2));color:transparent}
-.privacy .pic:has(input:checked) > span{visibility:hidden}
-/* Focus: tabs, each with its own list; the invitation answers share the pill control */
-.focus .tabs,.work .answers{display:flex;gap:4px;padding:4px;margin-bottom:6px;border-radius:999px;background:var(--bg)}
-.focus .tabs label,.work .answers label{flex:1;position:relative}
-.focus .tabs input,.work .answers input{position:absolute;opacity:0}
-.focus .tabs span,.work .answers span{display:grid;place-items:center;min-height:36px;padding:0 8px;border-radius:999px;font-size:14px;font-weight:600;color:var(--fg-3);cursor:pointer;white-space:nowrap}
-.focus .tabs input:checked+span,.work .answers input:checked+span{background:var(--accent-fill);color:#fff}
-.focus .tabs input:focus-visible+span,.work .answers input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
-.focus .fl{display:none;gap:3px}
-.focus:has([value="0"]:checked) .f0,.focus:has([value="1"]:checked) .f1,.focus:has([value="2"]:checked) .f2{display:grid}
-
-/* Privacy: plain reading, no snapping */
-.doc{scroll-snap-type:none}
+.privacy .bar{display:flex;align-items:center;gap:10px;padding:8px 8px 8px 14px;border-radius:14px;background:var(--bg);font-size:13px;line-height:1.35;color:var(--fg-3)}
+.privacy .btnish{flex:none;padding:7px 14px;border-radius:999px;background:var(--bg-soft);font-size:14px;font-weight:600;color:var(--accent)}
+.privacy .img{height:120px;border-radius:14px;background:repeating-linear-gradient(-45deg,var(--bg),var(--bg) 10px,transparent 10px,transparent 20px);transition:background .4s var(--ease)}
+.privacy .pic:has(input:focus-visible){outline:2px solid var(--water);outline-offset:2px;border-radius:14px}
+.privacy .pic:has(input:checked) .bar{display:none}
+.privacy .pic:has(input:checked) .img{background:linear-gradient(180deg,#b6d4ff,#f4f8ff 52%,#6aa3f9 53%,#1f5ccd)}
+/* Privacy: plain reading */
 .policy{padding-top:32px;padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
-.policy h1{font-family:var(--f-display);font-size:clamp(20px,6.2cqi,44px);line-height:1.15;letter-spacing:-.02em;margin:28px 0 6px}
-.policy h2{font-size:21px;line-height:1.3;margin:40px 0 10px}
+.policy h1{font-size:clamp(28px,6.2cqi,44px);font-weight:700;line-height:1.15;letter-spacing:-.022em;margin:28px 0 6px}
+.policy h2{font-size:21px;line-height:1.3;margin:40px 0 10px;letter-spacing:-.01em}
+.policy p{font-family:var(--f-read);font-size:17.5px;line-height:28px}
 .policy p+p{margin-top:12px}
-.policy .date,.policy .home,.policy .other{font-size:15px;color:var(--fg-3)}
-.policy .lead{margin-top:22px;font-size:21px}
+.policy .date,.policy .home,.policy .other{font-family:var(--f-ui);font-size:15px;color:var(--fg-3)}
+.policy .lead{margin-top:22px;font-size:20px;line-height:31px}
 .policy .other{margin-top:48px}
 
-/* Work mail: an invitation card, answered in place, with the day strip */
-.work .card{display:grid;gap:2px;padding:14px;border-radius:14px;background:var(--bg)}
-.demo.work .wt{font-weight:600;color:var(--fg)}
-.demo.work .ws{color:var(--fg-3)}
-.work .day{position:relative;height:14px;margin:12px 0 8px;border-radius:7px;background:repeating-linear-gradient(90deg,var(--bg-soft) 0 calc(20% - 1px),var(--line) calc(20% - 1px) 20%)}
-.work .day i{position:absolute;top:2px;bottom:2px;border-radius:5px;background:var(--stripe)}
-.work .day .lunch{left:10%;width:15%}
-.work .day .this{left:40%;width:20%;background:var(--accent-fill);z-index:1}
-.work .day .other{left:50%;width:20%;background:var(--acc-1);top:6px;bottom:-2px}
-.demo.work .clash{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--fg-2)}
-.demo.work .clash::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--acc-1)}
-.work .answers{margin:6px 0 0}
-.demo.work .sent{display:grid;place-items:center;min-height:0;height:0;opacity:0;overflow:hidden;font-size:14px;font-weight:600;color:var(--done);transition:opacity .4s ease,min-height .3s ease}
-.demo.work:has(.answers input:checked) .sent{min-height:36px;opacity:1}
+/* Work mail: the app's invitation card, its day from the invitations in your mail, answered in place */
+.work .card{display:grid;gap:2px;padding:14px;border-radius:16px;background:var(--bg);border:1px solid var(--line)}
+.demo.work .wt{font-weight:650;font-size:16px;color:var(--fg)}
+.demo.work .ws{color:var(--fg-3);font-size:14px}
+.work .day{margin:12px 0 10px}
+.demo.work .dayh{display:flex;align-items:baseline;gap:8px;font-size:13px;font-weight:600;color:var(--fg-2);margin-bottom:6px}
+.work .dayh span{font-weight:400;color:var(--fg-3)}
+.work .hours{position:relative;display:grid;grid-template-rows:repeat(3,28px)}
+.work .h{border-top:1px solid var(--line);font-size:11px;color:var(--fg-3);padding-top:2px;font-variant-numeric:tabular-nums}
+.work .ev{position:absolute;left:28px;height:26px;display:flex;align-items:center;padding:0 8px;border-radius:6px;font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.work .ev.this{top:29px;right:50%;background:var(--accent-soft);color:var(--accent);box-shadow:inset 3px 0 var(--water)}
+.work .ev.other{top:43px;left:52%;right:0;background:color-mix(in srgb,#df5260 14%,var(--bg));color:#c23745;box-shadow:inset 3px 0 #df5260}
+@media (prefers-color-scheme: dark){.work .ev.other{color:#f08a94}}
+.work .answers{display:flex;gap:8px;margin-top:4px}
+.work .answers label{flex:1 1 0;min-width:0;display:flex}
+.work .answers input{position:absolute;opacity:0;pointer-events:none}
+.work .answers span{flex:1;display:grid;place-items:center;min-height:48px;border-radius:14px;border:1px solid var(--line);font-size:15px;font-weight:600;color:var(--fg);cursor:pointer;white-space:nowrap;transition:background-color .15s ease}
+.work .answers span:hover{background:var(--bg-soft)}
+.work .answers .yes span{background:var(--accent-fill);border-color:var(--accent-fill);color:#fff}
+.work .answers input:focus-visible+span{outline:2px solid var(--water);outline-offset:2px}
+.work .result{display:none;align-items:center;justify-content:space-between;gap:8px;min-height:48px;margin-top:4px;font-weight:600;color:var(--fg)}
+.work .result .r{display:none}
+.work:has(.answers :checked) .answers{display:none}
+.work:has(.answers :checked) .result{display:flex;animation:pour .3s var(--ease)}
+.work:has([value="0"]:checked) .r0,.work:has([value="1"]:checked) .r1,.work:has([value="2"]:checked) .r2{display:inline}
+.work .chg{border:0;background:none;color:var(--accent);font-weight:600;font-size:15px;min-height:44px;padding:0 12px;border-radius:999px;cursor:pointer}
+.work .chg:hover{background:var(--bg-soft)}

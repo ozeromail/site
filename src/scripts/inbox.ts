@@ -1,12 +1,181 @@
 // The page behaves like the app's inbox: a letter scrolled to its end counts as read, swipe or press Done
-// to clear it with Undo in a toast, a bulk "Swipe N letters" strip, and a quiet "ozero" moment at Inbox Zero.
+// to clear it with Undo in a toast, a bulk "Swipe N letters" strip, and still water at Inbox Zero.
 
 import type en from '../i18n/en.json';
 import { plural } from '../i18n/format';
+import { Lake } from './lake';
 
 type Strings = typeof en.client & { lang: string; word: string; done: string };
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
+const still = matchMedia('(prefers-reduced-motion: reduce)');
+
+/* One physics, as in the app: a critically damped spring (stiffness 700) that starts from the release velocity,
+   so a fling carries on and a motion can be caught midway without a jump. It ends early once `until` holds.
+   Returns a function that stops it. */
+function spring(from: number, to: number, v: number, apply: (x: number) => void, done?: () => void, until?: (x: number) => boolean) {
+  if (still.matches) {
+    apply(to);
+    done?.();
+    return () => {};
+  }
+  const k = 700;
+  let x = from;
+  let last = performance.now();
+  let id = requestAnimationFrame(function tick(now) {
+    let dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    while (dt > 0) {
+      const s = Math.min(dt, 1 / 240);
+      v += (-k * (x - to) - 2 * Math.sqrt(k) * v) * s;
+      x += v * s;
+      dt -= s;
+    }
+    const over = until?.(x);
+    if (over || (Math.abs(x - to) < 0.5 && Math.abs(v) < 10)) {
+      apply(over ? x : to);
+      done?.();
+      return;
+    }
+    apply(x);
+    id = requestAnimationFrame(tick);
+  });
+  return () => cancelAnimationFrame(id);
+}
+
+/* Springs an element's height from what it was before `change` to what it is after, so what is below
+   moves up or down instead of jumping. */
+function resize(box: HTMLElement, change: () => void, done?: () => void) {
+  const h0 = box.offsetHeight;
+  change();
+  const h1 = box.offsetHeight;
+  const end = () => {
+    box.style.height = '';
+    done?.();
+  };
+  if (h0 === h1) return end();
+  box.style.height = `${h0}px`;
+  spring(h0, h1, 0, (h) => (box.style.height = `${h}px`), end);
+}
+
+interface Swipe {
+  /** Whether the last press became a drag, so its click can be ignored. */
+  moved: () => boolean;
+  /** Clears as a swipe would, for a button or a key. */
+  fly: () => void;
+  /** Comes back from the left, the way it left. */
+  back: () => void;
+}
+
+/* A left swipe, as on a row in the app: the finger drives 1:1, the bead fills past the threshold,
+   and the release velocity decides: a flick clears even a short drag, a finger that stopped cancels.
+   A sheet in motion can be caught. Only clearly horizontal gestures count, so scrolling still works.
+   `onSwipe` gets a function that puts the sheet back once its box has changed. */
+function swipeable(box: HTMLElement, sheet: HTMLElement, onSwipe: (reset: () => void) => void, canStart: (e: PointerEvent) => boolean): Swipe {
+  const under = box.querySelector<HTMLElement>(':scope > .under');
+  let x0: number | null = null;
+  let startX = 0;
+  let startY = 0;
+  let dx = 0;
+  let v = 0;
+  let lastX = 0;
+  let lastT = 0;
+  let axis: 'x' | 'y' | null = null;
+  let moved = false;
+  let stop = () => {};
+  const threshold = () => Math.min(box.offsetWidth * 0.35, 160);
+  const place = (x: number) => {
+    dx = x;
+    sheet.style.transform = x ? `translateX(${x}px)` : '';
+    under?.style.setProperty('--seen', String(Math.min(1, Math.max(0, (-x - 14) / 36))));
+  };
+  const settle = () => {
+    box.classList.remove('armed');
+    if (dx) stop = spring(dx, 0, 0, place);
+  };
+  const reset = () => {
+    stop();
+    box.classList.remove('flying', 'armed');
+    place(0);
+  };
+  const fly = (from: number, speed: number) => {
+    const width = box.offsetWidth;
+    box.classList.add('flying', 'armed');
+    // Aimed past the edge and done once out of sight, so it never lingers there.
+    stop = spring(from, -width * 1.5, Math.min(speed, -600), place, () => onSwipe(reset), (x) => x <= -width);
+  };
+  sheet.addEventListener('pointerdown', (e) => {
+    // One finger at a time: a second pointer must not reset the gesture in progress.
+    if (x0 !== null) return;
+    moved = false;
+    if (e.button || !canStart(e)) return;
+    // iOS takes a swipe from the screen edge for Forward.
+    if (e.pointerType === 'touch' && e.clientX > innerWidth - 20) return;
+    stop();
+    box.classList.remove('flying');
+    startX = lastX = e.clientX;
+    startY = e.clientY;
+    x0 = e.clientX - dx;
+    lastT = e.timeStamp;
+    v = 0;
+    axis = null;
+    // The bead waits beside the finger, not in the middle of a tall letter.
+    box.style.setProperty('--by', `${Math.max(40, e.clientY - sheet.getBoundingClientRect().top)}px`);
+  });
+  sheet.addEventListener('pointermove', (e) => {
+    if (x0 === null) return;
+    // The button was released outside before the pointer was captured.
+    if (!e.buttons) {
+      x0 = null;
+      return settle();
+    }
+    const mx = e.clientX - startX;
+    const my = e.clientY - startY;
+    if (!axis && (Math.abs(mx) > 10 || Math.abs(my) > 10)) {
+      moved = true;
+      axis = mx < 0 && Math.abs(mx) > 1.5 * Math.abs(my) ? 'x' : 'y';
+      if (axis === 'y') {
+        x0 = null;
+        return settle();
+      }
+      // Start from where the sheet is, so it does not jump by the slop.
+      x0 = e.clientX - dx;
+      sheet.setPointerCapture(e.pointerId);
+      box.classList.add('dragging');
+    }
+    if (axis !== 'x') return;
+    const dt = Math.max(1, e.timeStamp - lastT);
+    v = v * 0.6 + ((e.clientX - lastX) / dt) * 1000 * 0.4;
+    lastX = e.clientX;
+    lastT = e.timeStamp;
+    const x = e.clientX - x0;
+    // Past the start the finger meets resistance, as at the edge of a list.
+    place(x < 0 ? x : x * 0.2);
+    box.classList.toggle('armed', -dx > threshold());
+  });
+  const end = (e: PointerEvent) => {
+    if (x0 === null) return;
+    x0 = null;
+    box.classList.remove('dragging');
+    if (axis !== 'x') return settle();
+    if (e.timeStamp - lastT > 60) v = 0;
+    // Where the motion would come to rest: the release velocity carries it on.
+    const projected = dx + v * 0.2;
+    if (-dx > threshold() || projected < -box.offsetWidth * 0.5 || v < -900) fly(dx, v);
+    else settle();
+  };
+  sheet.addEventListener('pointerup', end);
+  sheet.addEventListener('pointercancel', end);
+  return {
+    moved: () => moved,
+    fly: () => fly(dx, -900),
+    back: () => {
+      stop();
+      place(-box.offsetWidth);
+      stop = spring(dx, 0, 0, place);
+    },
+  };
+}
 
 export function start() {
   const S: Strings = JSON.parse($('strings').textContent ?? '{}');
@@ -35,7 +204,8 @@ export function start() {
     requestAnimationFrame(() => (live.textContent = text));
   };
 
-  /* Toast with Undo. It waits while focus or a real pointer is on it; touch screens keep :hover after a tap. */
+  /* Toast with Undo, for five seconds as in the app. It waits while focus or a real pointer is on it;
+     touch screens keep :hover after a tap. */
   const toast = $('toast');
   const undoBtn = $<HTMLButtonElement>('toastUndo');
   const hoverable = matchMedia('(hover: hover)');
@@ -43,14 +213,18 @@ export function start() {
   let undo: (() => void) | null = null;
   function hideToast() {
     clearInterval(timer);
-    toast.hidden = true;
+    toast.classList.add('gone');
+    toast.inert = true;
     undo = null;
   }
   function showToast(undoFn: () => void) {
-    hideToast();
+    clearInterval(timer);
     undo = undoFn;
     toast.hidden = false;
-    let n = 8;
+    toast.inert = false;
+    // A frame later, so even the first one rises.
+    requestAnimationFrame(() => toast.classList.remove('gone'));
+    let n = 5;
     timer = window.setInterval(() => {
       const held = toast.matches(':focus-within') || (hoverable.matches && toast.matches(':hover'));
       if (!held && --n <= 0) hideToast();
@@ -62,54 +236,41 @@ export function start() {
     f?.();
   });
 
-  /* Changes to the list morph instead of jumping: letters slide into their new places.
-     The browser applies the change a frame later, so focus and announcements go in `after`, and scrolling waits for the morph. */
-  const still = matchMedia('(prefers-reduced-motion: reduce)');
-  let settled: Promise<void> = Promise.resolve();
-  function morph(change: () => void, after: () => void) {
-    const apply = () => {
-      change();
-      upd();
-      relight();
+  // CSS turns smooth scrolling off for reduced motion. Letters a glide passes are not read.
+  let gliding = false;
+  function glide(target: HTMLElement, block: ScrollLogicalPosition, then?: () => void) {
+    gliding = true;
+    target.scrollIntoView({ block });
+    let ended = false;
+    const over = () => {
+      if (ended) return;
+      ended = true;
+      gliding = false;
+      readSoon();
+      then?.();
     };
-    if (!document.startViewTransition || still.matches) {
-      apply();
-      after();
-      return;
-    }
-    const vt = document.startViewTransition(apply);
-    settled = vt.finished.catch(() => {});
-    void vt.updateCallbackDone.then(after, after);
+    addEventListener('scrollend', over, { once: true });
+    // No scroll at all, or no scrollend in this browser.
+    setTimeout(over, 900);
   }
-  // CSS turns smooth scrolling off for reduced motion.
-  const glide = (target: HTMLElement, block: ScrollLogicalPosition) => void settled.then(() => target.scrollIntoView({ block }));
+  // Brings a letter into view only if it is out of it.
+  const reveal = (m: HTMLElement) => {
+    const r = m.getBoundingClientRect();
+    if (r.top < 0 || r.top > innerHeight * 0.6) glide(m, 'start');
+  };
 
-  /* One screen at a time: the screen across the middle of the view is lit, the others fade almost away.
-     Fading starts only after the first callback has lit a screen, so nothing blinks on load. */
-  const root = document.documentElement;
+  /* The screen across the middle of the view is "on": E clears it first. */
   const lit = new IntersectionObserver((entries) => {
     for (const e of entries) e.target.classList.toggle('on', e.isIntersecting);
-    root.classList.add('stage');
   }, { rootMargin: '-45% 0px -45% 0px' });
   document.querySelectorAll('.screen').forEach((s) => lit.observe(s));
-  // After a list change the observer reports a frame late; light the screen in the middle now, without a fade.
-  function relight() {
-    const mid = innerHeight / 2;
-    root.classList.add('still');
-    for (const s of document.querySelectorAll<HTMLElement>('.screen')) {
-      const r = s.getBoundingClientRect();
-      s.classList.toggle('on', r.top <= mid && r.bottom >= mid);
-    }
-    requestAnimationFrame(() => root.classList.remove('still'));
-  }
 
   /* Letters */
   const mails = [...document.querySelectorAll<HTMLElement>('.mail')];
-  mails.forEach((m, i) => (m.style.viewTransitionName = `mail-${i}`));
   const isOpen = (m: HTMLElement | null | undefined): m is HTMLElement => !!m && !m.classList.contains('is-done');
   const isUnread = (m: HTMLElement) => isOpen(m) && !m.classList.contains('is-read');
   const el = Object.fromEntries(
-    ['count', 'unreadSr', 'left', 'bar', 'track', 'ozw', 'ozn', 'lake', 'calm', 'bulk', 'bulkText', 'bulkBtn', 'bringBack'].map((id) => [id, $(id)]),
+    ['count', 'unreadSr', 'left', 'bar', 'track', 'ozw', 'ozn', 'calm', 'bulk', 'bulkText', 'bulkBtn', 'bringBack', 'finale'].map((id) => [id, $(id)]),
   ) as Record<string, HTMLElement>;
   const oz = document.querySelector<HTMLElement>('.oz')!;
   const nav = document.querySelector<HTMLElement>('.bbar')!;
@@ -117,15 +278,12 @@ export function start() {
   let wasLeft = mails.length;
   const leftText = () => (unread ? plural(S.lang, S.left, unread) : mails.some(isOpen) ? S.allRead : S.allClear);
 
-  function centreLake() {
-    const r = oz.getBoundingClientRect();
-    // Page coordinates: the lake covers the whole page, so the rings stay on the word while it scrolls.
-    el.lake.style.setProperty('--cx', r.left + scrollX + r.width / 2 + 'px');
-    el.lake.style.setProperty('--cy', r.top + scrollY + r.height / 2 + 'px');
-  }
-  addEventListener('resize', () => {
-    if (el.lake.classList.contains('go')) centreLake();
-  });
+  // The finale's water: its horizon lies 90px down the canvas, under the word.
+  const lake = new Lake($<HTMLCanvasElement>('lake'), 90);
+  lake.onOpen = () => el.calm.classList.remove('wait-drop');
+  const lakes = [lake];
+  addEventListener('resize', () => lakes.forEach((l) => l.redraw()));
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => lakes.forEach((l) => l.redraw()));
 
   // The counters show unread letters; Inbox Zero needs every letter Done.
   function upd() {
@@ -143,23 +301,19 @@ export function start() {
     el.bulkText.textContent = plural(S.lang, S.bulk, left);
     oz.classList.toggle('clear', !left);
     el.calm.hidden = el.bringBack.hidden = !!left;
+    el.finale.classList.toggle('clear', !left);
     // Collapsing letters moves others into view.
     readSoon();
     if (left === wasLeft) return;
     wasLeft = left;
     if (left) {
-      el.lake.classList.remove('go');
+      lake.hide();
       return;
     }
-    // Inbox Zero: glide to the word and let the water move.
-    glide(oz, 'center');
+    // Inbox Zero: glide to the word; a drop falls from it and opens the water, then the words come.
+    el.calm.classList.add('wait-drop');
     el.calm.focus({ preventScroll: true });
-    requestAnimationFrame(() => {
-      centreLake();
-      el.lake.classList.remove('go');
-      void el.lake.offsetWidth;
-      el.lake.classList.add('go');
-    });
+    glide(el.finale, 'center', () => lake.open());
   }
 
   // Done implies read; reset also forgets reading, for "Bring the letters back".
@@ -168,143 +322,85 @@ export function start() {
     if (done) m.classList.add('is-read');
     if (reset) m.classList.remove('is-read');
   }
-  // Reopens a group of letters and brings the reader back to the first one.
-  function restore(list: HTMLElement[], reset = false) {
-    morph(
-      () => list.forEach((m) => collapse(m, false, reset)),
-      () => doneBtn(list[0]).focus({ preventScroll: true }),
-    );
-    glide(list[0], 'center');
-  }
   const doneBtn = (m: HTMLElement) => m.querySelector<HTMLElement>('.act.done')!;
+  const swipes = new Map<HTMLElement, Swipe>();
 
+  // Reopens every letter at once and brings the reader back to the first one.
+  function restoreAll(list: HTMLElement[], reset = false) {
+    list.forEach((m) => collapse(m, false, reset));
+    upd();
+    doneBtn(list[0]).focus({ preventScroll: true });
+    say(leftText());
+    glide(list[0], 'start');
+  }
   function reopen(m: HTMLElement) {
     hideToast();
-    morph(
-      () => collapse(m, false),
-      () => doneBtn(m).focus({ preventScroll: true }),
-    );
-    glide(m, 'center');
+    resize(m, () => {
+      collapse(m, false);
+      swipes.get(m)!.back();
+      upd();
+    }, () => reveal(m));
+    doneBtn(m).focus({ preventScroll: true });
+    say(leftText());
   }
-  function done(m: HTMLElement) {
-    morph(
-      () => collapse(m, true),
-      () => {
-        if (mails.some(isOpen)) m.querySelector<HTMLElement>('.row')!.focus({ preventScroll: true });
-        say(`${S.done}. ${leftText()}`);
-      },
-    );
-    showToast(() => reopen(m));
+  // Called once the letter has flown out: it closes into a row and the letters below move up.
+  function done(m: HTMLElement, reset: () => void) {
+    if (!isOpen(m)) return reset();
+    resize(m, () => {
+      collapse(m, true);
+      reset();
+      upd();
+    });
+    if (mails.some(isOpen)) m.querySelector<HTMLElement>('.row')!.focus({ preventScroll: true });
+    say(`${S.done}. ${leftText()}`);
+    if (mails.some(isOpen)) showToast(() => reopen(m));
+    else hideToast();
   }
 
-  /* A left swipe past 45% of the width fires onSwipe. Only clearly horizontal gestures count, so scrolling still works. */
-  function swipeable(box: HTMLElement, sheet: HTMLElement, onSwipe: () => void, canStart: (e: PointerEvent) => boolean) {
-    let x0: number | null = null;
-    let y0 = 0;
-    let dx = 0;
-    let axis: 'x' | 'y' | null = null;
-    let moved = false;
-    sheet.addEventListener('pointerdown', (e) => {
-      // One finger at a time: a second pointer must not reset the gesture in progress.
-      if (x0 !== null) return;
-      moved = false;
-      if (e.button || !canStart(e)) return;
-      x0 = e.clientX;
-      y0 = e.clientY;
-      dx = 0;
-      axis = null;
-    });
-    sheet.addEventListener('pointermove', (e) => {
-      if (x0 === null) return;
-      // The button was released outside before the pointer was captured.
-      if (!e.buttons) {
-        x0 = null;
-        return;
-      }
-      const mx = e.clientX - x0;
-      const my = e.clientY - y0;
-      if (!axis && (Math.abs(mx) > 10 || Math.abs(my) > 10)) {
-        moved = true;
-        axis = mx < 0 && Math.abs(mx) > 1.5 * Math.abs(my) ? 'x' : 'y';
-        if (axis === 'y') {
-          x0 = null;
-          return;
-        }
-        sheet.setPointerCapture(e.pointerId);
-        box.classList.add('dragging');
-      }
-      if (axis === 'x') {
-        dx = Math.min(0, mx);
-        sheet.style.transform = `translateX(${dx}px)`;
-      }
-    });
-    const end = () => {
-      if (x0 === null) return;
-      x0 = null;
-      box.classList.remove('dragging');
-      if (axis === 'x' && dx < -box.offsetWidth * 0.45) {
-        sheet.style.transform = 'translateX(-110%)';
-        setTimeout(() => {
-          onSwipe();
-          // After the morph has captured the swiped-away state, so the letter doesn't flash back.
-          void settled.then(() => (sheet.style.transform = ''));
-        }, 200);
-      } else {
-        sheet.style.transform = '';
-      }
-    };
-    sheet.addEventListener('pointerup', end);
-    sheet.addEventListener('pointercancel', end);
-    // Whether the last press became a drag, so its click can be ignored.
-    return () => moved;
-  }
-
-  // Touch swipes anywhere on the letter; a mouse drags by the header, so text stays selectable.
+  // Touch swipes anywhere on the letter; a mouse drags by the header, the subject or the margins, so text stays selectable.
   for (const m of mails) {
-    doneBtn(m).addEventListener('click', () => done(m));
-    m.querySelector('.row')!.addEventListener('click', () => reopen(m));
-    swipeable(m, m.querySelector<HTMLElement>('.sheet')!, () => done(m), (e) => {
+    const swipe = swipeable(m, m.querySelector<HTMLElement>('.sheet')!, (reset) => done(m, reset), (e) => {
       const target = e.target as Element;
-      return !target.closest('a,button,label') && (e.pointerType !== 'mouse' || !!target.closest('.mhead,.subj'));
+      if (target.closest('a,button,label,input,.demo')) return false;
+      return e.pointerType !== 'mouse' || !target.closest('.sheet > p,.plan');
     });
+    swipes.set(m, swipe);
+    doneBtn(m).addEventListener('click', () => swipe.fly());
+    m.querySelector('.row')!.addEventListener('click', () => reopen(m));
   }
 
-  /* For visitors who scrolled past without clearing: one bulk action, as in the app. Swipe it or just press it. */
-  function doneAll() {
+  /* For visitors who scrolled past without clearing: one bulk action, as in the app. Swipe it or just press it.
+     All letters close at once and the page lands on the finale; "Bring the letters back" is the undo. */
+  function doneAll(reset?: () => void) {
     const open = mails.filter(isOpen);
+    reset?.();
     if (!open.length) return;
-    morph(
-      () => {
-        open.forEach((m) => collapse(m, true));
-        // Land on the finale in the same frame: otherwise Safari clamps to the page bottom first and then glides back up.
-        $('finale').scrollIntoView({ block: 'center', behavior: 'instant' });
-      },
-      () => say(S.allDone),
-    );
-    showToast(() => restore(open));
+    hideToast();
+    open.forEach((m) => collapse(m, true));
+    // Land on the finale in the same frame: otherwise Safari clamps to the page bottom first and then glides back up.
+    el.finale.scrollIntoView({ block: 'center', behavior: 'instant' });
+    upd();
+    say(S.allDone);
   }
-  const swiped = swipeable(el.bulk, el.bulkBtn, doneAll, () => true);
+  const bulk = swipeable(el.bulk, el.bulkBtn, doneAll, () => true);
   // A keyboard click (detail 0) has no press of its own, so an old swipe must not cancel it.
   el.bulkBtn.addEventListener('click', (e) => {
-    if (!e.detail || !swiped()) doneAll();
+    if (!e.detail || !bulk.moved()) doneAll();
   });
 
   el.bringBack.addEventListener('click', () => {
     hideToast();
-    restore(mails, true);
+    restoreAll(mails, true);
   });
 
   /* Reading: a letter whose end has passed above the bottom bar counts as read. */
   let frame = 0;
   const read = () => {
     frame = 0;
-    if (!unread) return;
+    if (!unread || gliding) return;
     const edge = innerHeight - nav.offsetHeight;
     // Measure all first, then write, so layout is read once.
-    const seen = mails.filter(isUnread).filter((m) => {
-      // The letter fills a screen, so its sheet is what has to be seen.
-      return m.querySelector('.sheet')!.getBoundingClientRect().bottom <= edge;
-    });
+    const seen = mails.filter(isUnread).filter((m) => m.querySelector('.sheet')!.getBoundingClientRect().bottom <= edge);
     for (const m of seen) m.classList.add('is-read');
     if (seen.length) upd();
   };
@@ -316,38 +412,63 @@ export function start() {
   addEventListener('resize', readSoon);
   readSoon();
 
-  /* Demos play only while their letter is on screen: Inbox Zero clears a row at a time, the Sent folders merge and part. */
+  /* Demos move only when touched. Inbox Zero: its rows swipe away like letters, and the last one leaves still water. */
   const zero = document.querySelector<HTMLElement>('.demo.zero');
-  const boxes = document.querySelector<HTMLElement>('.demo.boxes');
-  const zeroRows = zero ? [...zero.querySelectorAll('.di')] : [];
-  const zeroCount = zero?.querySelector('.dc');
-  let beat = 0;
-  if (!still.matches) {
-    setInterval(() => {
-      beat++;
-      if (zero?.closest('.on')) {
-        // Rows go one per beat, then a few quiet beats before they come back.
-        const n = zeroRows.length;
-        const gone = beat % (n + 4);
-        zeroRows.forEach((r, i) => r.classList.toggle('gone', i < gone));
-        zero.classList.toggle('clear', gone >= n);
-        if (zeroCount) zeroCount.textContent = gone < n ? String(n - gone) : '';
-      }
-      if (boxes?.closest('.on') && beat % 2 === 0) boxes.classList.toggle('merged');
-    }, 1400);
+  if (zero) {
+    const rows = [...zero.querySelectorAll<HTMLElement>('.swipe')];
+    const count = zero.querySelector('.dc')!;
+    const zeroLake = new Lake(zero.querySelector('canvas')!, 72, 120);
+    lakes.push(zeroLake);
+    zeroLake.onOpen = () => zero.classList.remove('falling');
+    const left = () => rows.filter((x) => !x.classList.contains('gone'));
+    const gone = (r: HTMLElement, reset: () => void) => {
+      r.classList.add('gone');
+      const n = left().length;
+      count.textContent = n ? String(n) : '';
+      // The rows below close the gap; the last row leaves the water.
+      resize(r, () => r.classList.add('shut'), reset);
+      if (n) return;
+      zero.classList.add('clear', 'falling');
+      zeroLake.open();
+    };
+    for (const r of rows) {
+      const swipe = swipeable(r, r.querySelector<HTMLElement>('.di')!, (reset) => gone(r, reset), () => !r.classList.contains('gone'));
+      // Keyboards clear a row with its button, which shows only when focused.
+      r.querySelector('.rowdone')!.addEventListener('click', () => {
+        const next = left().find((x) => x !== r);
+        swipe.fly();
+        (next?.querySelector<HTMLElement>('.rowdone') ?? zero.querySelector<HTMLElement>('.deb'))!.focus();
+      });
+    }
+    zero.querySelector('.deb')!.addEventListener('click', () => {
+      rows.forEach((r) => r.classList.remove('gone', 'shut'));
+      count.textContent = String(rows.length);
+      zero.classList.remove('clear', 'falling');
+      zeroLake.hide();
+      rows[0].querySelector<HTMLElement>('.rowdone')!.focus();
+    });
   }
+
+  /* The invitation: once answered, its answer and Change take the buttons' place, so focus moves along. */
+  const work = document.querySelector<HTMLFormElement>('.demo.work');
+  work?.addEventListener('change', () => work.querySelector<HTMLElement>('.chg')!.focus());
+  work?.addEventListener('reset', () => requestAnimationFrame(() => work.querySelector<HTMLElement>('input')!.focus()));
 
   /* Keyboard: E marks the focused letter, or the first open one in view, as Done; U or Z undoes. */
   document.addEventListener('keydown', (e) => {
-    if (e.repeat || e.metaKey || e.ctrlKey || e.altKey || (e.target as Element).closest('input,textarea')) return;
+    if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
+    // Only where a letter or the toast has focus, or nothing does, so a key pressed elsewhere does nothing.
+    const at = document.activeElement;
+    if (at && at !== document.body && !at.closest('.mail,.toast,.finale')) return;
+    if ((e.target as Element).closest('input,textarea')) return;
     // By physical key, so the shortcuts work on any keyboard layout.
     const k = e.code;
     if (k === 'KeyE') {
-      const focused = document.activeElement?.closest<HTMLElement>('.mail');
+      const focused = at?.closest<HTMLElement>('.mail');
       const m = isOpen(focused) ? focused : mails.find((x) => isOpen(x) && x.classList.contains('on')) ?? mails.find(isOpen);
-      if (m) {
+      if (m && !m.classList.contains('flying')) {
         e.preventDefault();
-        done(m);
+        swipes.get(m)!.fly();
       }
     } else if ((k === 'KeyU' || k === 'KeyZ') && undo) {
       e.preventDefault();

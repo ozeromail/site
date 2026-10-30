@@ -1,0 +1,11 @@
+---
+// A message row as in the app's list: sender and time, then the subject; unread hangs a blue dot before the sender.
+interface Props {
+  who: string;
+  what: string;
+  when: string;
+  unread?: boolean;
+}
+const { who, what, when, unread } = Astro.props;
+---
+<p class:list={['di', { unread }]}><span class="l1"><span class="dn">{who}</span><span class="dt">{when}</span></span><span class="l2">{what}</span></p>
