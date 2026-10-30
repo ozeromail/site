@@ -15,8 +15,8 @@ const { t, id, subject, from, when } = Astro.props;
 <article class="mail screen" id={id} tabindex="-1">
   <div class="under" aria-hidden="true"><span class="word">{t.doneLbl}</span><span class="bead"><svg aria-hidden="true" width="20" height="20"><use href="#i-check"/></svg></span></div>
   <div class="sheet">
-    <div class="mhead"><span class="from">{from}</span><span class="when">{when}</span></div>
     <h2 class="subj">{subject}</h2>
+    <div class="mhead"><span class="from">{from}</span><span class="when">{when}</span></div>
     <slot />
     <button class="act done" type="button" aria-label={fill(t.doneFor, { s: subject })}><svg aria-hidden="true"><use href="#i-check"/></svg><span>{t.doneLbl}</span></button>
   </div>

@@ -15,7 +15,7 @@
   "pains": [
     {
       "q": "1,254 unread?",
-      "a": "The inbox is a to-do list, not an archive. Done moves a letter to the archive, nothing is deleted. Snooze brings it back when you need it. When nothing is left, it goes quiet. Try it here: swipe this letter left.",
+      "a": "The inbox is a to-do list, not an archive. Done moves a letter to the archive, nothing is deleted. Snooze brings it back when you need it. When nothing is left, it goes quiet. Try it: clear the rows below, then this letter.",
       "from": "Inbox Zero",
       "when": "10:12",
       "demo": "zero"
@@ -164,10 +164,12 @@
     "work": {
       "title": "Design review",
       "time": "Thu, 14:00–15:00",
-      "place": "Room 4 · video link",
+      "place": "Room 4",
+      "join": "Join",
+      "leaf": ["Thu", "30"],
       "day": "Thursday",
       "fromMail": "from invitations in your mail",
-      "other": "Call with the bank · 14:30",
+      "other": "Bank call",
       "answers": [
         "No",
         "Maybe",

@@ -37,8 +37,6 @@ html{scroll-behavior:smooth;scroll-padding-bottom:calc(150px + env(safe-area-ins
 
 /* The first screen and the finale fill the view; letters follow one another like a list, with air between */
 .head,.finale{min-height:100svh;display:grid;align-content:center}
-.mail{padding:clamp(56px,12vh,120px) 0}
-.mail.is-done{padding:0}
 
 body{position:relative;margin:0;background:var(--bg);color:var(--fg);font-family:var(--f-ui);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;font-feature-settings:"cv11"}
 a{color:var(--accent);text-decoration:none}
@@ -80,17 +78,15 @@ main{position:relative;z-index:1;max-width:620px;margin:0 auto;padding:0 max(24p
 /* A letter, set like an open message: who and when, the subject, then text to read */
 .mail{position:relative;display:grid;overflow:hidden;margin-left:-20px;padding-left:20px}
 .mail>*{grid-area:1/1}
-.mail .sheet{position:relative;background:var(--bg);display:grid;gap:16px;justify-items:start;touch-action:pan-y pinch-zoom}
+.mail .sheet{padding-block:clamp(56px,12vh,120px);position:relative;background:var(--bg);display:grid;gap:16px;justify-items:start;touch-action:pan-y pinch-zoom}
 .dragging>.sheet,.flying>.sheet{will-change:transform}
 .mhead,.subj{cursor:grab;user-select:none;-webkit-user-select:none;width:100%}
 .dragging .mhead,.dragging .subj{cursor:grabbing}
-.mhead{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--fg-3)}
-.from{flex:1;min-width:0;display:flex;align-items:center;gap:8px;font-weight:600;color:var(--fg)}
-/* Unread: the app's blue dot, going out quietly once read */
-.from{position:relative}
-.from::before{content:"";position:absolute;left:-15px;top:50%;margin-top:-3.5px;width:7px;height:7px;border-radius:50%;background:var(--water);transition:opacity .15s ease}
-.mail.is-read .from::before{opacity:0}
-.when{font-size:14px;font-variant-numeric:tabular-nums}
+.mhead{display:flex;align-items:baseline;gap:8px;margin-top:-8px;font-size:13px;color:var(--fg-3)}
+.from{flex:1;min-width:0;display:flex;align-items:center;gap:8px;font-size:16px;font-weight:500;color:var(--fg)}
+/* Unread shows as weight, as in the app */
+.mail:not(.is-read) .from{font-weight:700}
+.when{font-size:13px;font-variant-numeric:tabular-nums}
 .subj{font-weight:650;font-size:clamp(24px,6cqi,28px);line-height:1.25;letter-spacing:-.017em;font-variation-settings:"opsz" 32}
 .mail .sheet>p{font-family:var(--f-read);font-size:17.5px;line-height:28px;color:var(--fg)}
 /* The plan: steps on a line, done ones ticked, the current one marked */
@@ -112,6 +108,7 @@ main{position:relative;z-index:1;max-width:620px;margin:0 auto;padding:0 max(24p
 .under{pointer-events:none;position:absolute;inset:0;display:flex;align-items:center;justify-content:flex-end;gap:12px;padding-right:18px;opacity:0;--seen:0}
 .mail>.under{position:relative;inset:auto;align-items:flex-start}
 .mail>.under>*{margin-top:calc(var(--by,50%) - 18px)}
+
 .dragging>.under,.flying>.under{opacity:1}
 .bead{width:36px;height:36px;flex:none;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--water) 16%,var(--bg));color:var(--water);transform:scale(var(--seen));transition:background-color .15s ease,color .15s ease}
 .under .word{font-weight:600;font-size:14px;color:var(--water);opacity:0;transform:translateX(8px);transition:opacity .15s ease,transform .2s var(--ease)}
@@ -141,7 +138,7 @@ main{position:relative;z-index:1;max-width:620px;margin:0 auto;padding:0 max(24p
 /* The lake's horizon lies 90px down the canvas, so the drop has room to fall from the word */
 .lake{display:block;width:min(100%,420px);height:0;margin:-24px 0 -24px;touch-action:manipulation}
 .finale.clear .lake{height:190px;margin:-74px 0 -40px}
-.finale p{color:var(--fg-2);max-width:26em}
+.finale p{color:var(--fg-2);max-width:26em;text-wrap:balance}
 .calm{transition:opacity .4s var(--ease),transform .4s var(--ease)}
 .calm.wait-drop{opacity:0;transform:translateY(8px)}
 [tabindex="-1"]:focus{outline:none}
@@ -154,7 +151,10 @@ main{position:relative;z-index:1;max-width:620px;margin:0 auto;padding:0 max(24p
 .back{border:0;background:var(--bg-soft);color:var(--fg-2);font-weight:500;font-size:15px;cursor:pointer;padding:10px 18px;border-radius:999px;min-height:44px}
 .back:hover{color:var(--fg)}
 /* A quiet pointer to the note below, once the inbox is clear */
-.next{display:grid;justify-items:center;gap:6px;margin-top:12px;color:var(--fg-3);font-size:15px;animation:calm .6s var(--ease) 1.6s both}
+.next{display:grid;justify-items:center;gap:6px;margin-top:12px;color:var(--fg-3);font-size:15px;opacity:0}
+.finale.open .next{opacity:1;animation:calm .6s var(--ease) .4s both}
+.back{transition:opacity .4s var(--ease)}
+.calm.wait-drop~.back{opacity:0}
 @keyframes calm{from{opacity:0;transform:translateY(8px)}}
 .tip:hover,.next:hover{text-decoration:none;color:var(--fg-2)}
 .calm[hidden]~.next{display:none}
@@ -198,19 +198,20 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .lost .oz{color:var(--accent)}
 
 /* Demos: a small live piece of the app inside a letter, drawn as the app draws it */
-.demo{width:100%;max-width:380px;margin:6px 0 4px;padding:6px;border-radius:20px;background:var(--bg-soft);font-size:15px;line-height:1.3}
+.demo{overflow:hidden;width:100%;max-width:380px;margin:6px 0 4px;padding:6px;border-radius:20px;background:var(--bg-soft);font-size:15px;line-height:1.3}
 .demo p{margin:0}
 .demo .dh{display:flex;align-items:center;gap:8px;padding:8px 10px 10px;font-weight:600;color:var(--fg)}
 .demo .dc{color:var(--accent);font-variant-numeric:tabular-nums}
 .demo .dl{display:grid;gap:0;border-radius:16px;background:var(--bg);overflow:hidden}
 /* A row: sender and time, then the subject; unread hangs a 7px dot before the sender */
-.demo .di{position:relative;display:grid;gap:2px;padding:10px 14px 10px 26px;background:var(--bg)}
-.demo .di.unread::before{content:"";position:absolute;left:11px;top:17px;width:7px;height:7px;border-radius:50%;background:var(--water)}
+.demo .di{position:relative;display:grid;gap:2px;padding:13px 14px 13px 26px;background:var(--bg)}
+.demo .di.unread::before{content:"";position:absolute;left:11px;top:20px;width:7px;height:7px;border-radius:50%;background:var(--water)}
 .demo .l1{display:flex;align-items:baseline;gap:8px}
-.demo .dn{flex:1;min-width:0;font-weight:500;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.demo .dn{flex:1;min-width:0;font-size:16px;line-height:21px;font-weight:500;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .demo .unread .dn{font-weight:650}
 .demo .dt{font-size:13px;color:var(--fg-3);font-variant-numeric:tabular-nums}
-.demo .l2{font-size:14px;color:var(--fg-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.demo .unread .dt{color:var(--fg)}
+.demo .l2{font-size:15px;line-height:20px;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .demo .unread .l2{font-weight:550;color:var(--fg)}
 .dots{display:inline-flex;padding-left:3px}
 .dots i{width:11px;height:11px;margin-left:-3px;border-radius:50%;border:2px solid var(--bg);background:var(--acc-1)}
@@ -230,7 +231,7 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .zero.clear .de{display:grid}
 .zero .de canvas{display:block;width:100%;height:150px;margin-bottom:-62px}
 .demo.zero .det{font-weight:650;font-size:19px;line-height:25px;letter-spacing:-.01em;color:var(--fg)}
-.demo.zero .des{color:var(--fg-3);margin-top:4px;max-width:20em}
+.demo.zero .des{color:var(--fg-3);margin-top:6px;max-width:280px;font-size:15px;line-height:22px;text-wrap:balance}
 .zero .det,.zero .des,.zero .deb{transition:opacity .4s var(--ease),transform .4s var(--ease)}
 .zero.falling .det,.zero.falling .des,.zero.falling .deb{opacity:0;transform:translateY(8px)}
 .zero .rowdone{position:absolute;right:8px;top:50%;translate:0 -50%;width:36px;height:36px;border:0;border-radius:50%;display:grid;place-items:center;background:var(--water);color:#fff;opacity:0;pointer-events:none;cursor:pointer}
@@ -244,9 +245,12 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .seg{background:var(--bg-soft);max-width:260px}
 .focus .tabs label,.boxes .tabs label,.seg label{flex:1 1 0;min-width:0;position:relative;display:flex}
 .focus .tabs input,.boxes .tabs input,.seg input{position:absolute;opacity:0;pointer-events:none}
-.focus .tabs span,.boxes .tabs span,.seg span{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;min-height:38px;padding:2px 6px;border-radius:11px;font-size:14px;line-height:1.15;text-align:center;font-weight:500;color:var(--fg-3);cursor:pointer;flex-wrap:wrap;column-gap:5px;row-gap:0;transition:background-color .25s var(--ease),color .25s var(--ease),box-shadow .25s var(--ease)}
-.focus .tabs input:checked+span,.boxes .tabs input:checked+span,.seg input:checked+span{background:var(--bg);color:var(--fg);font-weight:600;box-shadow:0 1px 2px rgba(10,20,40,.12)}
+.focus .tabs label>span,.boxes .tabs label>span,.seg label>span{flex:1;display:flex;align-items:center;justify-content:center;gap:4px;min-height:38px;padding:0 4px;border-radius:11px;font-size:14px;line-height:1.15;text-align:center;white-space:nowrap;min-width:0;font-weight:500;color:var(--fg-3);cursor:pointer;transition:background-color .25s var(--ease),color .25s var(--ease),box-shadow .25s var(--ease)}
+/* One paper thumb that slides to the choice */
+.focus .tabs::before,.boxes .tabs::before,.seg::before{content:"";position:absolute;top:3px;bottom:3px;left:calc(3px + (100% - 6px) / var(--n,2) * var(--i,0));width:calc((100% - 6px) / var(--n,2));border-radius:11px;background:var(--bg);box-shadow:0 1px 2px rgba(10,20,40,.12);transition:left .3s var(--ease)}
+.focus .tabs input:checked+span,.boxes .tabs input:checked+span,.seg input:checked+span{color:var(--fg);font-weight:600}
 .focus .tabs input:focus-visible+span,.boxes .tabs input:focus-visible+span,.seg input:focus-visible+span{outline:2px solid var(--accent);outline-offset:-2px}
+.tabs .tl{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .tabs .n{font-size:11px;font-weight:700;color:var(--accent)}
 .focus .fl{display:none}
 .focus:has([value="0"]:checked) .f0,.focus:has([value="1"]:checked) .f1,.focus:has([value="2"]:checked) .f2{display:grid;animation:pour .4s var(--ease)}
@@ -261,23 +265,26 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .boxes .inbox .dots{width:24px}
 .boxes .inbox .bn{flex:1}
 .boxes .bc{font-size:14px;font-variant-numeric:tabular-nums;color:var(--fg-3);font-weight:400}
-.boxes .cap{padding:10px 14px 2px;font-size:13px;color:var(--fg-3)}
+.boxes .cap{padding:10px 14px 2px;font-size:11.5px;font-weight:600;color:var(--fg-3);transition:opacity .25s ease}
+.boxes:has([value="0"]:checked) .cap{opacity:0}
 .boxes .ic{width:20px;height:20px;flex:none;margin:0 2px;color:var(--fg-3)}
 .boxes .dot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--acc-1)}
 .boxes .dot.a2{background:var(--acc-2)}
 .boxes .dot.a3{background:var(--acc-3)}
 .boxes .grp{display:grid}
-.boxes .grp .bx{transition:min-height .35s var(--ease),opacity .25s ease}
 .boxes .grp .all,.boxes:has([value="1"]:checked) .grp .one{min-height:0;height:0;opacity:0}
 .boxes:has([value="1"]:checked) .grp .all{min-height:44px;height:auto;opacity:1}
 /* Hidden images: the app's grey bar with Show; the image comes when asked */
-.privacy .dl,.privacy>.di{border-radius:14px}
+.privacy .lh{padding:12px 14px;border-radius:14px;background:var(--bg)}
+.demo.privacy .ls{font-weight:650;font-size:16px;line-height:21px;color:var(--fg)}
+.demo.privacy .lf{display:flex;gap:8px;margin-top:2px;font-size:13px;color:var(--fg-3)}
+.privacy .lf b{font-weight:500;color:var(--fg)}
 .privacy .pic{display:grid;gap:6px;margin-top:6px;cursor:pointer}
 .privacy input{position:absolute;opacity:0;pointer-events:none}
-.privacy .bar{display:flex;align-items:center;gap:10px;padding:8px 8px 8px 14px;border-radius:14px;background:var(--bg);font-size:13px;line-height:1.35;color:var(--fg-3)}
-.privacy .btnish{flex:none;padding:7px 14px;border-radius:999px;background:var(--bg-soft);font-size:14px;font-weight:600;color:var(--accent)}
-.privacy .img{height:120px;border-radius:14px;background:repeating-linear-gradient(-45deg,var(--bg),var(--bg) 10px,transparent 10px,transparent 20px);transition:background .4s var(--ease)}
-.privacy .pic:has(input:focus-visible){outline:2px solid var(--water);outline-offset:2px;border-radius:14px}
+.privacy .bar{display:flex;align-items:center;gap:10px;padding:8px 8px 8px 14px;border-radius:14px;background:var(--line);font-size:13px;line-height:1.35;color:var(--fg-3)}
+.privacy .btnish{flex:none;padding:7px 14px;border-radius:999px;background:var(--bg);font-size:13px;font-weight:600;color:var(--fg)}
+.privacy .img{height:120px;border-radius:14px;background:linear-gradient(var(--line),var(--line)) 14px 18px/70% 10px no-repeat,linear-gradient(var(--line),var(--line)) 14px 38px/52% 10px no-repeat,linear-gradient(var(--line),var(--line)) 14px 58px/62% 10px no-repeat,var(--bg);transition:background .4s var(--ease)}
+.privacy .pic:has(input:focus-visible){outline:2px solid var(--water);outline-offset:-2px;border-radius:14px}
 .privacy .pic:has(input:checked) .bar{display:none}
 .privacy .pic:has(input:checked) .img{background:linear-gradient(180deg,#b6d4ff,#f4f8ff 52%,#6aa3f9 53%,#1f5ccd)}
 /* Privacy: plain reading */
@@ -291,6 +298,12 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .policy .other{margin-top:48px}
 
 /* Work mail: the app's invitation card, its day from the invitations in your mail, answered in place */
+.work .wtop{display:flex;gap:12px;align-items:center}
+.demo.work .leaf{flex:none;width:48px;height:48px;border-radius:12px;display:grid;place-content:center;text-align:center;background:var(--accent-soft);color:var(--accent);font-size:11px;font-weight:600;line-height:1.1;text-transform:uppercase}
+.work .leaf b{font-size:19px;line-height:1.1}
+.demo.work .meta{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:14px;color:var(--fg-3)}
+.work .meta svg{width:16px;height:16px;flex:none}
+.work .join{margin-left:auto;color:var(--accent);font-weight:600}
 .work .card{display:grid;gap:2px;padding:14px;border-radius:16px;background:var(--bg);border:1px solid var(--line)}
 .demo.work .wt{font-weight:650;font-size:16px;color:var(--fg)}
 .demo.work .ws{color:var(--fg-3);font-size:14px}
@@ -299,17 +312,23 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .work .dayh span{font-weight:400;color:var(--fg-3)}
 .work .hours{position:relative;display:grid;grid-template-rows:repeat(3,28px)}
 .work .h{border-top:1px solid var(--line);font-size:11px;color:var(--fg-3);padding-top:2px;font-variant-numeric:tabular-nums}
-.work .ev{position:absolute;left:28px;height:26px;display:flex;align-items:center;padding:0 8px;border-radius:6px;font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.work .ev.this{top:29px;right:50%;background:var(--accent-soft);color:var(--accent);box-shadow:inset 3px 0 var(--water)}
-.work .ev.other{top:43px;left:52%;right:0;background:color-mix(in srgb,#df5260 14%,var(--bg));color:#c23745;box-shadow:inset 3px 0 #df5260}
+.work .ev{position:absolute;left:28px;height:26px;display:flex;align-items:center;padding:0 8px;border-radius:6px;font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.work .ev.this{top:29px;right:calc((100% - 28px)*.38 + 4px);background:var(--accent-soft);color:var(--accent);box-shadow:inset 3px 0 var(--water)}
+.work .ev.other{top:43px;left:calc(28px + (100% - 28px)*.62);right:0;background:var(--bg-soft);color:#c23745;box-shadow:inset 3px 0 #df5260}
 @media (prefers-color-scheme: dark){.work .ev.other{color:#f08a94}}
 .work .answers{display:flex;gap:8px;margin-top:4px}
 .work .answers button{flex:1 1 0;min-width:0;min-height:48px;padding:0 6px;border-radius:14px;border:1px solid var(--line);background:none;font-size:15px;font-weight:600;line-height:1.15;color:var(--fg);cursor:pointer;transition:background-color .15s ease}
 .work .answers button:hover{background:var(--bg-soft)}
 .work .answers .yes{background:var(--accent-fill);border-color:var(--accent-fill);color:#fff}
 .work .answers .yes:hover{background:var(--accent-fill);filter:brightness(1.06)}
-.work .result{display:none;align-items:center;justify-content:space-between;gap:8px;min-height:48px;margin-top:4px;font-weight:600;color:var(--fg)}
+.work .result{display:none;align-items:center;justify-content:space-between;gap:8px;min-height:48px;margin-top:8px;padding-top:4px;border-top:1px solid var(--line);font-weight:600;color:var(--ans)}
+.work .rs{display:flex;align-items:center;gap:8px}
+.work .rs svg{width:18px;height:18px}
+.work{--ans:#17804f}
+.work[data-answer="1"]{--ans:#a35f00}
+.work[data-answer="0"]{--ans:#c23745}
+@media (prefers-color-scheme: dark){.work{--ans:#4cc98d}.work[data-answer="1"]{--ans:#f0a640}.work[data-answer="0"]{--ans:#f08a94}}
 .work.answered .answers{display:none}
 .work.answered .result{display:flex;animation:pour .3s var(--ease)}
-.work .chg{border:0;background:none;color:var(--accent);font-weight:600;font-size:15px;min-height:44px;padding:0 12px;border-radius:999px;cursor:pointer}
-.work .chg:hover{background:var(--bg-soft)}
+.work .chg{border:0;background:var(--bg-soft);color:var(--fg);font-weight:600;font-size:13px;min-height:36px;padding:0 12px;border-radius:10px;cursor:pointer}
+.work .chg:hover{background:var(--line)}
