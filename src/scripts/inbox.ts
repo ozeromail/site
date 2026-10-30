@@ -46,9 +46,9 @@ function spring(from: number, to: number, v: number, apply: (x: number) => void,
 /* Springs an element's height from what it was before `change` to what it is after, so what is below
    moves up or down instead of jumping. */
 const resizing = new WeakMap<HTMLElement, () => void>();
-function resize(box: HTMLElement, change: () => void, done?: () => void, step?: (k: number) => void) {
-  // A resize caught midway starts from where it is.
-  const h0 = box.offsetHeight;
+function resize(box: HTMLElement, change: () => void, done?: () => void, step?: (k: number) => void, from?: number) {
+  // A resize caught midway starts from where it is, and the one it replaces still finishes its work.
+  const h0 = from ?? box.offsetHeight;
   resizing.get(box)?.();
   box.style.height = '';
   change();
@@ -61,10 +61,14 @@ function resize(box: HTMLElement, change: () => void, done?: () => void, step?: 
   if (h0 === h1) return end();
   box.style.height = `${h0}px`;
   // `step` gets how far along it is, 0 to 1.
-  resizing.set(box, spring(h0, h1, 0, (h) => {
+  const stop = spring(h0, h1, 0, (h) => {
     box.style.height = `${h}px`;
     step?.((h - h0) / (h1 - h0));
-  }, end));
+  }, end);
+  resizing.set(box, () => {
+    stop();
+    end();
+  });
 }
 
 interface Swipe {
@@ -322,7 +326,6 @@ export function start() {
     clearTimeout(redrawing);
     redrawing = window.setTimeout(() => lakes.forEach((l) => l.redraw()), 120);
   });
-  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => lakes.forEach((l) => l.redraw()));
 
   // The counters show unread letters; Inbox Zero needs every letter Done.
   // `land` jumps to the finale at once, for the bulk action.
@@ -357,7 +360,7 @@ export function start() {
       // In the same frame: otherwise Safari clamps to the page bottom first and then glides back up.
       el.finale.scrollIntoView({ block: 'center', behavior: 'instant' });
       lake.open();
-    } else glide(el.finale, 'center', () => lake.open());
+    } else glide(el.finale, 'center', () => !mails.some(isOpen) && lake.open());
   }
 
   // Done implies read; reset also forgets reading, for "Bring the letters back".
@@ -393,11 +396,11 @@ export function start() {
         upd();
       });
       follow(doneBtn(m));
+      say(leftText());
     };
     const r = m.getBoundingClientRect();
     if (r.top < 0 || r.top > innerHeight * 0.6) glide(m, 'start', open);
     else open();
-    say(leftText());
   }
   // Called once the letter has flown out: it closes into a row and the letters below move up.
   function done(m: HTMLElement, reset: () => void) {
@@ -407,7 +410,9 @@ export function start() {
     const top = m.getBoundingClientRect().top;
     const y0 = scrollY;
     const root = document.documentElement;
-    const release = top < 0 ? hold() : null;
+    // Not for the last letter: the page glides on to the finale.
+    const pin = top < 0 && mails.filter(isOpen).length > 1;
+    const release = pin ? hold() : null;
     if (release) root.style.overflowAnchor = 'none';
     resize(m, () => {
       collapse(m, true);
@@ -420,10 +425,12 @@ export function start() {
       }
       // A keyboard user follows focus, so the row comes into view for them.
       if (row.matches(':focus-visible')) row.scrollIntoView({ block: 'nearest' });
-    }, top < 0 ? (k) => scrollTo(0, y0 + top * k) : undefined);
+    }, pin ? (k) => scrollTo({ top: y0 + top * k, behavior: 'instant' }) : undefined);
     // The last letter has no Undo: "Bring the letters back" takes its place.
     if (mails.some(isOpen)) {
-      follow(row);
+      // Focus on the letter would be lost with it.
+      if (m.contains(document.activeElement)) row.focus({ preventScroll: true });
+      else follow(row);
       say(`${S.done}. ${leftText()}. ${S.undoHint}`);
       showToast(() => reopen(m));
     } else {
@@ -548,7 +555,12 @@ export function start() {
     // Browsers may restore a choice on reload without a change event.
     const sync = () => seg.style.setProperty('--i', String(Math.max(0, inputs.findIndex((i) => i.checked))));
     sync();
-    seg.addEventListener('change', () => (box ? resize(box, sync) : sync()));
+    // The choice has changed by the time `change` fires, so the height is noted on the press before it.
+    let h0 = 0;
+    const note = () => (h0 = box?.offsetHeight ?? 0);
+    seg.addEventListener('pointerdown', note);
+    seg.addEventListener('keydown', note);
+    seg.addEventListener('change', () => (box && h0 ? resize(box, sync, undefined, undefined, h0) : sync()));
   }
 
   /* The invitation: once answered, its answer and Change take the buttons' place, so focus moves along. */
@@ -573,13 +585,12 @@ export function start() {
   /* Keyboard: E marks the focused letter, or the first open one in view, as Done; U or Z undoes. */
   document.addEventListener('keydown', (e) => {
     if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
-    // Only where a letter or the toast has focus, or nothing does, so a key pressed elsewhere does nothing.
     const at = document.activeElement;
-    if (at && at !== document.body && !at.closest('.mail,.toast,.finale')) return;
     if ((e.target as Element).closest('input,textarea')) return;
     // By physical key, so the shortcuts work on any keyboard layout.
     const k = e.code;
-    if (k === 'KeyE') {
+    // E only within a letter, not on a demo's own controls; Undo from anywhere while it is offered.
+    if (k === 'KeyE' && !at?.closest('.demo') && (!at || at === document.body || at.closest('.mail,.toast,.finale'))) {
       // A letter already flying is gone, so a quick second E takes the next one.
       const can = (x: HTMLElement | null | undefined): x is HTMLElement => isOpen(x) && !x.classList.contains('flying');
       const focused = at?.closest<HTMLElement>('.mail');

@@ -39,9 +39,9 @@ export class Lake {
   // Each wave's crests, worked out once a frame.
   private crests: { r: number; amp: number; k: number; q: number }[][] = [];
   // Points of one line, reused from frame to frame.
-  private xs = new Float32Array(128);
-  private ys = new Float32Array(128);
-  private gl = new Float32Array(128);
+  private xs: Float32Array;
+  private ys: Float32Array;
+  private gl: Float32Array;
   private w = 0;
   private h = 0;
   /** Called once when the drop that opens the water lands. */
@@ -50,6 +50,11 @@ export class Lake {
   /** [horizon] is in px from the canvas top, [half] the horizon's half width. */
   constructor(private canvas: HTMLCanvasElement, private horizon: number, private half = 150) {
     this.ctx = canvas.getContext('2d')!;
+    // One point every 3px along the line, both ends included.
+    const points = Math.ceil((2 * half) / 3) + 2;
+    this.xs = new Float32Array(points);
+    this.ys = new Float32Array(points);
+    this.gl = new Float32Array(points);
     canvas.addEventListener('pointerdown', (e) => {
       if (!this.shown || this.level < 0.5) return;
       const r = canvas.getBoundingClientRect();
