@@ -4,11 +4,11 @@
 import type en from '../i18n/en.json';
 import { plural } from '../i18n/format';
 import { Lake } from './lake';
+import { clamp, still } from './motion';
 
 type Strings = typeof en.client & { lang: string; word: string; done: string };
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
-const still = matchMedia('(prefers-reduced-motion: reduce)');
 
 /* One physics, as in the app: a critically damped spring (stiffness 700) that starts from the release velocity,
    so a fling carries on and a motion can be caught midway without a jump. It ends early once `until` holds.
@@ -96,7 +96,7 @@ function swipeable(box: HTMLElement, sheet: HTMLElement, onSwipe: (reset: () => 
   const place = (x: number) => {
     dx = x;
     sheet.style.transform = x ? `translateX(${x}px)` : '';
-    under?.style.setProperty('--seen', String(Math.min(1, Math.max(0, (-x - 14) / 36))));
+    under?.style.setProperty('--seen', String(clamp((-x - 14) / 36)));
   };
   const settle = (speed = 0) => {
     box.classList.remove('armed');
@@ -257,35 +257,37 @@ export function start() {
     f?.();
   });
 
-  // CSS turns smooth scrolling off for reduced motion. Letters a glide passes are not read.
-  let gliding = false;
+  // While the page moves by itself, letters it passes are not read. Returns the release.
+  let holds = 0;
+  const hold = () => {
+    holds++;
+    return () => --holds || readSoon();
+  };
+  // CSS turns smooth scrolling off for reduced motion.
   function glide(target: HTMLElement, block: ScrollLogicalPosition, then?: () => void) {
-    gliding = true;
+    const release = hold();
     const y0 = scrollY;
     target.scrollIntoView({ block });
-    let ended = false;
+    const ac = new AbortController();
+    let quiet: ReturnType<typeof setTimeout> | undefined;
     const over = () => {
-      if (ended) return;
-      ended = true;
-      gliding = false;
-      readSoon();
+      if (ac.signal.aborted) return;
+      ac.abort();
+      clearTimeout(quiet);
+      release();
       then?.();
     };
     if ('onscrollend' in window) {
-      addEventListener('scrollend', over, { once: true });
+      addEventListener('scrollend', over, { signal: ac.signal });
       // No scroll at all.
-      setTimeout(() => scrollY === y0 && over(), 150);
+      quiet = setTimeout(() => scrollY === y0 && over(), 150);
     } else {
       // Safari: over once the page has been still for a moment.
-      let quiet = setTimeout(over, 200);
-      const wait = () => {
+      quiet = setTimeout(over, 200);
+      addEventListener('scroll', () => {
         clearTimeout(quiet);
-        quiet = setTimeout(() => {
-          removeEventListener('scroll', wait);
-          over();
-        }, 150);
-      };
-      addEventListener('scroll', wait, { passive: true });
+        quiet = setTimeout(over, 150);
+      }, { passive: true, signal: ac.signal });
     }
   }
 
@@ -302,7 +304,6 @@ export function start() {
   const el = Object.fromEntries(
     ['count', 'unreadSr', 'left', 'bar', 'track', 'ozw', 'ozn', 'calm', 'bulk', 'bulkText', 'bulkBtn', 'bringBack', 'finale'].map((id) => [id, $(id)]),
   ) as Record<string, HTMLElement>;
-  const oz = document.querySelector<HTMLElement>('.oz')!;
   const nav = document.querySelector<HTMLElement>('.bbar')!;
   let unread = mails.length;
   let wasLeft = mails.length;
@@ -338,7 +339,6 @@ export function start() {
     el.ozn.textContent = unread ? String(unread) : '';
     el.bulk.hidden = !left;
     el.bulkText.textContent = plural(S.lang, S.bulk, left);
-    oz.classList.toggle('clear', !left);
     el.calm.hidden = el.bringBack.hidden = !!left;
     el.finale.classList.toggle('clear', !left);
     // Collapsing letters moves others into view.
@@ -368,15 +368,19 @@ export function start() {
   }
   const doneBtn = (m: HTMLElement) => m.querySelector<HTMLElement>('.act.done')!;
   const swipes = new Map<HTMLElement, Swipe>();
+  // For a button or a key. The Undo for the letter before must not undo this one.
+  const clear = (m: HTMLElement) => {
+    hideToast();
+    swipes.get(m)!.fly();
+  };
 
-  // Reopens every letter at once and brings the reader back to the first one.
-  // Reopens every letter at once and puts the reader at the first one, which comes back from the left.
-  function restoreAll(list: HTMLElement[], reset = false) {
-    list.forEach((m) => collapse(m, false, reset));
+  // Reopens every letter at once, unread again, and puts the reader at the first one, which comes back from the left.
+  function restoreAll() {
+    mails.forEach((m) => collapse(m, false, true));
     upd();
-    list[0].scrollIntoView({ block: 'start', behavior: 'instant' });
-    swipes.get(list[0])!.back();
-    doneBtn(list[0]).focus({ preventScroll: true });
+    mails[0].scrollIntoView({ block: 'start', behavior: 'instant' });
+    swipes.get(mails[0])!.back();
+    doneBtn(mails[0]).focus({ preventScroll: true });
     say(leftText());
   }
   // The row comes into view first, if it is out of it, and then opens where the reader looks.
@@ -403,19 +407,16 @@ export function start() {
     const top = m.getBoundingClientRect().top;
     const y0 = scrollY;
     const root = document.documentElement;
-    if (top < 0) {
-      root.style.overflowAnchor = 'none';
-      gliding = true;
-    }
+    const release = top < 0 ? hold() : null;
+    if (release) root.style.overflowAnchor = 'none';
     resize(m, () => {
       collapse(m, true);
       reset();
       upd();
     }, () => {
-      if (top < 0) {
+      if (release) {
         root.style.overflowAnchor = '';
-        gliding = false;
-        readSoon();
+        release();
       }
       // A keyboard user follows focus, so the row comes into view for them.
       if (row.matches(':focus-visible')) row.scrollIntoView({ block: 'nearest' });
@@ -439,11 +440,7 @@ export function start() {
       return e.pointerType !== 'mouse' || !target.closest('.sheet > p,.plan');
     }, doneBtn(m));
     swipes.set(m, swipe);
-    doneBtn(m).addEventListener('click', () => {
-      // The Undo for the letter before must not undo this one.
-      hideToast();
-      swipe.fly();
-    });
+    doneBtn(m).addEventListener('click', () => clear(m));
     m.querySelector('.row')!.addEventListener('click', () => reopen(m));
   }
 
@@ -466,14 +463,14 @@ export function start() {
 
   el.bringBack.addEventListener('click', () => {
     hideToast();
-    restoreAll(mails, true);
+    restoreAll();
   });
 
   /* Reading: a letter whose end has passed above the bottom bar counts as read. */
   let frame = 0;
   const read = () => {
     frame = 0;
-    if (!unread || gliding) return;
+    if (!unread || holds) return;
     const edge = innerHeight - nav.offsetHeight;
     // Measure all first, then write, so layout is read once.
     const seen = mails.filter(isUnread).filter((m) => m.querySelector('.sheet')!.getBoundingClientRect().bottom <= edge);
@@ -589,8 +586,7 @@ export function start() {
       const m = can(focused) ? focused : mails.find((x) => can(x) && x.classList.contains('on'));
       if (m) {
         e.preventDefault();
-        hideToast();
-        swipes.get(m)!.fly();
+        clear(m);
       }
     } else if ((k === 'KeyU' || k === 'KeyZ') && undo) {
       e.preventDefault();

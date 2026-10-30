@@ -2,6 +2,8 @@
 // Only a cause moves it: a drop that opens the water, or a touch. Rings lie on the water in perspective,
 // nearer ones rounder, and light up only where a crest faces the eye. The clock sleeps while the water is calm.
 
+import { clamp, still } from './motion';
+
 const G = 760;
 const STREAKS = [[9, 104, 0.1], [20, 84, 0.075], [35, 62, 0.055], [55, 40, 0.035]] as const;
 // One surface along the horizon: a damped wave equation with banks at both ends.
@@ -14,7 +16,6 @@ interface Drop { x: number; y: number; v: number; land: number; r: number; opens
 interface Jet { x: number; y: number; v: number; base: number }
 interface Wave { x: number; y: number; t: number; e: number }
 
-const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
 const ease = (x: number) => 1 - Math.pow(1 - clamp(x), 3);
 
 export class Lake {
@@ -58,16 +59,12 @@ export class Lake {
     });
   }
 
-  private get still() {
-    return matchMedia('(prefers-reduced-motion: reduce)').matches;
-  }
-
   /** The last letter left: a drop falls from above and opens the water. */
   open() {
     this.measure();
     this.reset();
     this.shown = true;
-    if (this.still) {
+    if (still.matches) {
       this.level = 1;
       this.onOpen?.();
       this.wake();
@@ -75,15 +72,6 @@ export class Lake {
     }
     this.level = 0;
     this.drops.push({ x: this.w / 2, y: this.horizon - 70, v: 120, land: this.horizon + 40, r: 2.8, opens: true });
-    this.wake();
-  }
-
-  /** Water already lying there, without a drop. */
-  fill() {
-    this.measure();
-    this.reset();
-    this.shown = true;
-    this.level = 1;
     this.wake();
   }
 
@@ -96,7 +84,7 @@ export class Lake {
 
   /** A wave from under a finger at [x], [y] px. */
   touch(x: number, y: number) {
-    if (this.still) return;
+    if (still.matches) return;
     this.waves.push({ x, y: Math.max(y, this.horizon + 6), t: 0, e: 0.55 });
     this.kick(x, -22);
     this.wake();
@@ -300,22 +288,26 @@ export class Lake {
     for (let i = 0; i <= n; i++) (i ? ctx.lineTo(xs[i], ys[i]) : ctx.moveTo(xs[i], ys[i]));
     ctx.stroke();
     ctx.lineWidth = 1.2;
+    ctx.strokeStyle = this.rgba(1);
     for (let i = 1; i <= n; i++) {
       const fade = Math.max(0, 1 - Math.abs(xs[i] - 1.5 - cx) / half);
       const alpha = ((Math.min(0.42, a * 2.6) * (gl[i] + gl[i - 1])) / 2) * Math.sqrt(fade);
       if (alpha < 0.01) continue;
-      ctx.strokeStyle = this.rgba(alpha);
+      // One colour, varying alpha: no new style string per segment.
+      ctx.globalAlpha = alpha;
       ctx.beginPath();
       ctx.moveTo(xs[i - 1], ys[i - 1]);
       ctx.lineTo(xs[i], ys[i]);
       ctx.stroke();
     }
+    ctx.globalAlpha = 1;
   }
 
   // Rings drawn on the surface: light only where a crest faces the eye, more on the near side.
   private rings() {
     const { ctx } = this;
     ctx.lineWidth = 1;
+    ctx.strokeStyle = this.rgba(1);
     for (let w = 0; w < this.waves.length; w++) {
       const wv = this.waves[w];
       const depth = clamp((wv.y - this.horizon) / 220);
@@ -334,7 +326,7 @@ export class Lake {
             const side = Math.sin(a) > 0 ? 1 : 0.55;
             const alpha = 0.5 * cr.amp * face * side;
             if (alpha > 0.008) {
-              ctx.strokeStyle = this.rgba(Math.min(0.42, alpha));
+              ctx.globalAlpha = Math.min(0.42, alpha);
               ctx.beginPath();
               ctx.moveTo(px, py);
               ctx.lineTo(x, y);
@@ -346,11 +338,13 @@ export class Lake {
         }
       }
     }
+    ctx.globalAlpha = 1;
   }
 
   // A glass drop: a hairline brighter below, a faint tone inside, drawn to a point on top.
-  private drop(x: number, y: number, r: number, point: number, stretch: number) {
+  private drop(x: number, y: number, r: number, stretch: number) {
     const { ctx } = this;
+    const point = 0.9;
     ctx.beginPath();
     for (let i = 0; i <= 48; i++) {
       const a = (i / 48) * Math.PI * 2;
@@ -414,7 +408,7 @@ export class Lake {
     }
     ctx.restore();
     if (lv > 0) this.line(cx, hz, half * lv, 0.55, 0);
-    for (const d of this.drops) this.drop(d.x, d.y, d.r, 0.9, 1 + Math.min(0.35, d.v / 1100));
+    for (const d of this.drops) this.drop(d.x, d.y, d.r, 1 + Math.min(0.35, d.v / 1100));
     for (const j of this.jets) {
       ctx.beginPath();
       ctx.arc(j.x, j.y, 1.3, 0, Math.PI * 2);
