@@ -19,7 +19,7 @@ const icons = ['#i-sent', '#i-archive', '#i-spam', '#i-trash'];
     <div class="dl">
       {d.zero.rows.map(([who, what, when]) => (
         <div class="swipe">
-          <Under label={t.doneLbl} size={18} />
+          <Under label={t.doneLbl} />
           <Row who={who} what={what} when={when} unread />
           <button type="button" class="rowdone" aria-label={fill(t.doneFor, { s: `${who}, ${what}` })}><svg aria-hidden="true"><use href="#i-check"/></svg></button>
         </div>
@@ -43,10 +43,10 @@ const icons = ['#i-sent', '#i-archive', '#i-spam', '#i-trash'];
       <p class="bx inbox"><span class="dots"><i></i><i></i><i></i></span><span class="bn">{d.boxes.folders[0]}</span><span class="bc">12</span></p>
       <div class="views">
         <div class="v v0">
-          {[0, 1].map((i) => d.boxes.accounts.map((a, j) => <p class="bx" style={`--d:${-(i * 2 + j)}`}><svg aria-hidden="true" class="ic"><use href={icons[i]}/></svg><span class="bn">{d.boxes.folders[i + 1]}</span><span class="ds">{a}</span><i class={`dot a${j + 1}`}></i></p>))}
+          {[0, 1].map((i) => d.boxes.accounts.map((a, j) => <p class:list={['bx', { head: j === 0 }]} style={`--d:${-(i * 2 + j)}`}><svg aria-hidden="true" class="ic"><use href={icons[i]}/></svg><span class="bn">{d.boxes.folders[i + 1]}</span><span class="ds">{a}</span><i class={`dot a${j + 1}`}></i></p>))}
         </div>
         <div class="v v1">
-          {d.boxes.merged.map((all, i) => <p class="bx" style={`--k:${i}`}><svg aria-hidden="true" class="ic"><use href={icons[i]}/></svg><span class="bn">{all}</span><span class="trio"><i class="dot"></i><i class="dot a2"></i><i class="dot a3"></i></span></p>)}
+          {d.boxes.merged.map((all, i) => <p class:list={['bx', { more: i > 1 }]} style={`--k:${i}`}><svg aria-hidden="true" class="ic"><use href={icons[i]}/></svg><span class="bn">{all}</span><span class="trio"><i class="dot"></i><i class="dot a2"></i><i class="dot a3"></i></span></p>)}
           <p class="cap">{d.boxes.caption}</p>
           <p class="bx accs">{d.boxes.accounts.map((a, j) => <span><i class={`dot a${j + 1}`}></i>{a}</span>)}</p>
         </div>
@@ -105,8 +105,8 @@ const icons = ['#i-sent', '#i-archive', '#i-spam', '#i-trash'];
         <div class="hl">{d.zero.rows.slice(0, 2).map(([who, what, when], i) => <Row who={who} what={what} when={when} unread={i === 0} />)}</div>
         <p class="dock">
           <span class="dots"><i></i><i></i><i></i></span>
-          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg>
-          <svg viewBox="0 0 24 24"><path d="M5 19l1-4L16 5l3 3L9 18z"/></svg>
+          <svg><use href="#i-search"/></svg>
+          <svg><use href="#i-compose"/></svg>
         </p>
       </div>
       <div class="v v1">
