@@ -3,11 +3,10 @@
 import '../../styles/fonts.css';
 import '../../styles/site.css';
 import Mark from '../../components/Mark.astro';
-import Letter from '../../components/Letter.astro';
+import Part from '../../components/Part.astro';
 import Demo from '../../components/Demo.astro';
-import Under from '../../components/Under.astro';
 import { LANGS, strings, type Lang } from '../../i18n';
-import { fill, plural } from '../../i18n/format';
+import { fill } from '../../i18n/format';
 import { CONTACT, INDEXABLE, STATS_URL, STORES, TIPS } from '../../config';
 import interLatin from '@fontsource-variable/inter/files/inter-latin-standard-normal.woff2?url';
 import interCyrillic from '@fontsource-variable/inter/files/inter-cyrillic-standard-normal.woff2?url';
@@ -18,9 +17,7 @@ export function getStaticPaths() {
 
 const lang = Astro.params.lang as Lang;
 const t = strings[lang];
-const c = t.client;
 const tip = TIPS[lang];
-const n = t.pains.length + 1;
 const mailto = (os: string) =>
   `mailto:${CONTACT}?subject=${encodeURIComponent(t.mailSubj)}&body=${encodeURIComponent(`${t.mailBody}\n\n${fill(t.cPhone, { os })}`)}`;
 
@@ -57,7 +54,7 @@ const url = new URL(`/${lang}/`, site);
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="color-scheme" content="light dark">
-  <noscript><style>.act,.tip,.bulk,.bbar{display:none}</style></noscript>
+  <noscript><style>.finale .calm,.finale .next{opacity:1}</style></noscript>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -79,29 +76,26 @@ const url = new URL(`/${lang}/`, site);
   </header>
 
   <section class="head screen">
-    <p class="inboxline"><span>{t.inbox}</span><span class="n" id="count">{n}</span><span class="sr" id="unreadSr"> {plural(lang, c.unread, n)}</span></p>
     <h1>{t.h1}</h1>
     <p class="sub">{t.sub}</p>
     {released && (
       <div class="stores">{stores.map((s) => <a class="store" href={s.url} target="_blank" rel="noopener"><small>{s.small}</small><b>{s.big}</b></a>)}</div>
     )}
-    <a class="tip" href="#first"><span class="touch">{t.tip}</span><span class="mouse">{t.tipMouse}</span><span class="drift" aria-hidden="true">↓</span></a>
+    <a class="tip" href="#first">{t.more}<span class="drift" aria-hidden="true">↓</span></a>
   </section>
 
   {t.pains.map((p, i) => (
-    <Letter t={t} id={i === 0 ? 'first' : undefined} subject={p.q} from={p.from} when={p.when}><p>{p.a}</p><Demo t={t} kind={p.demo} /></Letter>
+    <Part id={i === 0 ? 'first' : undefined} title={p.q}><p>{p.a}</p><Demo t={t} kind={p.demo} /></Part>
   ))}
-  <Letter t={t} subject={t.plan.q} from={t.plan.from} when={t.plan.when}>
+  <Part title={t.plan.q}>
     <p>{t.plan.a}</p>
     <ol class="plan">{t.plan.steps.map((step, i) => <li class={i < t.plan.now ? 'done' : i === t.plan.now ? 'now' : undefined} aria-current={i === t.plan.now ? 'step' : undefined}>{step}{i < t.plan.now && <span class="sr">, {t.plan.doneLbl}</span>}{i === t.plan.now && <> <span class="pill">{t.plan.nowLbl}</span></>}</li>)}</ol>
-  </Letter>
+  </Part>
 
   <section class="finale screen" id="finale">
-    <div class="oz" aria-hidden="true"><span id="ozw">{t.inbox}</span><span class="n" id="ozn">{n}</span></div>
+    <div class="oz" aria-hidden="true">{t.ozero}</div>
     <canvas class="lake" id="lake" aria-hidden="true"></canvas>
-    <div class="bulk" id="bulk"><Under label={t.doneLbl} /><button type="button" class="bs" id="bulkBtn"><span class="grip" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span><span id="bulkText">{plural(lang, c.bulk, n)}</span><span class="grip" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span></button></div>
-    <p class="calm" id="calm" tabindex="-1" hidden>{t.calm}</p>
-    <button type="button" class="back" id="bringBack" hidden>{t.bringBack}</button>
+    <p class="calm">{t.calm}</p>
     {!released && <a class="next" href="#wait">{t.next}<span class="drift" aria-hidden="true">↓</span></a>}
   </section>
 
@@ -131,16 +125,7 @@ const url = new URL(`/${lang}/`, site);
   </footer>
 </main>
 
-<nav class="bbar" aria-label={t.barLabel}>
-  <div class="cap">
-    <div class="prog"><b id="left">{plural(lang, c.left, n)}</b><span class="track" role="progressbar" aria-valuemin="0" aria-valuemax={n} aria-valuenow="0" id="track" aria-label={t.progLabel}><i id="bar"></i></span></div>
-    {!released && <a class="btn" href="#wait">{t.cta}</a>}
-  </div>
-</nav>
-<p class="sr" id="live" aria-live="polite"></p>
-<div class="toast gone" id="toast" hidden><span>{t.archived}</span><button type="button" id="toastUndo">{t.undo}</button></div>
-
-<script type="application/json" id="strings" set:html={JSON.stringify({ lang, word: t.inbox, done: t.doneLbl, ...c }).replace(/</g, '\\u003c')} />
+{!released && <nav class="bbar" aria-label={t.barLabel}><a class="btn" href="#wait">{t.cta}</a></nav>}
 <script>
   import { start } from '../../scripts/inbox';
   start();
