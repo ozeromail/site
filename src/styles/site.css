@@ -200,6 +200,15 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .focus .fl{display:grid}
 .focus:has([value="0"]:checked) .f0,.focus:has([value="1"]:checked) .f1,.focus:has([value="2"]:checked) .f2,.boxes:has([value="1"]:checked) .v1{opacity:1;visibility:visible;transition-delay:0s}
 .boxes .views,.work .reply{display:grid}
+/* Mailboxes merge: each account's copy of a folder slides up into one row, then the merged list settles in */
+.boxes .v0 .bx{transition:transform .4s var(--ease),opacity .25s var(--ease)}
+.boxes:has([value="1"]:checked) .v0{transition-delay:.3s,.55s}
+.boxes:has([value="1"]:checked) .v0 .bx{transform:translateY(calc(var(--d) * 48px))}
+.boxes:has([value="1"]:checked) .v0 .bx:not(:nth-child(3n+1)){opacity:0}
+.boxes .v1 .bx{transition:opacity .25s var(--ease)}
+.boxes:has([value="1"]:checked) .v1{transition-delay:.25s}
+.boxes .v1 .bx:nth-child(n+3){opacity:0}
+.boxes:has([value="1"]:checked) .v1 .bx:nth-child(n+3){opacity:1;transition-delay:calc(.35s + var(--k, 2) * .06s)}
 @keyframes pour{from{opacity:0;transform:translateY(6px)}}
 /* Mailboxes: as in the app's sheet; three Sent folders become one "All sent" */
 .boxes .sheetish{border-radius:16px;background:var(--bg);padding:4px 0 6px}
@@ -212,6 +221,11 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .boxes .inbox .bn{flex:1}
 .boxes .bc{font-size:13px;font-variant-numeric:tabular-nums;color:inherit;font-weight:500}
 .boxes .cap{padding:10px 14px 2px;font-size:11.5px;font-weight:600;color:var(--fg-3);transition:opacity .25s ease}
+.boxes .v1 .bn{flex:1;min-width:0}
+.boxes .trio{display:flex;gap:4px}
+.boxes .trio .dot{width:7px;height:7px}
+.boxes .accs{gap:18px;color:var(--fg-2);font-size:15px}
+.boxes .accs span{display:flex;align-items:center;gap:7px}
 .boxes .ic{width:20px;height:20px;flex:none;margin:0 2px;color:var(--fg-3)}
 .boxes .dot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--acc-1)}
 .boxes .dot.a2{background:var(--acc-2)}
