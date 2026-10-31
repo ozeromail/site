@@ -11,7 +11,7 @@
   "statsLink": "The numbers are public",
   "description": "Ozero Mail: one calm inbox for Gmail, iCloud, Exchange and any IMAP mail (Outlook soon), with shared folders and people first. No AI, no ads, no tracking.",
   "h1": "All your email. One calm inbox.",
-  "sub": "I’m making the email app I couldn’t find for myself. For Android and iPhone, no AI.",
+  "sub": "I’m making the email app I couldn’t find for myself. For Android and iPhone, no AI. The beta opens soon.",
   "pains": [
     {
       "q": "1,254 unread?",
@@ -47,6 +47,12 @@
       "from": "Focus",
       "when": "Yesterday",
       "demo": "focus"
+    },
+    {
+      "q": "With one hand?",
+      "a": "Everything you touch sits in the lower third of the screen. A short swipe marks a letter Done or Read, a long one deletes or snoozes it; you choose what each side does. When you write, To, Subject and the text sit right above the keyboard, and the text grows upwards as far as it needs.",
+      "from": "One hand",
+      "when": "Yesterday"
     },
     {
       "q": "Who’s on the other end?",
@@ -94,7 +100,7 @@
   "cPhone": "My phone: {os}",
   "cFine": "Opens your mail app. Your address stays in my inbox and nowhere else.",
   "send": "Send",
-  "cta": "Write to me",
+  "cta": "Ask for the beta",
   "barLabel": "Page controls",
   "progLabel": "Letters read",
   "next": "The last letter is yours to write",
@@ -166,7 +172,10 @@
       "time": "Thu, 14:00–15:00",
       "place": "Room 4",
       "join": "Join",
-      "leaf": ["Thu", "30"],
+      "leaf": [
+        "Thu",
+        "30"
+      ],
       "day": "Thursday",
       "fromMail": "from invitations in your mail",
       "other": "Bank call",
