@@ -40,13 +40,15 @@ const d = t.demo;
     <div class="sheetish" aria-hidden="true">
       <p class="dh">{d.boxes.title}</p>
       <p class="bx inbox"><span class="dots"><i></i><i></i><i></i></span><span class="bn">{d.boxes.folders[0]}</span><span class="bc">12</span></p>
-      <p class="cap">{d.boxes.caption}</p>
-      {d.boxes.merged.map((all, i) => (
-        <div class="grp">
-          {d.boxes.accounts.map((a, j) => <p class="bx one"><svg aria-hidden="true" class="ic"><use href={i ? '#i-archive' : '#i-sent'}/></svg><span class="bn">{d.boxes.folders[i + 1]}</span><span class="ds">{a}</span><i class={`dot a${j + 1}`}></i></p>)}
-          <p class="bx all"><svg aria-hidden="true" class="ic"><use href={i ? '#i-archive' : '#i-sent'}/></svg><span class="bn">{all}</span></p>
+      <div class="views">
+        <div class="v v0">
+          {d.boxes.merged.map((_, i) => d.boxes.accounts.map((a, j) => <p class="bx"><svg aria-hidden="true" class="ic"><use href={i ? '#i-archive' : '#i-sent'}/></svg><span class="bn">{d.boxes.folders[i + 1]}</span><span class="ds">{a}</span><i class={`dot a${j + 1}`}></i></p>))}
         </div>
-      ))}
+        <div class="v v1">
+          <p class="cap">{d.boxes.caption}</p>
+          {d.boxes.merged.map((all, i) => <p class="bx"><svg aria-hidden="true" class="ic"><use href={i ? '#i-archive' : '#i-sent'}/></svg><span class="bn">{all}</span></p>)}
+        </div>
+      </div>
     </div>
   </div>
 )}
@@ -79,18 +81,13 @@ const d = t.demo;
       </div>
       <p class="meta"><svg aria-hidden="true"><use href="#i-pin"/></svg><span>{d.work.place}</span></p>
       <p class="meta join"><svg aria-hidden="true"><use href="#i-video"/></svg><span>{d.work.join}</span></p>
-      <div class="day" aria-hidden="true">
-        <p class="dayh">{d.work.day}<span>{d.work.fromMail}</span></p>
-        <div class="hours">
-          {['13', '14', '15'].map((h) => <span class="h">{h}</span>)}
-          <span class="ev this">{d.work.title}</span>
-          <span class="ev other">{d.work.other}</span>
-        </div>
-      </div>
+      <p class="clash">{d.work.clash}</p>
+      <div class="reply">
       <div class="answers" role="group" aria-label={d.work.label}>
         {d.work.answers.map((a, i) => <button type="button" class={i === 2 ? 'yes' : undefined} data-answer={i} data-result={d.work.results[i]}>{a}</button>)}
       </div>
       <p class="result"><span class="rs">{['#i-close', '#i-maybe', '#i-check'].map((i, n) => <svg aria-hidden="true" class={`ri r${n}`}><use href={i}/></svg>)}<span class="rtext" role="status"></span></span><button type="button" class="chg">{d.work.change}</button></p>
+      </div>
     </div>
   </div>
 )}

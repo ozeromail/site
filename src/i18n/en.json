@@ -24,7 +24,7 @@
     },
     {
       "q": "Work mail too?",
-      "a": "Your work Exchange sits next to your own mail; all it takes is the address and password. A meeting invite comes as a card: answer right in the letter, and the day strip shows what it clashes with.",
+      "a": "Your work Exchange sits next to your own mail; all it takes is the address and password. A meeting invite comes as a card: answer right in the letter, and the card tells you if it clashes with anything.",
       "demo": "work"
     },
     {
@@ -58,7 +58,7 @@
   "fOs": "Your OS",
   "fSubj": "Subject",
   "cPhone": "My phone: {os}",
-  "cFine": "Opens your mail app. Your address stays in my inbox and nowhere else.",
+  "cFine": "Opens your mail app. Only I will see your address.",
   "send": "Send",
   "cta": "Ask for the beta",
   "barLabel": "Page controls",
@@ -133,9 +133,6 @@
         "Thu",
         "30"
       ],
-      "day": "Thursday",
-      "fromMail": "from invitations in your mail",
-      "other": "Bank call",
       "answers": [
         "No",
         "Maybe",
@@ -147,7 +144,8 @@
         "You’re going"
       ],
       "change": "Change",
-      "label": "Your answer"
+      "label": "Your answer",
+      "clash": "Clashes with Bank call at 14:30"
     },
     "privacy": {
       "from": "Shop",
@@ -242,7 +240,7 @@
       {
         "h": "Meeting invitations",
         "p": [
-          "Your answer to an invitation goes from your own mailbox, or straight to your Exchange server. The day strip next to it is built from invitations in your mail.",
+          "Your answer to an invitation goes from your own mailbox, or straight to your Exchange server. Clashes are found among the invitations in your mail.",
           "Add to calendar opens your phone’s calendar with the meeting filled in. The app does not read your calendar."
         ]
       },

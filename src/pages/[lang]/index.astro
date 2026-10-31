@@ -104,12 +104,12 @@ const url = new URL(`/${lang}/`, site);
       <p class="soon">{t.soon}</p>
       <div class="compose">
         <div class="field"><span class="lbl">{t.fTo}</span><span>{t.name}</span></div>
-        <fieldset class="field"><legend class="lbl">{t.fOs}</legend>
-          <div class="seg">
+        <div class="field"><span class="lbl" id="osLbl">{t.fOs}</span>
+          <div class="seg" role="radiogroup" aria-labelledby="osLbl">
             <label><input type="radio" name="os" value="android" checked><span>Android</span></label>
             <label><input type="radio" name="os" value="iphone"><span>iPhone</span></label>
           </div>
-        </fieldset>
+        </div>
         <div class="field"><span class="lbl">{t.fSubj}</span><h2 id="waitTitle">{t.mailSubj}</h2></div>
         <p class="text">{t.mailBody}</p>
         <div class="send"><span class="fine">{t.cFine}</span><a class="btn" id="send" href={mailto('Android')} data-iphone={mailto('iPhone')} data-android={mailto('Android')}>{t.send}</a></div>

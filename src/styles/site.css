@@ -118,13 +118,12 @@ main{position:relative;z-index:1;max-width:620px;margin:0 auto;padding:0 max(24p
 .wait{display:grid;gap:24px;padding:clamp(56px,12vh,120px) 0}
 .wait .soon{color:var(--fg-2)}
 .compose{border:1px solid var(--line);border-radius:20px;overflow:hidden;font-size:16px}
-.field{margin:0;min-width:0;border:0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:minmax(72px,auto) minmax(0,1fr);align-items:center;gap:8px;padding:12px 20px}
-.field legend{float:left;padding:0}
+.field{margin:0;min-width:0;border:0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:84px minmax(0,1fr);align-items:center;gap:8px;padding:12px 20px}
 .field h2{font:inherit}
 .field .lbl{color:var(--fg-3)}
 .compose .text{padding:18px 20px 28px;color:var(--fg);font-family:var(--f-ui);font-size:17px;line-height:27px}
 .compose .send{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding:12px 12px 12px 20px;border-top:1px solid var(--line)}
-.compose .fine{flex:1 1 160px;font-size:13px;line-height:1.45;color:var(--fg-3)}
+.compose .fine{flex:1 1 180px;text-wrap:balance;font-size:13px;line-height:1.45;color:var(--fg-3)}
 .btn{display:inline-flex;align-items:center;min-height:44px;border-radius:999px;padding:0 20px;white-space:nowrap;background:var(--accent-fill);color:#fff;font-weight:600}
 .btn:hover{text-decoration:none;filter:brightness(1.06)}
 
@@ -169,7 +168,8 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .zero .under .word{font-size:14px}
 .zero .bead{width:30px;height:30px}
 .zero .bead svg{width:16px;height:16px}
-.zero .de{display:none;justify-items:center;text-align:center;padding:0 12px 16px}
+.demo.zero .dl{position:relative;min-height:240px;align-content:start}
+.zero .de{position:absolute;inset:0;align-content:center;display:none;justify-items:center;text-align:center;padding:0 12px 16px}
 .zero.clear .de{display:grid}
 .zero .de canvas{display:block;width:100%;height:150px;margin-bottom:-62px}
 .demo.zero .det{font-weight:650;font-size:19px;line-height:25px;letter-spacing:-.01em;color:var(--fg)}
@@ -194,8 +194,12 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .tabs input:focus-visible+span,.seg input:focus-visible+span{outline:2px solid var(--accent);outline-offset:-2px}
 .tabs .tl{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .tabs .n{font-size:11px;font-weight:700;color:var(--accent)}
-.focus .fl{display:none}
-.focus:has([value="0"]:checked) .f0,.focus:has([value="1"]:checked) .f1,.focus:has([value="2"]:checked) .f2{display:grid;animation:pour .4s var(--ease)}
+/* Every demo keeps one height in all its states, so the page never jumps: states share one grid cell and cross-fade */
+.focus .dl>.fl,.boxes .v,.work .reply>*{grid-area:1/1;transition:opacity .25s var(--ease),visibility 0s .25s}
+.focus .fl,.boxes .v1,.boxes:has([value="1"]:checked) .v0{opacity:0;visibility:hidden}
+.focus .fl{display:grid}
+.focus:has([value="0"]:checked) .f0,.focus:has([value="1"]:checked) .f1,.focus:has([value="2"]:checked) .f2,.boxes:has([value="1"]:checked) .v1{opacity:1;visibility:visible;transition-delay:0s}
+.boxes .views,.work .reply{display:grid}
 @keyframes pour{from{opacity:0;transform:translateY(6px)}}
 /* Mailboxes: as in the app's sheet; three Sent folders become one "All sent" */
 .boxes .sheetish{border-radius:16px;background:var(--bg);padding:4px 0 6px}
@@ -208,26 +212,23 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .boxes .inbox .bn{flex:1}
 .boxes .bc{font-size:13px;font-variant-numeric:tabular-nums;color:inherit;font-weight:500}
 .boxes .cap{padding:10px 14px 2px;font-size:11.5px;font-weight:600;color:var(--fg-3);transition:opacity .25s ease}
-.boxes:has([value="0"]:checked) .cap{display:none}
 .boxes .ic{width:20px;height:20px;flex:none;margin:0 2px;color:var(--fg-3)}
 .boxes .dot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--acc-1)}
 .boxes .dot.a2{background:var(--acc-2)}
 .boxes .dot.a3{background:var(--acc-3)}
-.boxes .grp{display:grid}
-.boxes .grp .all,.boxes:has([value="1"]:checked) .grp .one{min-height:0;height:0;opacity:0}
-.boxes:has([value="1"]:checked) .grp .all{min-height:48px;height:auto;opacity:1}
 /* Hidden images: the app's grey bar with Show; the image comes when asked */
 .privacy .lh{padding:12px 14px;border-radius:14px;background:var(--bg)}
 .demo.privacy .ls{font-weight:650;font-size:16px;line-height:21px;color:var(--fg)}
 .demo.privacy .lf{display:flex;gap:8px;margin-top:2px;font-size:13px;color:var(--fg-3)}
 .privacy .lf b{font-weight:500;color:var(--fg)}
-.privacy .pic{display:grid;gap:6px;margin-top:6px;cursor:pointer}
+.privacy .pic{display:grid;margin-top:6px;cursor:pointer}
+.privacy .pic>*{grid-area:1/1}
 .privacy input{position:absolute;opacity:0;pointer-events:none}
-.privacy .bar{display:flex;align-items:center;gap:10px;padding:8px 8px 8px 14px;border-radius:14px;background:var(--line);font-size:13px;line-height:1.35;color:var(--fg-3)}
+.privacy .bar{position:relative;z-index:1;align-self:end;margin:8px;transition:opacity .25s var(--ease),visibility 0s .25s;display:flex;align-items:center;gap:10px;padding:8px 8px 8px 14px;border-radius:14px;background:var(--line);font-size:13px;line-height:1.35;color:var(--fg-3)}
 .privacy .btnish{flex:none;padding:7px 14px;border-radius:999px;background:var(--bg);font-size:13px;font-weight:600;color:var(--fg)}
-.privacy .img{height:120px;border-radius:14px;background:linear-gradient(var(--line),var(--line)) 14px 18px/70% 10px no-repeat,linear-gradient(var(--line),var(--line)) 14px 38px/52% 10px no-repeat,linear-gradient(var(--line),var(--line)) 14px 58px/62% 10px no-repeat,var(--bg);transition:background .4s var(--ease)}
+.privacy .img{height:150px;border-radius:14px;background:linear-gradient(var(--line),var(--line)) 14px 18px/70% 10px no-repeat,linear-gradient(var(--line),var(--line)) 14px 38px/52% 10px no-repeat,linear-gradient(var(--line),var(--line)) 14px 58px/62% 10px no-repeat,var(--bg);transition:background .4s var(--ease)}
 .privacy .pic:has(input:focus-visible){outline:2px solid var(--water);outline-offset:-2px;border-radius:14px}
-.privacy .pic:has(input:checked) .bar{display:none}
+.privacy .pic:has(input:checked) .bar{opacity:0;visibility:hidden}
 .privacy .pic:has(input:checked) .img{background:linear-gradient(180deg,#b6d4ff,#f4f8ff 52%,#6aa3f9 53%,#1f5ccd)}
 /* Privacy: plain reading */
 .policy{padding-top:32px;padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
@@ -251,21 +252,14 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .work .card{display:grid;gap:2px;padding:14px;border-radius:16px;background:var(--bg);border:1px solid var(--line)}
 .demo.work .wt{font-weight:650;font-size:16px;color:var(--fg)}
 .demo.work .ws{color:var(--fg-3);font-size:13px}
-.work .day{margin:12px 0 10px;border-top:1px solid var(--line);padding-top:10px}
-.demo.work .dayh{display:flex;align-items:baseline;gap:8px;font-size:11px;font-weight:600;color:var(--fg-3);margin-bottom:6px}
-.work .dayh span{margin-left:auto;font-size:11.5px;font-weight:500}
-.work .hours{position:relative;display:grid;grid-template-rows:repeat(3,28px)}
-.work .h{border-top:1px solid var(--line);font-size:11px;color:var(--fg-3);padding-top:2px;font-variant-numeric:tabular-nums}
-.work .ev{position:absolute;left:28px;height:26px;display:flex;align-items:center;padding:0 8px;border-radius:6px;font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.work .ev.this{top:29px;right:calc((100% - 28px)*.38 + 4px);background:var(--accent-soft);color:var(--accent);box-shadow:inset 3px 0 var(--water)}
-.work .ev.other{top:43px;left:calc(28px + (100% - 28px)*.62);right:0;background:var(--bg-soft);color:#c23745;box-shadow:inset 3px 0 #df5260}
-@media (prefers-color-scheme: dark){.work .ev.other{color:#f08a94}}
+.demo.work .clash{display:flex;align-items:center;gap:8px;margin:12px 0 10px;padding-top:12px;border-top:1px solid var(--line);font-size:13px;color:var(--fg-2)}
+.work .clash::before{content:"";width:7px;height:7px;flex:none;border-radius:50%;background:#df5260}
 .work .answers{display:flex;gap:8px;margin-top:4px}
-.work .answers button{flex:1 1 0;min-width:0;min-height:48px;padding:0 6px;border-radius:14px;border:1px solid var(--line);background:none;font-size:15px;font-weight:600;line-height:1.15;color:var(--fg);cursor:pointer;transition:background-color .15s ease}
+.work .answers button{flex:1 1 auto;min-width:0;white-space:nowrap;min-height:48px;padding:0 6px;border-radius:14px;border:1px solid var(--line);background:none;font-size:15px;font-weight:600;line-height:1.15;color:var(--fg);cursor:pointer;transition:background-color .15s ease}
 .work .answers button:hover{background:var(--bg-soft)}
 .work .answers .yes{background:var(--accent-fill);border-color:var(--accent-fill);color:#fff}
 .work .answers .yes:hover{background:var(--accent-fill);filter:brightness(1.06)}
-.work .result{display:none;align-items:center;justify-content:space-between;gap:8px;min-height:48px;margin-top:8px;padding-top:4px;border-top:1px solid var(--line);font-weight:600;color:var(--ans)}
+.work .result{display:flex;opacity:0;visibility:hidden;align-items:center;justify-content:space-between;gap:8px;min-height:48px;margin-top:8px;padding-top:4px;border-top:1px solid var(--line);font-weight:600;color:var(--ans)}
 .work .rs{display:flex;align-items:center;gap:8px}
 .work .rs svg{width:18px;height:18px;display:none}
 .work[data-answer="0"] .r0,.work[data-answer="1"] .r1,.work[data-answer="2"] .r2{display:block}
@@ -274,7 +268,7 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .work[data-answer="1"]{--ans:#a35f00}
 .work[data-answer="0"]{--ans:#c23745}
 @media (prefers-color-scheme: dark){.work{--ans:#4cc98d}.work[data-answer="1"]{--ans:#f0a640}.work[data-answer="0"]{--ans:#f08a94}}
-.work.answered .answers{display:none}
-.work.answered .result{display:flex;animation:pour .3s var(--ease)}
+.work .answers,.work.answered .result{opacity:1;visibility:visible;transition-delay:0s}
+.work.answered .answers{opacity:0;visibility:hidden;transition-delay:0s,.25s}
 .work .chg{border:0;background:var(--bg-soft);color:var(--fg);font-weight:600;font-size:13px;min-height:36px;padding:0 12px;border-radius:10px;cursor:pointer}
 .work .chg:hover{background:var(--line)}
