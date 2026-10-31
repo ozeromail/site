@@ -133,7 +133,7 @@ function swipeable(box: HTMLElement, sheet: HTMLElement, onSwipe: (reset: () => 
     const mx = e.clientX - startX;
     const my = e.clientY - startY;
     if (!axis && (Math.abs(mx) > 10 || Math.abs(my) > 10)) {
-      axis = mx < 0 && Math.abs(mx) > 1.5 * Math.abs(my) ? 'x' : 'y';
+      axis = mx < 0 && Math.abs(mx) > Math.abs(my) ? 'x' : 'y';
       if (axis === 'y') {
         x0 = null;
         return settle();
@@ -164,6 +164,25 @@ function swipeable(box: HTMLElement, sheet: HTMLElement, onSwipe: (reset: () => 
     if (v <= 300 && (-dx > threshold() || projected < -box.offsetWidth * 0.5 || v < -900)) fly(dx, v);
     else settle(v);
   };
+  /* touch-action lets the page pan vertically, so a swipe that drifts up or down would scroll it too.
+     Once a touch moves more sideways than up or down, the page stays put; only the first moves count, as browsers decide on those. */
+  let tx = 0;
+  let ty = 0;
+  let sideways: boolean | null = null;
+  sheet.addEventListener('touchstart', (e) => {
+    tx = e.touches[0].clientX;
+    ty = e.touches[0].clientY;
+    sideways = null;
+  }, { passive: true });
+  sheet.addEventListener('touchmove', (e) => {
+    if (sideways === null) {
+      const mx = e.touches[0].clientX - tx;
+      const my = e.touches[0].clientY - ty;
+      if (Math.abs(mx) < 3 && Math.abs(my) < 3) return;
+      sideways = mx < 0 && Math.abs(mx) > Math.abs(my);
+    }
+    if (sideways && e.cancelable) e.preventDefault();
+  }, { passive: false });
   sheet.addEventListener('pointerup', end);
   sheet.addEventListener('pointercancel', end);
   // Clears as a swipe would, for a button.

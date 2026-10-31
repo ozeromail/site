@@ -29,7 +29,8 @@
   --shadow:0 18px 40px -18px rgba(0,0,0,.7),0 4px 12px -6px rgba(0,0,0,.5);color-scheme:dark}}
 
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
+/* Nothing loads in late, so the browser never needs to shift the page: a demo that shrinks must not scroll it */
+html{overflow-anchor:none;scroll-behavior:smooth;scroll-padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
 
 /* The first screen and the finale fill the view; parts follow one another with air between */
