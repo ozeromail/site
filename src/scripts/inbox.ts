@@ -263,7 +263,7 @@ export function start() {
       resize(r, () => r.classList.add('shut'), () => {
         reset();
         if (n || left().length) return;
-        resize(zero, () => zero.classList.add('clear', 'falling'));
+        zero.classList.add('clear', 'falling');
         zeroLake.open();
       });
     };
@@ -279,33 +279,25 @@ export function start() {
       });
     }
     deb.addEventListener('click', () => {
-      resize(zero, () => {
-        rows.forEach((r) => {
-          r.inert = false;
-          r.classList.remove('shut');
-        });
-        zero.classList.remove('clear', 'falling');
+      rows.forEach((r) => {
+        r.inert = false;
+        r.classList.remove('shut');
       });
+      zero.classList.remove('clear', 'falling');
       count.textContent = String(rows.length);
       zeroLake.hide();
       follow(rows[0].querySelector<HTMLElement>('.rowdone')!);
     });
   }
 
-  /* Segmented controls: the thumb slides to the choice, and a demo grows or shrinks to what it now shows. */
+  /* Segmented controls: the thumb slides to the choice. */
   for (const seg of document.querySelectorAll<HTMLElement>('.tabs,.seg')) {
     const inputs = [...seg.querySelectorAll('input')];
-    const box = seg.closest<HTMLElement>('.demo');
     seg.style.setProperty('--n', String(inputs.length));
     // Browsers may restore a choice on reload without a change event.
     const sync = () => seg.style.setProperty('--i', String(Math.max(0, inputs.findIndex((i) => i.checked))));
     sync();
-    // The choice has changed by the time `change` fires, so the height is noted on the press before it.
-    let h0 = 0;
-    const note = () => (h0 = box?.offsetHeight ?? 0);
-    seg.addEventListener('pointerdown', note);
-    seg.addEventListener('keydown', note);
-    seg.addEventListener('change', () => (box && h0 ? resize(box, sync, undefined, undefined, h0) : sync()));
+    seg.addEventListener('change', sync);
   }
 
   /* The invitation: once answered, its answer and Change take the buttons' place, so focus moves along. */
