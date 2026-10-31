@@ -195,25 +195,26 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .tabs .tl{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .tabs .n{font-size:11px;font-weight:700;color:var(--accent)}
 /* Every demo keeps one height in all its states, so the page never jumps: states share one grid cell and cross-fade */
-.focus .dl>.fl,.boxes .v,.work .reply>*{grid-area:1/1;transition:opacity .25s var(--ease),visibility 0s .25s}
-.focus .fl,.boxes .v1,.boxes:has([value="1"]:checked) .v0{opacity:0;visibility:hidden}
+.focus .dl>.fl,.boxes .v,.hand .v,.work .reply>*{grid-area:1/1;transition:opacity .25s var(--ease),visibility 0s .25s}
+.focus .fl,.boxes .v1,.boxes:has([value="1"]:checked) .v0,.hand .v1,.hand:has([value="1"]:checked) .v0{opacity:0;visibility:hidden}
 .focus .fl{display:grid}
-.focus:has([value="0"]:checked) .f0,.focus:has([value="1"]:checked) .f1,.focus:has([value="2"]:checked) .f2,.boxes:has([value="1"]:checked) .v1{opacity:1;visibility:visible;transition-delay:0s}
+.focus:has([value="0"]:checked) .f0,.focus:has([value="1"]:checked) .f1,.focus:has([value="2"]:checked) .f2,.boxes:has([value="1"]:checked) .v1,.hand:has([value="1"]:checked) .v1{opacity:1;visibility:visible;transition-delay:0s}
 .boxes .views,.work .reply{display:grid}
 /* Mailboxes merge: each account's copy of a folder slides up into one row, then the merged list settles in */
 .boxes .v0 .bx{transition:transform .4s var(--ease),opacity .25s var(--ease)}
 .boxes:has([value="1"]:checked) .v0{transition-delay:.3s,.55s}
-.boxes:has([value="1"]:checked) .v0 .bx{transform:translateY(calc(var(--d) * 48px))}
-.boxes:has([value="1"]:checked) .v0 .bx:not(:nth-child(3n+1)){opacity:0}
+.boxes:has([value="1"]:checked) .v0 .bx{transform:translateY(calc(var(--d) * var(--row)))}
+.boxes:has([value="1"]:checked) .v0 .bx:not(.head){opacity:0}
 .boxes .v1 .bx{transition:opacity .25s var(--ease)}
 .boxes:has([value="1"]:checked) .v1{transition-delay:.25s}
-.boxes .v1 .bx:nth-child(n+3){opacity:0}
-.boxes:has([value="1"]:checked) .v1 .bx:nth-child(n+3){opacity:1;transition-delay:calc(.35s + var(--k, 2) * .06s)}
+.boxes .v1 .more{opacity:0}
+.boxes:has([value="1"]:checked) .v1 .more{opacity:1;transition-delay:calc(.35s + var(--k) * .06s)}
 @keyframes pour{from{opacity:0;transform:translateY(6px)}}
 /* Mailboxes: as in the app's sheet; three Sent folders become one "All sent" */
 .boxes .sheetish{border-radius:16px;background:var(--bg);padding:4px 0 6px}
 .boxes .dh{padding:10px 14px 4px;font-size:19px;line-height:25px;font-weight:650}
-.boxes .bx{display:flex;align-items:center;gap:14px;min-height:48px;font-size:16px;padding:0 14px;color:var(--fg);overflow:hidden}
+.boxes{--row:48px}
+.boxes .bx{display:flex;align-items:center;gap:14px;min-height:var(--row);font-size:16px;padding:0 14px;color:var(--fg);overflow:hidden}
 .boxes .bx .bn{white-space:nowrap}
 .boxes .bx .ds{flex:1;min-width:0;color:var(--fg-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .boxes .inbox{color:var(--accent);font-weight:600}
@@ -240,7 +241,7 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .privacy input{position:absolute;opacity:0;pointer-events:none}
 .privacy .bar{position:relative;z-index:1;align-self:end;margin:8px;transition:opacity .25s var(--ease),visibility 0s .25s;display:flex;align-items:center;gap:10px;padding:8px 8px 8px 14px;border-radius:14px;background:var(--line);font-size:13px;line-height:1.35;color:var(--fg-3)}
 .privacy .btnish{flex:none;padding:7px 14px;border-radius:999px;background:var(--bg);font-size:13px;font-weight:600;color:var(--fg)}
-.privacy .img{height:150px;border-radius:14px;background:linear-gradient(var(--line),var(--line)) 14px 18px/70% 10px no-repeat,linear-gradient(var(--line),var(--line)) 14px 38px/52% 10px no-repeat,linear-gradient(var(--line),var(--line)) 14px 58px/62% 10px no-repeat,var(--bg);transition:background .4s var(--ease)}
+.privacy .img{height:150px;border-radius:14px;background:linear-gradient(var(--line),var(--line)) 14px 18px/70% 10px no-repeat,linear-gradient(var(--line),var(--line)) 14px 38px/52% 10px no-repeat,linear-gradient(var(--line),var(--line)) 14px 58px/62% 10px no-repeat,var(--bg)}
 .privacy .pic:has(input:focus-visible){outline:2px solid var(--water);outline-offset:-2px;border-radius:14px}
 .privacy .pic:has(input:checked) .bar{opacity:0;visibility:hidden}
 .privacy .pic:has(input:checked) .img{background:linear-gradient(180deg,#b6d4ff,#f4f8ff 52%,#6aa3f9 53%,#1f5ccd)}
@@ -264,7 +265,7 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .work .day{margin-top:12px}
 .demo.work .track{position:relative;height:8px;border-radius:4px;background:#e3e8f0;overflow:hidden}
 .work .track i{position:absolute;top:0;bottom:0;left:calc(var(--a) / 9 * 100%);width:calc((var(--b) - var(--a)) / 9 * 100%);background:#9aa6ba}
-.work .track .me{background:#2f8cff}
+.work .track .me{background:var(--water)}
 .work .track .x{background:#c23a2c}
 .demo.work .hrs{display:flex;justify-content:space-between;margin-top:4px;font-size:12px;line-height:16px;color:var(--fg-3);font-variant-numeric:tabular-nums}
 .demo.work .clash{margin:6px 0 10px;font-size:14px;color:#b23427}
@@ -292,27 +293,21 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 /* The thumb's reach: an arc swept from the lower right corner, where the thumb rests; it rises with the keyboard */
 .hand .screen::before{content:"";position:absolute;z-index:-1;right:0;bottom:0;width:170%;aspect-ratio:1;border-radius:50%;transform:translate(50%,50%);background:radial-gradient(closest-side,var(--accent-soft) 45%,color-mix(in srgb,var(--accent-soft) 35%,transparent) 99%);border:1.5px dashed color-mix(in srgb,var(--accent) 35%,transparent);transition:transform .35s var(--ease)}
 .hand:has([value="1"]:checked) .screen::before{transform:translate(50%,calc(50% - 120px))}
-.hand .v{grid-area:1/1;display:flex;flex-direction:column;min-height:0;transition:opacity .25s var(--ease),visibility 0s .25s}
-.hand .v1,.hand:has([value="1"]:checked) .v0{opacity:0;visibility:hidden}
-.hand:has([value="1"]:checked) .v1{opacity:1;visibility:visible;transition-delay:0s}
+.hand .v{display:flex;flex-direction:column;min-height:0}
 .hand .ht{padding:18px 16px 6px;font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.01em;color:var(--fg)}
 .hand .hl .di{background:none}
 .hand .dock{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:auto 16px 16px;padding:0 18px;min-height:52px;border-radius:999px;background:var(--bg);box-shadow:0 2px 10px rgba(10,20,40,.12)}
 .hand .dock svg{width:24px;height:24px;fill:none;stroke:var(--fg-2);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .hand .dock svg:last-child{stroke:var(--accent)}
-.hand .dots{display:inline-flex;gap:3px}
-.hand .dots i{width:7px;height:7px;border-radius:50%;background:var(--acc-1)}
-.hand .dots i:nth-child(2){background:var(--acc-2)}
-.hand .dots i:nth-child(3){background:var(--acc-3)}
 .hand .quote{margin:16px 16px 0;padding:10px 12px;border-radius:12px;background:var(--bg-soft);font-size:13px;color:var(--fg-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hand .page{margin-top:auto;padding:0 16px 8px}
 .hand .hf{display:flex;gap:10px;min-height:38px;align-items:center;border-bottom:1px solid var(--line);font-size:15px;color:var(--fg);white-space:nowrap;overflow:hidden}
 .hand .hf span{color:var(--fg-3);min-width:44px}
 .hand .hb{padding-top:10px;font-family:var(--f-read);font-size:16px;line-height:24px;color:var(--fg)}
-.hand .caret{display:inline-block;width:2px;height:19px;margin-left:2px;vertical-align:-4px;background:var(--accent);animation:blink 1s steps(1) infinite}
+.hand .caret{display:inline-block;width:2px;height:19px;margin-left:2px;vertical-align:-4px;background:var(--accent)}
+.hand:has([value="1"]:checked) .caret{animation:blink 1s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
 .hand .keys{display:grid;gap:7px;padding:10px 6px 14px;background:var(--line)}
 .hand .keys i{height:32px;border-radius:6px;background:repeating-linear-gradient(90deg,var(--bg) 0 calc(10% - 5px),transparent calc(10% - 5px) 10%)}
 .hand .keys i:nth-child(2){margin:0 5%}
 .hand .keys i:nth-child(3){margin:0 15%}
-@media (prefers-reduced-motion:reduce){.hand .caret{animation:none}.hand .screen::before{transition:none}}

@@ -42,9 +42,9 @@ function spring(from: number, to: number, v: number, apply: (x: number) => void,
 /* Springs an element's height from what it was before `change` to what it is after, so what is below
    moves up or down instead of jumping. */
 const resizing = new WeakMap<HTMLElement, () => void>();
-function resize(box: HTMLElement, change: () => void, done?: () => void, step?: (k: number) => void, from?: number) {
+function resize(box: HTMLElement, change: () => void, done?: () => void) {
   // A resize caught midway starts from where it is, and the one it replaces still finishes its work.
-  const h0 = from ?? box.offsetHeight;
+  const h0 = box.offsetHeight;
   resizing.get(box)?.();
   box.style.height = '';
   change();
@@ -56,11 +56,7 @@ function resize(box: HTMLElement, change: () => void, done?: () => void, step?: 
   };
   if (h0 === h1) return end();
   box.style.height = `${h0}px`;
-  // `step` gets how far along it is, 0 to 1.
-  const stop = spring(h0, h1, 0, (h) => {
-    box.style.height = `${h}px`;
-    step?.((h - h0) / (h1 - h0));
-  }, end);
+  const stop = spring(h0, h1, 0, (h) => (box.style.height = `${h}px`), end);
   resizing.set(box, () => {
     stop();
     end();
