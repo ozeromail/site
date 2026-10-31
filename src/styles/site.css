@@ -118,7 +118,7 @@ main{position:relative;z-index:1;max-width:620px;margin:0 auto;padding:0 max(24p
 .wait{display:grid;gap:24px;padding:clamp(56px,12vh,120px) 0}
 .wait .soon{color:var(--fg-2)}
 .compose{border:1px solid var(--line);border-radius:20px;overflow:hidden;font-size:16px}
-.field{margin:0;min-width:0;border:0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:84px minmax(0,1fr);align-items:center;gap:8px;padding:12px 20px}
+.field{border-bottom:1px solid var(--line);display:grid;grid-template-columns:84px minmax(0,1fr);align-items:center;gap:8px;padding:12px 20px}
 .field h2{font:inherit}
 .field .lbl{color:var(--fg-3)}
 .compose .text{padding:18px 20px 28px;color:var(--fg);font-family:var(--f-ui);font-size:17px;line-height:27px}
