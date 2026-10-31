@@ -91,3 +91,31 @@ const d = t.demo;
     </div>
   </div>
 )}
+{kind === 'hand' && (
+  <div class="demo hand">
+    <div class="tabs" role="radiogroup" aria-label={d.hand.label}>
+      {d.hand.modes.map((mode, i) => <label><input type="radio" name="hand" value={i} checked={i === 0} /><span>{mode}</span></label>)}
+    </div>
+    <div class="screen" aria-hidden="true">
+      <div class="v v0">
+        <p class="ht">{d.hand.title}</p>
+        <div class="hl">{d.zero.rows.slice(0, 2).map(([who, what, when], i) => <Row who={who} what={what} when={when} unread={i === 0} />)}</div>
+        <p class="zone">{d.hand.zone}</p>
+        <p class="dock">
+          <span class="dots"><i></i><i></i><i></i></span>
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M5 19l1-4L16 5l3 3L9 18z"/></svg>
+        </p>
+      </div>
+      <div class="v v1">
+        <p class="quote">{d.hand.quote}</p>
+        <div class="page">
+          <p class="hf"><span>{d.hand.to}</span>{d.zero.rows[0][0]}</p>
+          <p class="hf"><span>{d.hand.subj}</span>{d.hand.re}</p>
+          <p class="hb">{d.hand.body}<i class="caret"></i></p>
+        </div>
+        <p class="keys"><i></i><i></i><i></i></p>
+      </div>
+    </div>
+  </div>
+)}
