@@ -39,7 +39,8 @@
     },
     {
       "q": "Everything within thumb’s reach",
-      "a": "Everything you touch sits in the lower third of the screen. A short swipe marks a letter Done or Read, a long one deletes or snoozes it; you choose what each side does. When you write, To, Subject and the text sit right above the keyboard, and the text grows upwards as far as it needs."
+      "a": "Everything you touch sits in the lower third of the screen. A short swipe marks a letter Done or Read, a long one deletes or snoozes it; you choose what each side does. When you write, To, Subject and the text sit right above the keyboard, and the text grows upwards as far as it needs.",
+      "demo": "hand"
     },
     {
       "q": "Made by one person, for my own mail",
@@ -153,6 +154,20 @@
       "hidden": "Images are hidden, so the sender can’t tell you opened this.",
       "show": "Show",
       "showLabel": "Show images"
+    },
+    "hand": {
+      "label": "What the screen shows",
+      "modes": [
+        "Reading",
+        "Writing"
+      ],
+      "zone": "Thumb zone",
+      "title": "Inbox",
+      "to": "To",
+      "subj": "Subject",
+      "re": "Re: Contract to sign",
+      "body": "I’ll sign it tonight.",
+      "quote": "Anna · Contract to sign"
     },
     "focus": {
       "tabs": [
