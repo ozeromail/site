@@ -1,12 +1,8 @@
-// The page behaves like the app's inbox: a letter scrolled to its end counts as read, swipe or press Done
-// to clear it with Undo in a toast, a bulk "Swipe N letters" strip, and still water at Inbox Zero.
+// The page reads as plain text; small live pieces of the app move only when touched,
+// and the still water of Inbox Zero closes the page.
 
-import type en from '../i18n/en.json';
-import { plural } from '../i18n/format';
 import { Lake } from './lake';
 import { clamp, still } from './motion';
-
-type Strings = typeof en.client & { lang: string; word: string; done: string };
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 
@@ -71,20 +67,12 @@ function resize(box: HTMLElement, change: () => void, done?: () => void, step?: 
   });
 }
 
-interface Swipe {
-  /** Whether the last press became a drag, so its click can be ignored. */
-  moved: () => boolean;
-  /** Clears as a swipe would, for a button or a key. */
-  fly: () => void;
-  /** Comes back from the left, the way it left. */
-  back: () => void;
-}
 
 /* A left swipe, as on a row in the app: the finger drives 1:1, the bead fills past the threshold,
    and the release velocity decides: a flick clears even a short drag, a finger that stopped cancels.
    A sheet in motion can be caught. Only clearly horizontal gestures count, so scrolling still works.
    `onSwipe` gets a function that puts the sheet back once its box has changed. */
-function swipeable(box: HTMLElement, sheet: HTMLElement, onSwipe: (reset: () => void) => void, canStart: (e: PointerEvent) => boolean, by?: HTMLElement): Swipe {
+function swipeable(box: HTMLElement, sheet: HTMLElement, onSwipe: (reset: () => void) => void, canStart: (e: PointerEvent) => boolean) {
   const under = box.querySelector<HTMLElement>(':scope > .under');
   let x0: number | null = null;
   let startX = 0;
@@ -94,7 +82,6 @@ function swipeable(box: HTMLElement, sheet: HTMLElement, onSwipe: (reset: () => 
   let lastX = 0;
   let lastT = 0;
   let axis: 'x' | 'y' | null = null;
-  let moved = false;
   let stop = () => {};
   const threshold = () => Math.min(box.offsetWidth * 0.35, 160);
   const place = (x: number) => {
@@ -122,7 +109,6 @@ function swipeable(box: HTMLElement, sheet: HTMLElement, onSwipe: (reset: () => 
   sheet.addEventListener('pointerdown', (e) => {
     // One finger at a time: a second pointer must not reset the gesture in progress.
     if (x0 !== null) return;
-    moved = false;
     if (e.button || !canStart(e)) return;
     // iOS takes a swipe from the screen edge for Forward.
     if (e.pointerType === 'touch' && e.clientX > innerWidth - 20) return;
@@ -147,7 +133,6 @@ function swipeable(box: HTMLElement, sheet: HTMLElement, onSwipe: (reset: () => 
     const mx = e.clientX - startX;
     const my = e.clientY - startY;
     if (!axis && (Math.abs(mx) > 10 || Math.abs(my) > 10)) {
-      moved = true;
       axis = mx < 0 && Math.abs(mx) > 1.5 * Math.abs(my) ? 'x' : 'y';
       if (axis === 'y') {
         x0 = null;
@@ -181,37 +166,24 @@ function swipeable(box: HTMLElement, sheet: HTMLElement, onSwipe: (reset: () => 
   };
   sheet.addEventListener('pointerup', end);
   sheet.addEventListener('pointercancel', end);
-  return {
-    moved: () => moved,
-    fly: () => {
-      // The bead shows by the button that was pressed.
-      if (by) box.style.setProperty('--by', `${by.offsetTop + by.offsetHeight / 2}px`);
-      fly(dx, -900);
-    },
-    back: () => {
-      stop();
-      place(-box.offsetWidth);
-      stop = spring(dx, 0, 0, place);
-    },
-  };
+  // Clears as a swipe would, for a button.
+  return () => fly(dx, -900);
 }
 
 export function start() {
-  const S: Strings = JSON.parse($('strings').textContent ?? '{}');
-
-  /* Every visit is a fresh inbox, so it opens at the top: no restored scroll, no #anchor kept in the address. */
+  /* Every visit opens at the top: no restored scroll, no #anchor kept in the address. */
   history.scrollRestoration = 'manual';
   if (location.hash) {
     history.replaceState(null, '', location.pathname + location.search);
     scrollTo(0, 0);
   }
+  // CSS makes in-page links glide; focus moves along, so Tab continues from the target.
   document.addEventListener('click', (e) => {
     const a = (e.target as Element).closest<HTMLAnchorElement>('a[href^="#"]');
     const target = a && document.getElementById(a.hash.slice(1));
     if (!target) return;
     e.preventDefault();
-    glide(target, 'start');
-    // Move focus along, so Tab continues from the target.
+    target.scrollIntoView({ block: 'start' });
     if (!target.hasAttribute('tabindex')) target.tabIndex = -1;
     target.focus({ preventScroll: true });
   });
@@ -222,275 +194,29 @@ export function start() {
   addEventListener('keydown', () => (pointer = false), true);
   const follow = (to: HTMLElement) => pointer || to.focus({ preventScroll: true });
 
-  /* One live region speaks for the page, so each action is announced once. */
-  const live = $('live');
-  const say = (text: string) => {
-    live.textContent = '';
-    requestAnimationFrame(() => (live.textContent = text));
-  };
-
-  /* Toast with Undo, for five seconds as in the app. It waits while focus or a real pointer is on it;
-     touch screens keep :hover after a tap. */
-  const toast = $('toast');
-  const undoBtn = $<HTMLButtonElement>('toastUndo');
-  const hoverable = matchMedia('(hover: hover)');
-  let timer: number | undefined;
-  let undo: (() => void) | null = null;
-  function hideToast() {
-    clearInterval(timer);
-    toast.classList.add('gone');
-    toast.inert = true;
-    undo = null;
-  }
-  function showToast(undoFn: () => void) {
-    clearInterval(timer);
-    undo = undoFn;
-    toast.hidden = false;
-    toast.inert = false;
-    // A frame later, so even the first one rises.
-    requestAnimationFrame(() => toast.classList.remove('gone'));
-    let n = 5;
-    timer = window.setInterval(() => {
-      const held = toast.matches(':focus-within') || (hoverable.matches && toast.matches(':hover'));
-      if (!held && --n <= 0) hideToast();
-    }, 1000);
-  }
-  undoBtn.addEventListener('click', () => {
-    const f = undo;
-    hideToast();
-    f?.();
-  });
-
-  // While the page moves by itself, letters it passes are not read. Returns the release.
-  let holds = 0;
-  const hold = () => {
-    holds++;
-    return () => --holds || readSoon();
-  };
-  // CSS turns smooth scrolling off for reduced motion.
-  function glide(target: HTMLElement, block: ScrollLogicalPosition, then?: () => void) {
-    const release = hold();
-    const y0 = scrollY;
-    target.scrollIntoView({ block });
-    const ac = new AbortController();
-    let quiet: ReturnType<typeof setTimeout> | undefined;
-    const over = () => {
-      if (ac.signal.aborted) return;
-      ac.abort();
-      clearTimeout(quiet);
-      release();
-      then?.();
-    };
-    if ('onscrollend' in window) {
-      addEventListener('scrollend', over, { signal: ac.signal });
-      // No scroll at all.
-      quiet = setTimeout(() => scrollY === y0 && over(), 150);
-    } else {
-      // Safari: over once the page has been still for a moment.
-      quiet = setTimeout(over, 200);
-      addEventListener('scroll', () => {
-        clearTimeout(quiet);
-        quiet = setTimeout(over, 150);
-      }, { passive: true, signal: ac.signal });
-    }
-  }
-
-  /* The screen across the middle of the view is "on": E clears it first. */
-  const lit = new IntersectionObserver((entries) => {
-    for (const e of entries) e.target.classList.toggle('on', e.isIntersecting);
-  }, { rootMargin: '-45% 0px -45% 0px' });
-  document.querySelectorAll('.screen').forEach((s) => lit.observe(s));
-
-  /* Letters */
-  const mails = [...document.querySelectorAll<HTMLElement>('.mail')];
-  const isOpen = (m: HTMLElement | null | undefined): m is HTMLElement => !!m && !m.classList.contains('is-done');
-  const isUnread = (m: HTMLElement) => isOpen(m) && !m.classList.contains('is-read');
-  const el = Object.fromEntries(
-    ['count', 'unreadSr', 'left', 'bar', 'track', 'ozw', 'ozn', 'calm', 'bulk', 'bulkText', 'bulkBtn', 'bringBack', 'finale'].map((id) => [id, $(id)]),
-  ) as Record<string, HTMLElement>;
-  const nav = document.querySelector<HTMLElement>('.bbar')!;
-  let unread = mails.length;
-  let wasLeft = mails.length;
-  const leftText = () => (unread ? plural(S.lang, S.left, unread) : mails.some(isOpen) ? S.allRead : S.allClear);
-
-  // The finale's water: its horizon lies 90px down the canvas, under the word.
-  const lake = new Lake($<HTMLCanvasElement>('lake'), 90);
-  lake.onOpen = () => {
-    el.calm.classList.remove('wait-drop');
-    el.finale.classList.add('open');
-  };
-  const lakes = [lake];
   // The URL bar coming and going resizes the page too, so redraw once it settles.
+  const lakes: Lake[] = [];
   let redrawing = 0;
   addEventListener('resize', () => {
     clearTimeout(redrawing);
     redrawing = window.setTimeout(() => lakes.forEach((l) => l.redraw()), 120);
   });
 
-  // The counters show unread letters; Inbox Zero needs every letter Done.
-  // `land` jumps to the finale at once, for the bulk action.
-  function upd(land = false) {
-    const left = mails.filter(isOpen).length;
-    unread = mails.filter(isUnread).length;
-    el.count.textContent = String(unread);
-    el.unreadSr.textContent = ' ' + plural(S.lang, S.unread, unread);
-    el.left.textContent = leftText();
-    const read = mails.length - unread;
-    el.bar.style.width = (read / mails.length) * 100 + '%';
-    el.track.setAttribute('aria-valuenow', String(read));
-    el.ozw.textContent = left ? S.word : S.wordDone;
-    el.ozn.textContent = unread ? String(unread) : '';
-    el.bulk.hidden = !left;
-    el.bulkText.textContent = plural(S.lang, S.bulk, left);
-    el.calm.hidden = el.bringBack.hidden = !!left;
-    el.finale.classList.toggle('clear', !left);
-    // Collapsing letters moves others into view.
-    readSoon();
-    if (left === wasLeft) return;
-    wasLeft = left;
-    if (left) {
-      lake.hide();
-      el.finale.classList.remove('open');
-      return;
-    }
-    // Inbox Zero: glide to the word; a drop falls from it and opens the water, then the words come.
-    el.calm.classList.add('wait-drop');
-    el.calm.focus({ preventScroll: true });
-    if (land) {
-      // In the same frame: otherwise Safari clamps to the page bottom first and then glides back up.
-      el.finale.scrollIntoView({ block: 'center', behavior: 'instant' });
-      lake.open();
-    } else glide(el.finale, 'center', () => !mails.some(isOpen) && lake.open());
-  }
+  /* The finale: arriving at it is the cause, so a drop falls from the word once and opens the water, then the words come. */
+  const finale = $('finale');
+  const lake = new Lake($<HTMLCanvasElement>('lake'), 90);
+  lakes.push(lake);
+  lake.onOpen = () => finale.classList.add('open');
+  new IntersectionObserver((entries, seen) => {
+    if (!entries.some((e) => e.isIntersecting)) return;
+    seen.disconnect();
+    lake.open();
+  }, { threshold: 0.5 }).observe(finale);
 
-  // Done implies read; reset also forgets reading, for "Bring the letters back".
-  function collapse(m: HTMLElement, done: boolean, reset = false) {
-    m.classList.toggle('is-done', done);
-    if (done) m.classList.add('is-read');
-    if (reset) m.classList.remove('is-read');
-  }
-  const doneBtn = (m: HTMLElement) => m.querySelector<HTMLElement>('.act.done')!;
-  const swipes = new Map<HTMLElement, Swipe>();
-  // For a button or a key. The Undo for the letter before must not undo this one.
-  const clear = (m: HTMLElement) => {
-    hideToast();
-    swipes.get(m)!.fly();
-  };
-
-  // Reopens every letter at once, unread again, and puts the reader at the first one, which comes back from the left.
-  function restoreAll() {
-    mails.forEach((m) => collapse(m, false, true));
-    upd();
-    mails[0].scrollIntoView({ block: 'start', behavior: 'instant' });
-    swipes.get(mails[0])!.back();
-    doneBtn(mails[0]).focus({ preventScroll: true });
-    say(leftText());
-  }
-  // The row comes into view first, if it is out of it, and then opens where the reader looks.
-  function reopen(m: HTMLElement) {
-    hideToast();
-    const open = () => {
-      resize(m, () => {
-        collapse(m, false);
-        swipes.get(m)!.back();
-        upd();
-      });
-      follow(doneBtn(m));
-      say(leftText());
-    };
-    const r = m.getBoundingClientRect();
-    if (r.top < 0 || r.top > innerHeight * 0.6) glide(m, 'start', open);
-    else open();
-  }
-  // Called once the letter has flown out: it closes into a row and the letters below move up.
-  function done(m: HTMLElement, reset: () => void) {
-    if (!isOpen(m)) return reset();
-    const row = m.querySelector<HTMLElement>('.row')!;
-    // A letter read from its end closes towards the top of the view, so the next one follows right under its row.
-    const top = m.getBoundingClientRect().top;
-    const y0 = scrollY;
-    const root = document.documentElement;
-    // Not for the last letter: the page glides on to the finale.
-    const pin = top < 0 && mails.filter(isOpen).length > 1;
-    const release = pin ? hold() : null;
-    if (release) root.style.overflowAnchor = 'none';
-    resize(m, () => {
-      collapse(m, true);
-      reset();
-      upd();
-    }, () => {
-      if (release) {
-        root.style.overflowAnchor = '';
-        release();
-      }
-      // A keyboard user follows focus, so the row comes into view for them.
-      if (row.matches(':focus-visible')) row.scrollIntoView({ block: 'nearest' });
-    }, pin ? (k) => scrollTo({ top: y0 + top * k, behavior: 'instant' }) : undefined);
-    // The last letter has no Undo: "Bring the letters back" takes its place.
-    if (mails.some(isOpen)) {
-      // Focus on the letter would be lost with it.
-      if (m.contains(document.activeElement)) row.focus({ preventScroll: true });
-      else follow(row);
-      say(`${S.done}. ${leftText()}. ${S.undoHint}`);
-      showToast(() => reopen(m));
-    } else {
-      say(`${S.done}. ${leftText()}`);
-      hideToast();
-    }
-  }
-
-  // Touch swipes anywhere on the letter; a mouse drags by the header, the subject or the margins, so text stays selectable.
-  for (const m of mails) {
-    const swipe = swipeable(m, m.querySelector<HTMLElement>('.sheet')!, (reset) => done(m, reset), (e) => {
-      const target = e.target as Element;
-      if (target.closest('a,button,label,input,.demo')) return false;
-      return e.pointerType !== 'mouse' || !target.closest('.sheet > p,.plan');
-    }, doneBtn(m));
-    swipes.set(m, swipe);
-    doneBtn(m).addEventListener('click', () => clear(m));
-    m.querySelector('.row')!.addEventListener('click', () => reopen(m));
-  }
-
-  /* For visitors who scrolled past without clearing: one bulk action, as in the app. Swipe it or just press it.
-     All letters close at once and the page lands on the finale; "Bring the letters back" is the undo. */
-  function doneAll(reset?: () => void) {
-    const open = mails.filter(isOpen);
-    reset?.();
-    if (!open.length) return;
-    hideToast();
-    open.forEach((m) => collapse(m, true));
-    upd(true);
-    say(S.allDone);
-  }
-  const bulk = swipeable(el.bulk, el.bulkBtn, doneAll, () => true);
-  // A keyboard click (detail 0) has no press of its own, so an old swipe must not cancel it.
-  el.bulkBtn.addEventListener('click', (e) => {
-    if (!e.detail || !bulk.moved()) bulk.fly();
-  });
-
-  el.bringBack.addEventListener('click', () => {
-    hideToast();
-    restoreAll();
-  });
-
-  /* Reading: a letter whose end has passed above the bottom bar counts as read. */
-  let frame = 0;
-  const read = () => {
-    frame = 0;
-    if (!unread || holds) return;
-    const edge = innerHeight - nav.offsetHeight;
-    // Measure all first, then write, so layout is read once.
-    const seen = mails.filter(isUnread).filter((m) => m.querySelector('.sheet')!.getBoundingClientRect().bottom <= edge);
-    for (const m of seen) m.classList.add('is-read');
-    if (seen.length) upd();
-  };
-  // Also after load and resize: short letters may be read without any scrolling.
-  function readSoon() {
-    frame ||= requestAnimationFrame(read);
-  }
-  addEventListener('scroll', readSoon, { passive: true });
-  addEventListener('resize', readSoon);
-  readSoon();
+  /* The bottom button leads to the last letter, so it steps aside once that letter is in view. */
+  const bar = document.querySelector<HTMLElement>('.bbar');
+  const wait = document.getElementById('wait');
+  if (bar && wait) new IntersectionObserver(([e]) => bar.classList.toggle('away', e.isIntersecting)).observe(wait);
 
   /* Demos move only when touched. Inbox Zero: its rows swipe away like letters, and the last one leaves still water. */
   const zero = document.querySelector<HTMLElement>('.demo.zero');
@@ -523,14 +249,14 @@ export function start() {
       });
     };
     for (const r of rows) {
-      const swipe = swipeable(r, r.querySelector<HTMLElement>('.di')!, (reset) => gone(r, reset), () => !r.inert);
+      const fly = swipeable(r, r.querySelector<HTMLElement>('.di')!, (reset) => gone(r, reset), () => !r.inert);
       // Keyboards clear a row with its button, which shows only when focused.
       r.querySelector('.rowdone')!.addEventListener('click', () => {
         const next = left().find((x) => x !== r);
         if (next) next.querySelector<HTMLElement>('.rowdone')!.focus();
         else toDeb = true;
         r.inert = true;
-        swipe.fly();
+        fly();
       });
     }
     deb.addEventListener('click', () => {
@@ -581,29 +307,6 @@ export function start() {
       work.querySelector<HTMLElement>('.answers button')!.focus();
     });
   }
-
-  /* Keyboard: E marks the focused letter, or the first open one in view, as Done; U or Z undoes. */
-  document.addEventListener('keydown', (e) => {
-    if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
-    const at = document.activeElement;
-    if ((e.target as Element).closest('input,textarea')) return;
-    // By physical key, so the shortcuts work on any keyboard layout.
-    const k = e.code;
-    // E only within a letter, not on a demo's own controls; Undo from anywhere while it is offered.
-    if (k === 'KeyE' && !at?.closest('.demo') && (!at || at === document.body || at.closest('.mail,.toast,.finale'))) {
-      // A letter already flying is gone, so a quick second E takes the next one.
-      const can = (x: HTMLElement | null | undefined): x is HTMLElement => isOpen(x) && !x.classList.contains('flying');
-      const focused = at?.closest<HTMLElement>('.mail');
-      const m = can(focused) ? focused : mails.find((x) => can(x) && x.classList.contains('on'));
-      if (m) {
-        e.preventDefault();
-        clear(m);
-      }
-    } else if ((k === 'KeyU' || k === 'KeyZ') && undo) {
-      e.preventDefault();
-      undoBtn.click();
-    }
-  });
 
   /* Compose: Send opens the visitor's mail app with a note to the author; the phone goes into the text. */
   const send = document.getElementById('send') as HTMLAnchorElement | null;

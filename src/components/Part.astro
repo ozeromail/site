@@ -1,0 +1,12 @@
+---
+// One section of the page: a question, a short answer and, often, a live piece of the app.
+interface Props {
+  id?: string;
+  title: string;
+}
+const { id, title } = Astro.props;
+---
+<section class="part" id={id}>
+  <h2>{title}</h2>
+  <slot />
+</section>

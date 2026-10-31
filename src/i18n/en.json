@@ -1,6 +1,5 @@
 {
   "title": "Ozero Mail: email app without AI for Android and iPhone",
-  "inbox": "Inbox",
   "storeApple": "Download on the",
   "storeGoogle": "Get it on",
   "langLabel": "Language",
@@ -15,50 +14,36 @@
   "pains": [
     {
       "q": "1,254 unread?",
-      "a": "The inbox is a to-do list, not an archive. Done moves a letter to the archive, nothing is deleted. Snooze brings it back when you need it. When nothing is left, it goes quiet. Try it: clear the rows below, then this letter.",
-      "from": "Inbox Zero",
-      "when": "10:12",
+      "a": "The inbox is a to-do list, not an archive. Done moves a letter to the archive, nothing is deleted. Snooze brings it back when you need it. When nothing is left, it goes quiet. Try it: clear the rows below.",
       "demo": "zero"
     },
     {
       "q": "One inbox, but five Sent folders?",
       "a": "Most apps merge only the inbox. Here Sent, Archive, Spam and Trash are shared across accounts too, like in Apple Mail. Gmail, iCloud, Exchange at work or any IMAP mail; Outlook is coming.",
-      "from": "Mailboxes",
-      "when": "09:41",
       "demo": "boxes"
     },
     {
       "q": "Work mail too?",
       "a": "Your company’s Exchange sits next to your own mail; the address and password are enough. An invitation comes as a card: answer right in the letter, and the day strip shows what it clashes with.",
-      "from": "Work",
-      "when": "09:02",
       "demo": "work"
     },
     {
       "q": "Who else reads your mail?",
       "a": "Only you and your mail provider. No AI, no ads, no tracking. Images in newsletters stay hidden, so senders can’t tell you opened them.",
-      "from": "Privacy",
-      "when": "08:15",
       "demo": "privacy"
     },
     {
       "q": "Real letters lost in the noise?",
       "a": "People get the inbox. Newsletters and notifications wait in their own tabs, sorted by simple rules on your phone. You can leave a newsletter right from a letter.",
-      "from": "Focus",
-      "when": "Yesterday",
       "demo": "focus"
     },
     {
       "q": "With one hand?",
-      "a": "Everything you touch sits in the lower third of the screen. A short swipe marks a letter Done or Read, a long one deletes or snoozes it; you choose what each side does. When you write, To, Subject and the text sit right above the keyboard, and the text grows upwards as far as it needs.",
-      "from": "One hand",
-      "when": "Yesterday"
+      "a": "Everything you touch sits in the lower third of the screen. A short swipe marks a letter Done or Read, a long one deletes or snoozes it; you choose what each side does. When you write, To, Subject and the text sit right above the keyboard, and the text grows upwards as far as it needs."
     },
     {
       "q": "Who’s on the other end?",
-      "a": "Me, Khizri. I design and build it alone, for my own inbox. Mail is free forever; extras are a one-time purchase. You pay me, not a corporation. No ads, ever.",
-      "from": "Khizri",
-      "when": "Mon"
+      "a": "Me, Khizri. I design and build it alone, for my own inbox. Mail is free forever; extras are a one-time purchase. You pay me, not a corporation. No ads, ever."
     }
   ],
   "soon": "Ozero Mail isn’t out yet. Write to me and I’ll let you know when the beta opens. I answer every letter myself.",
@@ -66,34 +51,9 @@
   "mailBody": "Hi! Let me know when I can try it.",
   "by": "By Khizri",
   "doneLbl": "Done",
-  "archived": "Moved to Archive",
-  "undo": "Undo",
-  "reopen": "Open",
   "doneFor": "Done: {s}",
-  "openFor": "Open: {s}",
-  "client": {
-    "unread": {
-      "one": "unread letter",
-      "other": "unread letters"
-    },
-    "wordDone": "ozero",
-    "left": {
-      "other": "{n} unread"
-    },
-    "allRead": "All read",
-    "allClear": "All clear",
-    "bulk": {
-      "one": "Swipe {n} letter",
-      "other": "Swipe {n} letters"
-    },
-    "allDone": "All marked as done",
-    "undoHint": "Undo with U"
-  },
   "calm": "Empty and quiet. That’s the feeling I’m building.",
   "name": "Khizri",
-  "tip": "The letters are below. Clear them like mail: swipe left or tap Done.",
-  "tipMouse": "The letters are below. Drag one left by its top or press Done. Keys: E for Done, U to undo.",
-  "bringBack": "Bring the letters back",
   "fTo": "To",
   "fOs": "Your OS",
   "fSubj": "Subject",
@@ -102,13 +62,10 @@
   "send": "Send",
   "cta": "Ask for the beta",
   "barLabel": "Page controls",
-  "progLabel": "Letters read",
-  "next": "The last letter is yours to write",
+  "next": "Want to try it? Write to me",
   "plan": {
     "q": "When can I try it?",
     "a": "Here’s the whole plan. I mark each step as it’s done.",
-    "from": "Plan",
-    "when": "Today",
     "now": 1,
     "nowLbl": "now",
     "steps": [
@@ -331,5 +288,7 @@
     ],
     "home": "Back to Ozero Mail",
     "description": "What Ozero Mail and its site do with your data: your mail stays between your phone and your mail provider."
-  }
+  },
+  "ozero": "ozero",
+  "more": "How it works"
 }
