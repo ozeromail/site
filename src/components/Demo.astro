@@ -101,7 +101,6 @@ const d = t.demo;
       <div class="v v0">
         <p class="ht">{d.hand.title}</p>
         <div class="hl">{d.zero.rows.slice(0, 2).map(([who, what, when], i) => <Row who={who} what={what} when={when} unread={i === 0} />)}</div>
-        <p class="zone">{d.hand.zone}</p>
         <p class="dock">
           <span class="dots"><i></i><i></i><i></i></span>
           <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg>

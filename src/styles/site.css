@@ -275,9 +275,9 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .work .chg:hover{background:var(--line)}
 /* One hand: a small phone screen; what the thumb touches sits in the lit lower part */
 .hand .screen{position:relative;display:grid;height:380px;border-radius:22px;background:var(--bg);overflow:hidden;isolation:isolate}
-.hand .screen::before{content:"";position:absolute;z-index:-1;left:-20%;right:-45%;top:56%;aspect-ratio:1;border-radius:50%;background:var(--accent-soft);opacity:.7;transition:top .35s var(--ease)}
-.hand:has([value="1"]:checked) .screen::before{top:34%}
-.hand .zone{position:absolute;left:62.5%;top:calc(56% + 12px);transform:translateX(-50%);white-space:nowrap;font-size:11.5px;font-weight:600;color:var(--accent)}
+/* The thumb's reach: an arc swept from the lower right corner, where the thumb rests; it rises with the keyboard */
+.hand .screen::before{content:"";position:absolute;z-index:-1;right:0;bottom:0;width:170%;aspect-ratio:1;border-radius:50%;transform:translate(50%,50%);background:radial-gradient(closest-side,var(--accent-soft) 45%,color-mix(in srgb,var(--accent-soft) 35%,transparent) 99%);border:1.5px dashed color-mix(in srgb,var(--accent) 35%,transparent);transition:transform .35s var(--ease)}
+.hand:has([value="1"]:checked) .screen::before{transform:translate(50%,calc(50% - 120px))}
 .hand .v{grid-area:1/1;display:flex;flex-direction:column;min-height:0;transition:opacity .25s var(--ease),visibility 0s .25s}
 .hand .v1,.hand:has([value="1"]:checked) .v0{opacity:0;visibility:hidden}
 .hand:has([value="1"]:checked) .v1{opacity:1;visibility:visible;transition-delay:0s}
