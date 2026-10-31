@@ -11,6 +11,7 @@ interface Props {
 }
 const { t, kind } = Astro.props;
 const d = t.demo;
+const icons = ['#i-sent', '#i-archive', '#i-spam', '#i-trash'];
 ---
 {kind === 'zero' && (
   <div class="demo zero">
@@ -42,11 +43,12 @@ const d = t.demo;
       <p class="bx inbox"><span class="dots"><i></i><i></i><i></i></span><span class="bn">{d.boxes.folders[0]}</span><span class="bc">12</span></p>
       <div class="views">
         <div class="v v0">
-          {d.boxes.merged.map((_, i) => d.boxes.accounts.map((a, j) => <p class="bx"><svg aria-hidden="true" class="ic"><use href={i ? '#i-archive' : '#i-sent'}/></svg><span class="bn">{d.boxes.folders[i + 1]}</span><span class="ds">{a}</span><i class={`dot a${j + 1}`}></i></p>))}
+          {[0, 1].map((i) => d.boxes.accounts.map((a, j) => <p class="bx" style={`--d:${-(i * 2 + j)}`}><svg aria-hidden="true" class="ic"><use href={icons[i]}/></svg><span class="bn">{d.boxes.folders[i + 1]}</span><span class="ds">{a}</span><i class={`dot a${j + 1}`}></i></p>))}
         </div>
         <div class="v v1">
+          {d.boxes.merged.map((all, i) => <p class="bx" style={`--k:${i}`}><svg aria-hidden="true" class="ic"><use href={icons[i]}/></svg><span class="bn">{all}</span><span class="trio"><i class="dot"></i><i class="dot a2"></i><i class="dot a3"></i></span></p>)}
           <p class="cap">{d.boxes.caption}</p>
-          {d.boxes.merged.map((all, i) => <p class="bx"><svg aria-hidden="true" class="ic"><use href={i ? '#i-archive' : '#i-sent'}/></svg><span class="bn">{all}</span></p>)}
+          <p class="bx accs">{d.boxes.accounts.map((a, j) => <span><i class={`dot a${j + 1}`}></i>{a}</span>)}</p>
         </div>
       </div>
     </div>

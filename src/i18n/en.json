@@ -18,8 +18,8 @@
       "demo": "zero"
     },
     {
-      "q": "One mailbox for every account",
-      "a": "Most apps merge only the inbox. Ozero Mail also merges Sent, Archive, Spam and Trash, like Apple Mail. It works with Gmail, iCloud, Exchange and any IMAP mail; Outlook is coming.",
+      "q": "Every folder merged, not just the inbox",
+      "a": "Most mail apps merge only the inbox. Ozero Mail merges the rest too: Sent, Archive, Spam and Trash. To find a letter you sent, you don’t have to open three Sent folders. It works with Gmail, iCloud, Exchange and any IMAP mail; Outlook is coming.",
       "demo": "boxes"
     },
     {
@@ -119,11 +119,8 @@
         "In Ozero Mail"
       ],
       "label": "Mailboxes view",
-      "merged": [
-        "All sent",
-        "All archived"
-      ],
-      "caption": "All accounts"
+      "merged": ["All sent", "All archived", "All spam", "All trash"],
+      "caption": "Accounts"
     },
     "work": {
       "title": "Design review",
