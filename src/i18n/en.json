@@ -157,9 +157,7 @@
       "title": "Inbox",
       "to": "To",
       "subj": "Subject",
-      "re": "Re: Contract to sign",
-      "body": "I’ll sign it tonight.",
-      "quote": "Anna · Contract to sign"
+      "body": "I’ll sign it tonight."
     },
     "focus": {
       "tabs": [

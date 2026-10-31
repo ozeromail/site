@@ -64,6 +64,9 @@ function resize(box: HTMLElement, change: () => void, done?: () => void) {
 }
 
 
+/** Clearly leftward: a gesture steeper than that is a scroll. */
+const isSwipe = (mx: number, my: number) => mx < 0 && Math.abs(mx) > Math.abs(my) * 1.5;
+
 /* A left swipe, as on a row in the app: the finger drives 1:1, the bead fills past the threshold,
    and the release velocity decides: a flick clears even a short drag, a finger that stopped cancels.
    A sheet in motion can be caught. Only clearly horizontal gestures count, so scrolling still works.
@@ -116,8 +119,6 @@ function swipeable(box: HTMLElement, sheet: HTMLElement, onSwipe: (reset: () => 
     lastT = e.timeStamp;
     v = 0;
     axis = null;
-    // The bead waits beside the finger, not in the middle of a tall letter.
-    box.style.setProperty('--by', `${Math.max(40, e.clientY - sheet.getBoundingClientRect().top)}px`);
   });
   sheet.addEventListener('pointermove', (e) => {
     if (x0 === null) return;
@@ -129,7 +130,7 @@ function swipeable(box: HTMLElement, sheet: HTMLElement, onSwipe: (reset: () => 
     const mx = e.clientX - startX;
     const my = e.clientY - startY;
     if (!axis && (Math.abs(mx) > 10 || Math.abs(my) > 10)) {
-      axis = mx < 0 && Math.abs(mx) > Math.abs(my) ? 'x' : 'y';
+      axis = isSwipe(mx, my) ? 'x' : 'y';
       if (axis === 'y') {
         x0 = null;
         return settle();
@@ -175,9 +176,10 @@ function swipeable(box: HTMLElement, sheet: HTMLElement, onSwipe: (reset: () => 
       const mx = e.touches[0].clientX - tx;
       const my = e.touches[0].clientY - ty;
       if (Math.abs(mx) < 3 && Math.abs(my) < 3) return;
-      sideways = mx < 0 && Math.abs(mx) > Math.abs(my);
+      sideways = isSwipe(mx, my);
     }
-    if (sideways && e.cancelable) e.preventDefault();
+    // Once the pointer has settled on a scroll, the page gets the touch back.
+    if (sideways && axis !== 'y' && e.cancelable) e.preventDefault();
   }, { passive: false });
   sheet.addEventListener('pointerup', end);
   sheet.addEventListener('pointercancel', end);
@@ -222,10 +224,14 @@ export function start() {
   const lake = new Lake($<HTMLCanvasElement>('lake'), 90);
   lakes.push(lake);
   lake.onOpen = () => finale.classList.add('open');
-  new IntersectionObserver((entries, seen) => {
-    if (!entries.some((e) => e.isIntersecting)) return;
-    seen.disconnect();
-    lake.open();
+  // Only a visitor who stays counts: a smooth scroll passing through on its way to the note does not spend the drop.
+  let staying: ReturnType<typeof setTimeout> | undefined;
+  new IntersectionObserver(([e], seen) => {
+    clearTimeout(staying);
+    if (e.isIntersecting) staying = setTimeout(() => {
+      seen.disconnect();
+      lake.open();
+    }, 400);
   }, { threshold: 0.5 }).observe(finale);
 
   /* The bottom button leads to the last letter, so it steps aside once that letter is in view. */
