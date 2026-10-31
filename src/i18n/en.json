@@ -127,13 +127,9 @@
     },
     "work": {
       "title": "Design review",
-      "time": "Thu, 14:00–15:00",
+      "time": "Thu, 30 Oct · 14:00–15:00",
       "place": "Room 4",
       "join": "Join",
-      "leaf": [
-        "Thu",
-        "30"
-      ],
       "answers": [
         "No",
         "Maybe",
@@ -146,7 +142,7 @@
       ],
       "change": "Change",
       "label": "Your answer",
-      "clash": "Clashes with Bank call at 14:30"
+      "clash": "Clashes: Bank call, 14:30"
     },
     "privacy": {
       "from": "Shop",

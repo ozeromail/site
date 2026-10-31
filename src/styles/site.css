@@ -241,19 +241,20 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .policy .other{margin-top:48px}
 
 /* Work mail: the app's invitation card, its day from the invitations in your mail, answered in place */
-.work .wtop{display:flex;gap:12px;align-items:center}
-.demo.work .leaf{flex:none;width:48px;height:48px;border-radius:12px;display:grid;place-content:center;text-align:center;background:var(--accent-soft);color:var(--accent);font-size:11px;font-weight:600;line-height:1.1;text-transform:uppercase}
-.work .leaf span{letter-spacing:.07em}
-.work .leaf b{font-size:19px;line-height:1.1}
-.demo.work .meta{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:13px;color:var(--fg)}
-.demo.work .meta.join{margin-top:6px;color:var(--accent);font-weight:600}
-.work .meta svg{width:17px;height:17px;flex:none;color:var(--fg-3)}
-.work .meta.join svg{color:inherit}
-.work .card{display:grid;gap:2px;padding:14px;border-radius:16px;background:var(--bg);border:1px solid var(--line)}
-.demo.work .wt{font-weight:650;font-size:16px;color:var(--fg)}
-.demo.work .ws{color:var(--fg-3);font-size:13px}
-.demo.work .clash{display:flex;align-items:center;gap:8px;margin:12px 0 10px;padding-top:12px;border-top:1px solid var(--line);font-size:13px;color:var(--fg-2)}
-.work .clash::before{content:"";width:7px;height:7px;flex:none;border-radius:50%;background:#df5260}
+/* Invitation: three lines, a thin day line from 9 to 18 (--a/--b are hours after 9), and a clash note */
+.demo.work{background:none;padding:0}
+.work .card{display:grid;gap:4px;padding:16px 18px;border-radius:18px;background:var(--bg-soft)}
+.demo.work .wt{margin-bottom:2px;font-weight:600;font-size:18px;line-height:24px;color:var(--fg)}
+.demo.work .ws{font-size:15px;line-height:21px;color:var(--fg-3)}
+.work .join{color:var(--accent);font-weight:600}
+.work .day{margin-top:12px}
+.demo.work .track{position:relative;height:8px;border-radius:4px;background:#e3e8f0;overflow:hidden}
+.work .track i{position:absolute;top:0;bottom:0;left:calc(var(--a) / 9 * 100%);width:calc((var(--b) - var(--a)) / 9 * 100%);background:#9aa6ba}
+.work .track .me{background:#2f8cff}
+.work .track .x{background:#c23a2c}
+.demo.work .hrs{display:flex;justify-content:space-between;margin-top:4px;font-size:12px;line-height:16px;color:var(--fg-3);font-variant-numeric:tabular-nums}
+.demo.work .clash{margin:6px 0 10px;font-size:14px;color:#b23427}
+@media (prefers-color-scheme: dark){.demo.work .track{background:#2a3242}.work .track i{background:#5d6a80}.demo.work .clash{color:#f08a94}}
 .work .answers{display:flex;gap:8px;margin-top:4px}
 .work .answers button{flex:1 1 auto;min-width:0;white-space:nowrap;min-height:48px;padding:0 6px;border-radius:14px;border:1px solid var(--line);background:none;font-size:15px;font-weight:600;line-height:1.15;color:var(--fg);cursor:pointer;transition:background-color .15s ease}
 .work .answers button:hover{background:var(--bg-soft)}

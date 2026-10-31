@@ -75,12 +75,13 @@ const d = t.demo;
 {kind === 'work' && (
   <div class="demo work">
     <div class="card">
-      <div class="wtop">
-        <p class="leaf" aria-hidden="true"><span>{d.work.leaf[0]}</span><b>{d.work.leaf[1]}</b></p>
-        <div><p class="wt">{d.work.title}</p><p class="ws">{d.work.time}</p></div>
+      <p class="wt">{d.work.title}</p>
+      <p class="ws">{d.work.time}</p>
+      <p class="ws">{d.work.place} · <span class="join">{d.work.join}</span></p>
+      <div class="day" aria-hidden="true">
+        <p class="track"><i class="o" style="--a:1;--b:2"></i><i class="me" style="--a:5;--b:5.5"></i><i class="x" style="--a:5.5;--b:6"></i><i class="o" style="--a:6;--b:6.5"></i></p>
+        <p class="hrs"><span>9</span><span>12</span><span>15</span><span>18</span></p>
       </div>
-      <p class="meta"><svg aria-hidden="true"><use href="#i-pin"/></svg><span>{d.work.place}</span></p>
-      <p class="meta join"><svg aria-hidden="true"><use href="#i-video"/></svg><span>{d.work.join}</span></p>
       <p class="clash">{d.work.clash}</p>
       <div class="reply">
       <div class="answers" role="group" aria-label={d.work.label}>
