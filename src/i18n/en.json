@@ -4,7 +4,7 @@
   "storeGoogle": "Get it on",
   "langLabel": "Language",
   "ogLocale": "en_US",
-  "lost": "This letter got lost. Back to the inbox",
+  "lost": "This page doesn’t exist. Back to the start",
   "tipFoot": "Support me",
   "statsText": "This site counts visits without cookies.",
   "statsLink": "The numbers are public",
@@ -19,12 +19,12 @@
     },
     {
       "q": "One inbox, but five Sent folders?",
-      "a": "Most apps merge only the inbox. Here Sent, Archive, Spam and Trash are shared across accounts too, like in Apple Mail. Gmail, iCloud, Exchange at work or any IMAP mail; Outlook is coming.",
+      "a": "Most apps merge only the inbox. Ozero Mail also merges Sent, Archive, Spam and Trash, like Apple Mail. It works with Gmail, iCloud, Exchange and any IMAP mail; Outlook is coming.",
       "demo": "boxes"
     },
     {
       "q": "Work mail too?",
-      "a": "Your company’s Exchange sits next to your own mail; the address and password are enough. An invitation comes as a card: answer right in the letter, and the day strip shows what it clashes with.",
+      "a": "Your work Exchange sits next to your own mail; all it takes is the address and password. A meeting invite comes as a card: answer right in the letter, and the day strip shows what it clashes with.",
       "demo": "work"
     },
     {
@@ -34,7 +34,7 @@
     },
     {
       "q": "Real letters lost in the noise?",
-      "a": "People get the inbox. Newsletters and notifications wait in their own tabs, sorted by simple rules on your phone. You can leave a newsletter right from a letter.",
+      "a": "People get the inbox. Newsletters and notifications wait in their own tabs, sorted by simple rules on your phone. You can unsubscribe right from a newsletter.",
       "demo": "focus"
     },
     {
@@ -43,7 +43,7 @@
     },
     {
       "q": "Who’s on the other end?",
-      "a": "Me, Khizri. I design and build it alone, for my own inbox. Mail is free forever; extras are a one-time purchase. You pay me, not a corporation. No ads, ever."
+      "a": "Me, Khizri. I design and build Ozero Mail alone, first of all for my own mail. The basics are free forever; extras are a one-time purchase. There will never be ads."
     }
   ],
   "soon": "Ozero Mail isn’t out yet. Write to me and I’ll let you know when the beta opens. I answer every letter myself.",
