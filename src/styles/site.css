@@ -18,6 +18,14 @@
   --acc-2:#1f9c8a;
   --acc-3:#7b66e0;
   --shadow:0 18px 40px -18px rgba(10,20,40,.28),0 4px 12px -6px rgba(10,20,40,.12);
+  /* A little depth, kept faint as in the app: what lies on top lifts (soft shadow, light along its top edge),
+     what holds things is cut in (a shadow under its top edge), dots are tiny windows. --ink is the shadows' colour,
+     --raised fills what lifts; at night shadows hardly show, so lifted things are a shade lighter instead */
+  --ink:#142036;
+  --raised:#ffffff;
+  --lit:inset 0 1px 0 rgba(255,255,255,.35);
+  --sunk:inset 0 1.5px 1.5px -.5px rgba(20,32,54,.08);
+  --lift:0 1px 2px rgba(20,32,54,.1);
   --f-ui:"Inter Variable",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --f-read:"Literata Variable",Georgia,serif;
   /* One curve for what eases out, as in the app */
@@ -26,7 +34,8 @@
 @media (prefers-color-scheme: dark){:root{
   --bg:#141923;--bg-soft:#1f2532;--fg:#e5e9f1;--fg-2:#b9c2d3;--fg-3:#8792a7;--line:#242b39;--stripe:#4b566c;
   --accent:#6ab2ff;--accent-fill:#1a6fe0;--accent-soft:#15325a;
-  --shadow:0 18px 40px -18px rgba(0,0,0,.7),0 4px 12px -6px rgba(0,0,0,.5);color-scheme:dark}}
+  --shadow:0 18px 40px -18px rgba(0,0,0,.7),0 4px 12px -6px rgba(0,0,0,.5);
+  --ink:#000;--raised:#2b3343;--lit:inset 0 1px 0 rgba(255,255,255,.07);--sunk:inset 0 1.5px 1.5px -.5px rgba(0,0,0,.32);--lift:0 1px 2px rgba(0,0,0,.3);color-scheme:dark}}
 
 *{box-sizing:border-box}
 /* Nothing loads in late, so the browser never needs to shift the page: a demo that shrinks must not scroll it */
@@ -125,11 +134,13 @@ main{position:relative;z-index:1;max-width:620px;margin:0 auto;padding:0 max(24p
 .compose .send{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding:12px 12px 12px 20px;border-top:1px solid var(--line)}
 .compose .fine{flex:1 1 180px;text-wrap:balance;font-size:13px;line-height:1.45;color:var(--fg-3)}
 .btn{display:inline-flex;align-items:center;min-height:44px;border-radius:999px;padding:0 20px;white-space:nowrap;background:var(--accent-fill);color:#fff;font-weight:600}
+/* An accent button lifts: a soft shadow in its own blue and light along its top edge */
+.btn,.work .answers .yes{--glow:0 2px 6px -1px color-mix(in srgb,var(--accent-fill) 40%,transparent),inset 0 1px 0 rgba(255,255,255,.25);box-shadow:var(--glow)}
 .btn:hover{text-decoration:none;filter:brightness(1.06)}
 
 /* One button in thumb reach; it steps aside once the note to the author is in view */
 .bbar{position:fixed;left:0;right:0;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:20;display:flex;justify-content:center;pointer-events:none;transition:opacity .3s var(--ease),transform .3s var(--ease)}
-.bbar .btn{pointer-events:auto;min-height:48px;padding:0 24px;font-size:15px;box-shadow:0 6px 20px rgba(10,30,70,.18)}
+.bbar .btn{pointer-events:auto;min-height:48px;padding:0 24px;font-size:15px;box-shadow:var(--glow),0 6px 20px rgba(10,30,70,.18)}
 .bbar.away{opacity:0;transform:translateY(12px)}
 .bbar.away .btn{pointer-events:none;visibility:hidden;transition:visibility 0s .3s}
 
@@ -146,7 +157,9 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .demo .dl{display:grid;gap:0;border-radius:16px;background:var(--bg);overflow:hidden}
 /* A row: sender and time, then the subject; unread hangs a 7px dot before the sender */
 .demo .di{position:relative;display:grid;gap:2px;padding:13px 14px 13px 26px;background:var(--bg)}
-.demo .di.unread::before{content:"";position:absolute;left:11px;top:20px;width:7px;height:7px;border-radius:50%;background:var(--water)}
+.demo .di.unread::before{content:"";position:absolute;left:11px;top:20px;width:7px;height:7px;border-radius:50%;--c:var(--water);background:var(--window)}
+/* A round mark as a tiny window: darker under its top edge, lighter below */
+.demo .di.unread::before,.dots i,.boxes .dot{--window:linear-gradient(color-mix(in srgb,var(--c) 70%,var(--ink)),var(--c) 50%,color-mix(in srgb,var(--c) 80%,#fff))}
 .demo .l1{display:flex;align-items:baseline;gap:8px}
 .demo .dn{flex:1;min-width:0;font-size:16px;line-height:21px;font-weight:500;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .demo .unread .dn{font-weight:650}
@@ -155,9 +168,9 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .demo .l2{font-size:15px;line-height:20px;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .demo .unread .l2{font-weight:550;color:var(--fg)}
 .dots{display:inline-flex;padding-left:3px}
-.dots i{width:11px;height:11px;margin-left:-3px;border-radius:50%;border:2px solid var(--bg);background:var(--acc-1)}
-.dots i:nth-child(2){background:var(--acc-2)}
-.dots i:nth-child(3){background:var(--acc-3)}
+.dots i{width:11px;height:11px;margin-left:-3px;border-radius:50%;border:2px solid var(--bg);--c:var(--acc-1);background:var(--window)}
+.dots i:nth-child(2){--c:var(--acc-2)}
+.dots i:nth-child(3){--c:var(--acc-3)}
 /* Inbox Zero: rows are swiped away as letters are; the last one leaves still water */
 .zero .swipe{position:relative;display:grid;overflow:hidden}
 .zero .swipe>*{grid-area:1/1}
@@ -182,14 +195,14 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .zero .deb{margin-top:10px;border:0;background:none;color:var(--accent);font-weight:600;font-size:14px;min-height:44px;padding:0 12px;cursor:pointer;border-radius:999px}
 .zero .deb:hover{background:var(--bg-soft)}
 /* The app's segmented control: a grey track, a paper thumb, the label firms up when chosen */
-.tabs,.seg{position:relative;display:flex;gap:0;padding:3px;border-radius:14px;background:var(--line)}
+.tabs,.seg{position:relative;display:flex;gap:0;padding:3px;border-radius:14px;background:var(--line);box-shadow:var(--sunk)}
 .tabs{margin-bottom:6px}
 .seg{background:var(--bg-soft);max-width:260px}
 .tabs label,.seg label{flex:1 1 0;min-width:0;position:relative;display:flex}
 .tabs input,.seg input{position:absolute;opacity:0;pointer-events:none}
 .tabs label>span,.seg label>span{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;min-height:34px;padding:0 4px;border-radius:11px;font-size:14px;line-height:1.15;text-align:center;white-space:nowrap;min-width:0;font-weight:500;color:var(--fg-3);cursor:pointer;transition:background-color .25s var(--ease),color .25s var(--ease),box-shadow .25s var(--ease)}
 /* One paper thumb that slides to the choice */
-.tabs::before,.seg::before{content:"";position:absolute;top:3px;bottom:3px;left:calc(3px + (100% - 6px) / var(--n,2) * var(--i,0));width:calc((100% - 6px) / var(--n,2));border-radius:11px;background:var(--bg);box-shadow:0 1px 2px rgba(10,20,40,.12);transition:left .3s var(--ease)}
+.tabs::before,.seg::before{content:"";position:absolute;top:3px;bottom:3px;left:calc(3px + (100% - 6px) / var(--n,2) * var(--i,0));width:calc((100% - 6px) / var(--n,2));border-radius:11px;background:var(--raised);box-shadow:var(--lift),var(--lit);transition:left .3s var(--ease)}
 .tabs input:checked+span,.seg input:checked+span{color:var(--fg);font-weight:600}
 .tabs input:focus-visible+span,.seg input:focus-visible+span{outline:2px solid var(--accent);outline-offset:-2px}
 .tabs .tl{min-width:0;overflow:hidden;text-overflow:ellipsis}
@@ -228,9 +241,9 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .boxes .accs{gap:18px;color:var(--fg-2);font-size:15px}
 .boxes .accs span{display:flex;align-items:center;gap:7px}
 .boxes .ic{width:20px;height:20px;flex:none;margin:0 2px;color:var(--fg-3)}
-.boxes .dot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--acc-1)}
-.boxes .dot.a2{background:var(--acc-2)}
-.boxes .dot.a3{background:var(--acc-3)}
+.boxes .dot{width:9px;height:9px;border-radius:50%;flex:none;--c:var(--acc-1);background:var(--window)}
+.boxes .dot.a2{--c:var(--acc-2)}
+.boxes .dot.a3{--c:var(--acc-3)}
 /* Hidden images: the app's grey bar with Show; the image comes when asked */
 .privacy .lh{padding:12px 14px;border-radius:14px;background:var(--bg)}
 .demo.privacy .ls{font-weight:650;font-size:16px;line-height:21px;color:var(--fg)}
@@ -296,7 +309,7 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .hand .v{display:flex;flex-direction:column;min-height:0}
 .hand .ht{padding:18px 16px 6px;font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.01em;color:var(--fg)}
 .hand .hl .di{background:none}
-.hand .dock{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:auto 16px 16px;padding:0 18px;min-height:52px;border-radius:999px;background:var(--bg);box-shadow:0 2px 10px rgba(10,20,40,.12)}
+.hand .dock{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:auto 16px 16px;padding:0 18px;min-height:52px;border-radius:999px;background:var(--bg);box-shadow:0 2px 10px color-mix(in srgb,var(--ink) 10%,transparent),var(--lit)}
 .hand .dock svg{width:24px;height:24px;fill:none;stroke:var(--fg-2);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .hand .dock svg:last-child{stroke:var(--accent)}
 .hand .quote{margin:16px 16px 0;padding:10px 12px;border-radius:12px;background:var(--bg-soft);font-size:13px;color:var(--fg-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
