@@ -1,21 +1,16 @@
-// The logo: a round window onto a still lake, the app icon without its tile, cut into the page:
-// a shadow under its top edge.
+// The logo: the Refraction mark. A disc cut at the water line, half a stroke below the middle;
+// the lower part slides aside in the accent, as a straw does in water. At header and favicon
+// sizes the mark is the filled disc; the ring is for large sizes only.
 // One source for the header mark and the favicon. Ids must be unique per page.
 
-// Water sheets from the horizon down, each nearer one darker.
-const sheets = [[27.2, '#9cc4fd'], [30.7, '#6aa3f9'], [35.2, '#3f82f2'], [41.1, '#1f5ccd']] as const;
-
 export const markSvg = (id: string, attrs: string) => `<svg ${attrs} viewBox="0 0 48 48">
+  <style>.${id}t{fill:#142036}.${id}b{fill:#2f8cff}@media (prefers-color-scheme:dark){.${id}t{fill:#e5e9f1}.${id}b{fill:#6ab2ff}}</style>
   <defs>
-    <clipPath id="${id}c"><circle cx="24" cy="24" r="24"/></clipPath>
-    <linearGradient id="${id}s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b6d4ff"/><stop offset=".56" stop-color="#f4f8ff"/></linearGradient>
-    <radialGradient id="${id}d" cx=".5" cy=".6" r=".6"><stop offset=".8" stop-color="#04122e" stop-opacity="0"/><stop offset="1" stop-color="#04122e" stop-opacity=".22"/></radialGradient>
+    <clipPath id="${id}a"><rect x="-10" y="-10" width="70" height="36.7"/></clipPath>
+    <clipPath id="${id}w"><rect x="-10" y="28.3" width="70" height="40"/></clipPath>
   </defs>
-  <g clip-path="url(#${id}c)">
-    <rect width="48" height="48" fill="url(#${id}s)"/>
-    <circle cx="26.7" cy="20" r="4.3" fill="#fff"/>
-    ${sheets.map(([y, fill]) => `<path d="M0 ${y}Q24 ${y + 0.7} 48 ${y}V48H0Z" fill="${fill}"/>`).join('')}
-    <rect width="48" height="48" fill="url(#${id}d)"/>
+  <g transform="translate(-2.5 0)">
+    <circle class="${id}t" cx="24" cy="24" r="17.5" clip-path="url(#${id}a)"/>
+    <circle class="${id}b" cx="29" cy="24" r="17.5" clip-path="url(#${id}w)"/>
   </g>
-  <circle cx="24" cy="24" r="23.75" fill="none" stroke="#04122e" stroke-opacity=".08" stroke-width=".5"/>
 </svg>`;
