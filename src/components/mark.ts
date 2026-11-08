@@ -1,17 +1,11 @@
-// The logo: the family ring from the app icon. A ring cut at its centre line with a thin gap;
-// the lower half is a touch thicker and slides right, as a straw does in water. One sweep runs
-// from light at the top to dark at the bottom, the same as on the app and Ozero Phone icons.
-// One source for the header mark and the favicon. Ids must be unique per page.
+// The mark: sky over water in a circle, the shore an envelope flap. The same in both themes.
+// The favicon draws it; the header shows the outlined lockup from public/brand.
 
-export const markSvg = (id: string, attrs: string) => `<svg ${attrs} viewBox="18 18 64 64">
-  <style>.${id}a{stop-color:#6ab2ff}.${id}z{stop-color:#142036}@media (prefers-color-scheme:dark){.${id}a{stop-color:#cfe4ff}.${id}z{stop-color:#4d9bff}}</style>
+export const markSvg = (attrs: string) => `<svg ${attrs} viewBox="0 0 1024 1024">
   <defs>
-    <linearGradient id="${id}g" gradientUnits="userSpaceOnUse" x1="0" y1="23" x2="0" y2="77"><stop class="${id}a" offset="0"/><stop class="${id}z" offset="1"/></linearGradient>
-    <clipPath id="${id}t"><rect x="0" y="0" width="100" height="49.055"/></clipPath>
-    <clipPath id="${id}b"><rect x="0" y="50.945" width="100" height="49.055"/></clipPath>
+    <clipPath id="w"><path d="M0 280L466 572Q512 612 558 572L1024 280V1024H0Z"/></clipPath>
+    <linearGradient id="g" gradientUnits="userSpaceOnUse" x1="0" y1="280" x2="0" y2="1024"><stop offset="0" stop-color="#4f8bff"/><stop offset=".5" stop-color="#2f6bff"/><stop offset="1" stop-color="#1b3f7a"/></linearGradient>
   </defs>
-  <g fill="none" stroke="url(#${id}g)">
-    <circle cx="47.3" cy="50" r="20.25" stroke-width="13.5" clip-path="url(#${id}t)"/>
-    <g clip-path="url(#${id}b)"><circle cx="52.7" cy="50" r="19.71" stroke-width="14.58"/></g>
-  </g>
+  <circle cx="512" cy="512" r="512" fill="#e9f0ff"/>
+  <circle cx="512" cy="512" r="512" fill="url(#g)" clip-path="url(#w)"/>
 </svg>`;

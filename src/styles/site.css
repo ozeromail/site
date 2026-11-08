@@ -2,17 +2,17 @@
 /* Colours and type are the app's: white paper and the icon's lake, Inter around, Literata for reading. */
 :root{
   --bg:#ffffff;
-  --bg-soft:#f2f5fa;
-  --fg:#142036;
+  --bg-soft:#f6f2ec;
+  --fg:#12192a;
   --fg-2:#3d4a63;
-  --fg-3:#5b6680;
+  --fg-3:#6b7280;
   --line:#e9eef5;
   --stripe:#c9d2e0;
-  /* The morning blue: water, marks and Done; the darker tone for text and filled buttons, so both read */
-  --water:#2f8cff;
-  --accent:#1766d4;
-  --accent-fill:#1a6fe0;
-  --accent-soft:#e6f1ff;
+  /* The lake blue: water, marks and Done; the darker tone for text and filled buttons, so both read */
+  --water:#2f6bff;
+  --accent:#2456d6;
+  --accent-fill:#2f6bff;
+  --accent-soft:#e9f0ff;
   /* The first three account colours of the app */
   --acc-1:#e2605a;
   --acc-2:#1f9c8a;
@@ -21,19 +21,19 @@
   /* A little depth, kept faint as in the app: what lies on top lifts (soft shadow, light along its top edge),
      what holds things is cut in (a shadow under its top edge), dots are tiny windows. --ink is the shadows' colour,
      --raised fills what lifts; at night shadows hardly show, so lifted things are a shade lighter instead */
-  --ink:#142036;
+  --ink:#12192a;
   --raised:#ffffff;
   --lit:inset 0 1px 0 rgba(255,255,255,.35);
-  --sunk:inset 0 1.5px 1.5px -.5px rgba(20,32,54,.08);
-  --lift:0 1px 2px rgba(20,32,54,.1);
+  --sunk:inset 0 1.5px 1.5px -.5px rgba(18,25,42,.08);
+  --lift:0 1px 2px rgba(18,25,42,.1);
   --f-ui:"Inter Variable",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --f-read:"Literata Variable",Georgia,serif;
   /* One curve for what eases out, as in the app */
   --ease:cubic-bezier(.25,.1,.1,1);
 }
 @media (prefers-color-scheme: dark){:root{
-  --bg:#141923;--bg-soft:#1f2532;--fg:#e5e9f1;--fg-2:#b9c2d3;--fg-3:#8792a7;--line:#242b39;--stripe:#4b566c;
-  --accent:#6ab2ff;--accent-fill:#1a6fe0;--accent-soft:#15325a;
+  --bg:#12192a;--bg-soft:#1a2234;--fg:#e9edf4;--fg-2:#b9c2d3;--fg-3:#94a3b8;--line:#242b39;--stripe:#4b566c;
+  --accent:#7fa9ff;--accent-fill:#2f6bff;--accent-soft:#1b2d5c;
   --shadow:0 18px 40px -18px rgba(0,0,0,.7),0 4px 12px -6px rgba(0,0,0,.5);
   --ink:#000;--raised:#2b3343;--lit:inset 0 1px 0 rgba(255,255,255,.07);--sunk:inset 0 1.5px 1.5px -.5px rgba(0,0,0,.32);--lift:0 1px 2px rgba(0,0,0,.3);color-scheme:dark}}
 
@@ -55,12 +55,12 @@ h1,h2{margin:0;text-wrap:balance}
 p{margin:0}
 [hidden]{display:none!important}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.mark{width:22px;height:22px;flex:none;display:block}
 
 /* One narrow column, like a message on a phone */
 main{position:relative;z-index:1;max-width:620px;margin:0 auto;padding:0 max(24px,env(safe-area-inset-right,0px)) calc(112px + env(safe-area-inset-bottom,0px)) max(24px,env(safe-area-inset-left,0px));container-type:inline-size}
 .top{position:absolute;z-index:2;top:24px;left:max(24px,env(safe-area-inset-left,0px));right:max(24px,env(safe-area-inset-right,0px));display:flex;align-items:center;justify-content:space-between;gap:12px}
-.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:16px;letter-spacing:-.01em}
+.brand{display:flex}
+.brand img{display:block;height:28px;width:auto}
 .lang{display:flex;gap:2px}
 .lang a{display:grid;place-items:center;font:500 12px/1 var(--f-ui);letter-spacing:.04em;color:var(--fg-3);min-width:44px;min-height:44px;border-radius:999px}
 .lang a:hover{text-decoration:none;color:var(--fg)}
