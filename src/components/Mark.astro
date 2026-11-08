@@ -1,6 +1,0 @@
----
-import { markSvg } from './mark';
-interface Props { id: string }
-const { id } = Astro.props;
----
-<Fragment set:html={markSvg(id, 'class="mark" aria-hidden="true"')} />

@@ -208,7 +208,7 @@ export class Lake {
       this.canvas.height = Math.round(this.h * dpr);
     }
     this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const n = parseInt((getComputedStyle(this.canvas).getPropertyValue('--water').trim() || '#2f8cff').slice(1), 16);
+    const n = parseInt((getComputedStyle(this.canvas).getPropertyValue('--water').trim() || '#2f6bff').slice(1), 16);
     this.rgb = `${(n >> 16) & 255},${(n >> 8) & 255},${n & 255}`;
   }
 

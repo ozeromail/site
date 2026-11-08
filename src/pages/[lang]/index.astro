@@ -2,7 +2,6 @@
 // The page is a short inbox: a letter per pain, then one from the author, with plenty of air. Clearing them leads to "ozero" and a note to the author.
 import '../../styles/fonts.css';
 import '../../styles/site.css';
-import Mark from '../../components/Mark.astro';
 import Part from '../../components/Part.astro';
 import Demo from '../../components/Demo.astro';
 import { LANGS, strings, type Lang } from '../../i18n';
@@ -71,7 +70,10 @@ const url = new URL(`/${lang}/`, site);
 
 <main id="app">
   <header class="top">
-    <span class="brand"><Mark id="mk" />ozero mail</span>
+    <picture class="brand">
+      <source srcset={`/brand/ozero-mail${lang === 'ru' ? '-ru' : ''}-lockup-dark.svg`} media="(prefers-color-scheme: dark)">
+      <img src={`/brand/ozero-mail${lang === 'ru' ? '-ru' : ''}-lockup-light.svg`} alt="Ozero Mail" height="28">
+    </picture>
     <nav class="lang" aria-label={t.langLabel}>
       {LANGS.map((l) => <a href={`/${l}/`} hreflang={l} lang={l} aria-current={l === lang ? 'page' : undefined}>{l.toUpperCase()}</a>)}
     </nav>
