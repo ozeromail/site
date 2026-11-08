@@ -1,16 +1,17 @@
-// The logo: the Refraction mark. A disc cut at the water line, half a stroke below the middle;
-// the lower part slides aside in the accent, as a straw does in water. At header and favicon
-// sizes the mark is the filled disc; the ring is for large sizes only.
+// The logo: the family ring from the app icon. A ring cut at its centre line with a thin gap;
+// the lower half is a touch thicker and slides right, as a straw does in water. One sweep runs
+// from light at the top to dark at the bottom, the same as on the app and Ozero Phone icons.
 // One source for the header mark and the favicon. Ids must be unique per page.
 
-export const markSvg = (id: string, attrs: string) => `<svg ${attrs} viewBox="0 0 48 48">
-  <style>.${id}t{fill:#142036}.${id}b{fill:#2f8cff}@media (prefers-color-scheme:dark){.${id}t{fill:#e5e9f1}.${id}b{fill:#6ab2ff}}</style>
+export const markSvg = (id: string, attrs: string) => `<svg ${attrs} viewBox="18 18 64 64">
+  <style>.${id}a{stop-color:#6ab2ff}.${id}z{stop-color:#142036}@media (prefers-color-scheme:dark){.${id}a{stop-color:#cfe4ff}.${id}z{stop-color:#4d9bff}}</style>
   <defs>
-    <clipPath id="${id}a"><rect x="-10" y="-10" width="70" height="36.7"/></clipPath>
-    <clipPath id="${id}w"><rect x="-10" y="28.3" width="70" height="40"/></clipPath>
+    <linearGradient id="${id}g" gradientUnits="userSpaceOnUse" x1="0" y1="23" x2="0" y2="77"><stop class="${id}a" offset="0"/><stop class="${id}z" offset="1"/></linearGradient>
+    <clipPath id="${id}t"><rect x="0" y="0" width="100" height="49.055"/></clipPath>
+    <clipPath id="${id}b"><rect x="0" y="50.945" width="100" height="49.055"/></clipPath>
   </defs>
-  <g transform="translate(-2.5 0)">
-    <circle class="${id}t" cx="24" cy="24" r="17.5" clip-path="url(#${id}a)"/>
-    <circle class="${id}b" cx="29" cy="24" r="17.5" clip-path="url(#${id}w)"/>
+  <g fill="none" stroke="url(#${id}g)">
+    <circle cx="47.3" cy="50" r="20.25" stroke-width="13.5" clip-path="url(#${id}t)"/>
+    <g clip-path="url(#${id}b)"><circle cx="52.7" cy="50" r="19.71" stroke-width="14.58"/></g>
   </g>
 </svg>`;
