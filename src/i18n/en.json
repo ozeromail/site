@@ -204,7 +204,8 @@
         ]
       ],
       "label": "Inbox tab"
-    }
+    },
+    "search": "Search mail"
   },
   "privacyLink": "Privacy",
   "privacy": {

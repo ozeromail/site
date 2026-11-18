@@ -243,7 +243,6 @@ export function start() {
   const zero = document.querySelector<HTMLElement>('.demo.zero');
   if (zero) {
     const rows = [...zero.querySelectorAll<HTMLElement>('.swipe')];
-    const count = zero.querySelector('.dc')!;
     const zeroLake = new Lake(zero.querySelector('canvas')!, 72, 120);
     lakes.push(zeroLake);
     zeroLake.onOpen = () => zero.classList.remove('falling');
@@ -254,7 +253,6 @@ export function start() {
     const gone = (r: HTMLElement, reset: () => void) => {
       r.inert = true;
       const n = left().length;
-      count.textContent = n ? String(n) : '';
       // The rows below close the gap; once the last one has closed, the water opens.
       // A keyboard user gets Back at once, hidden until the water settles, so focus never drops.
       if (!n && toDeb) {
@@ -286,7 +284,6 @@ export function start() {
         r.classList.remove('shut');
       });
       zero.classList.remove('clear', 'falling');
-      count.textContent = String(rows.length);
       zeroLake.hide();
       follow(rows[0].querySelector<HTMLElement>('.rowdone')!);
     });
