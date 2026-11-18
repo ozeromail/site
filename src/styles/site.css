@@ -152,8 +152,10 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 /* Demos: a small live piece of the app, drawn as the app draws it */
 .demo{overflow:hidden;width:100%;max-width:380px;margin:6px 0 4px;padding:6px;border-radius:20px;background:var(--bg-soft);font-size:15px;line-height:1.3}
 .demo p{margin:0}
-.demo .dh{display:flex;align-items:center;gap:8px;padding:8px 10px 10px;font-weight:600;color:var(--fg)}
-.demo.zero .dh{padding:10px 14px 8px;font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.01em}
+.demo .dh{padding:8px 10px 10px;font-weight:600;color:var(--fg)}
+/* The list's big title, as in the app */
+.demo.zero .dh,.hand .ht{font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.01em;color:var(--fg)}
+.demo.zero .dh{padding:10px 14px 8px}
 .demo .dl{display:grid;gap:0;border-radius:16px;background:var(--bg);overflow:hidden}
 /* A row: sender and time, then the subject; unread hangs a 7px dot before the sender */
 .demo .di{position:relative;display:grid;gap:2px;padding:13px 14px 13px 26px;background:var(--bg)}
@@ -169,8 +171,8 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .demo .unread .l2{font-weight:550;color:var(--fg)}
 .dots{display:inline-flex;padding-left:3px}
 .dots i{width:11px;height:11px;margin-left:-3px;border-radius:50%;border:2px solid var(--bg);--c:var(--acc-1);background:var(--window)}
-.dots i:nth-child(2){--c:var(--acc-2)}
-.dots i:nth-child(3){--c:var(--acc-3)}
+.dots i:nth-child(2),.dock .acc i:nth-child(2){--c:var(--acc-2)}
+.dots i:nth-child(3),.dock .acc i:nth-child(3){--c:var(--acc-3)}
 /* Inbox Zero: rows are swiped away as letters are; the last one leaves still water */
 .zero .swipe{position:relative;display:grid;overflow:hidden}
 .zero .swipe>*{grid-area:1/1}
@@ -203,10 +205,10 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .tabs label>span,.seg label>span{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;min-height:34px;padding:0 4px;border-radius:11px;font-size:14px;line-height:1.15;text-align:center;white-space:nowrap;min-width:0;font-weight:500;color:var(--fg-3);cursor:pointer;transition:background-color .25s var(--ease),color .25s var(--ease),box-shadow .25s var(--ease)}
 /* One paper thumb that slides to the choice */
 .tabs::before,.seg::before{content:"";position:absolute;top:3px;bottom:3px;left:calc(3px + (100% - 6px) / var(--n,2) * var(--i,0));width:calc((100% - 6px) / var(--n,2));border-radius:11px;background:var(--raised);box-shadow:var(--lift),var(--lit);transition:left .3s var(--ease)}
-.tabs input:checked+span,.seg input:checked+span{color:var(--fg);font-weight:600}
+.tabs input:checked+span,.seg input:checked+span,.ptabs .on{color:var(--fg);font-weight:600}
 .tabs input:focus-visible+span,.seg input:focus-visible+span{outline:2px solid var(--accent);outline-offset:-2px}
-.tabs .tl{min-width:0;overflow:hidden;text-overflow:ellipsis}
-.tabs .n{font-size:11px;font-weight:700;color:var(--accent)}
+.tabs .tl,.ptabs .tl{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.tabs .n,.ptabs .n{font-size:11px;font-weight:700;color:var(--accent)}
 /* Every demo keeps one height in all its states, so the page never jumps: states share one grid cell and cross-fade */
 .focus .dl>.fl,.boxes .v,.hand .v,.work .reply>*{grid-area:1/1;transition:opacity .25s var(--ease),visibility 0s .25s}
 .focus .fl,.boxes .v1,.boxes:has([value="1"]:checked) .v0,.hand .v1,.hand:has([value="1"]:checked) .v0{opacity:0;visibility:hidden}
@@ -302,29 +304,24 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .work .chg{border:0;background:var(--bg-soft);color:var(--fg);font-weight:600;font-size:13px;min-height:36px;padding:0 12px;border-radius:10px;cursor:pointer}
 .work .chg:hover{background:var(--line)}
 /* The app's dock: tabs on a glass pill, then the accounts button, search and a round new message.
-   Glass is a faint wash with a light rim and no shadow, as in the app since the dock lost its shadows */
+   Glass is a faint wash with a light rim and no shadow, as in the app */
 .bar{display:grid;gap:8px;padding:8px 10px 10px}
-.ptabs,.dock .acc,.dock .find{background:color-mix(in srgb,var(--bg-soft) 70%,transparent);border:1px solid color-mix(in srgb,var(--fg) 7%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
-.tabs.ptabs{margin:0;box-shadow:none}
-.ptabs,.tabs.ptabs{display:flex;padding:2px;border-radius:999px}
-.ptabs>span,.tabs.ptabs label>span{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:center;gap:5px;min-height:32px;padding:0 6px;border-radius:999px;font-size:13px;font-weight:500;color:var(--fg-3);white-space:nowrap}
-.tabs.ptabs input:checked+span{color:var(--fg);font-weight:600}
+.ptabs,.dock .acc,.dock .find{background:color-mix(in srgb,var(--bg-soft) 70%,transparent);border:1px solid color-mix(in srgb,var(--fg) 7%,transparent)}
+.ptabs{display:flex;margin:0;padding:2px;border-radius:999px;box-shadow:none}
+.ptabs>span,.tabs.ptabs label>span{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:center;gap:5px;min-height:32px;padding:0 6px;border-radius:999px;font-size:13px;white-space:nowrap}
+.ptabs>span{font-weight:500;color:var(--fg-3)}
 .tabs.ptabs::before{top:2px;bottom:2px;left:calc(2px + (100% - 4px) / var(--n,2) * var(--i,0));width:calc((100% - 4px) / var(--n,2));border-radius:999px}
-.ptabs .on{background:var(--raised);box-shadow:var(--lift),var(--lit);color:var(--fg);font-weight:600}
-.ptabs .tl{min-width:0;overflow:hidden;text-overflow:ellipsis}
-.ptabs .n{font-size:11px;font-weight:700;color:var(--accent)}
+.ptabs .on{background:var(--raised);box-shadow:var(--lift),var(--lit)}
 .dock{display:flex;align-items:center;gap:8px}
 .dock>span{display:grid;place-items:center;height:42px;border-radius:999px;flex:none}
 .dock .acc{width:42px;grid-template-columns:repeat(2,8px);place-content:center;gap:4px}
 .dock .acc i{width:8px;height:8px;border-radius:50%;--c:var(--acc-1);background:var(--window)}
-.dock .acc .a2{--c:var(--acc-2)}
-.dock .acc .a3{--c:var(--acc-3);grid-column:1/-1;justify-self:center}
+.dock .acc i:nth-child(3){grid-column:1/-1;justify-self:center}
 .dock .find{flex:1;min-width:0;display:flex;align-items:center;gap:8px;padding:0 14px;font-size:14px;color:var(--fg-3);white-space:nowrap;overflow:hidden}
 .dock .new{width:42px;background:var(--accent-fill);color:#fff}
 .dock svg{flex:none;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 /* Tabs: the list on top, the tabs in the dock below it, as in the app */
 .demo.focus .screen{display:grid;border-radius:16px;background:var(--bg);overflow:hidden}
-.demo.focus .dl{border-radius:0}
 .hand .bar{margin-top:auto;padding:8px 12px 14px}
 /* One hand: a small phone screen; what the thumb touches sits in the lit lower part */
 .hand .screen{position:relative;display:grid;height:380px;border-radius:22px;background:var(--bg);overflow:hidden;isolation:isolate}
@@ -332,7 +329,7 @@ footer a{text-decoration:underline;text-underline-offset:.2em}
 .hand .screen::before{content:"";position:absolute;z-index:-1;right:0;bottom:0;width:170%;aspect-ratio:1;border-radius:50%;transform:translate(50%,50%);background:radial-gradient(closest-side,var(--accent-soft) 45%,color-mix(in srgb,var(--accent-soft) 35%,transparent) 99%);border:1.5px dashed color-mix(in srgb,var(--accent) 35%,transparent);transition:transform .35s var(--ease)}
 .hand:has([value="1"]:checked) .screen::before{transform:translate(50%,calc(50% - 120px))}
 .hand .v{display:flex;flex-direction:column;min-height:0}
-.hand .ht{padding:18px 16px 6px;font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.01em;color:var(--fg)}
+.hand .ht{padding:18px 16px 6px}
 .hand .hl .di{background:none}
 .hand .quote{margin:16px 16px 0;padding:10px 12px;border-radius:12px;background:var(--bg-soft);font-size:13px;color:var(--fg-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hand .page{margin-top:auto;padding:0 16px 8px}
