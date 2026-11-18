@@ -43,6 +43,10 @@
       "demo": "hand"
     },
     {
+      "q": "And everything you’d expect",
+      "a": "Search finds letters on the phone and on the server. Drafts, attachments, images right in the text, threads, other addresses to send from. Sending and every action can be undone for a few seconds. A dark theme that follows your phone, and two panes on a tablet."
+    },
+    {
       "q": "Made by one person, for my own mail",
       "a": "I’m Khizri, a designer and developer. I build Ozero Mail alone. The basics are free forever; extras are a one-time purchase. There will never be ads."
     }
