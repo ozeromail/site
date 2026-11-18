@@ -4,6 +4,7 @@ import type { Strings } from '../i18n';
 import { fill } from '../i18n/format';
 import Row from './Row.astro';
 import Under from './Under.astro';
+import Dock from './Dock.astro';
 
 interface Props {
   t: Strings;
@@ -15,7 +16,7 @@ const icons = ['#i-sent', '#i-archive', '#i-spam', '#i-trash'];
 ---
 {kind === 'zero' && (
   <div class="demo zero">
-    <p class="dh">{d.zero.title}<span class="dc">{d.zero.rows.length}</span></p>
+    <p class="dh">{d.zero.title}</p>
     <div class="dl">
       {d.zero.rows.map(([who, what, when]) => (
         <div class="swipe">
@@ -66,11 +67,15 @@ const icons = ['#i-sent', '#i-archive', '#i-spam', '#i-trash'];
 )}
 {kind === 'focus' && (
   <div class="demo focus">
-    <div class="tabs" role="radiogroup" aria-label={d.focus.label}>
-      {d.focus.tabs.map((tab, i) => <label><input type="radio" name="focus" value={i} checked={i === 0} /><span><span class="tl">{tab}</span>{i === 0 && <b class="n">1</b>}</span></label>)}
-    </div>
-    <div class="dl">
-      {d.focus.lists.map((list, i) => <div class={`fl f${i}`}>{list.map(([who, what, when], j) => <Row who={who} what={what} when={when} unread={i === 0 && j === 0} />)}</div>)}
+    <div class="screen">
+      <div class="dl">
+        {d.focus.lists.map((list, i) => <div class={`fl f${i}`}>{list.map(([who, what, when], j) => <Row who={who} what={what} when={when} unread={i === 0 && j === 0} />)}</div>)}
+      </div>
+      <Dock search={d.search}>
+        <div class="tabs ptabs" role="radiogroup" aria-label={d.focus.label}>
+          {d.focus.tabs.map((tab, i) => <label><input type="radio" name="focus" value={i} checked={i === 0} /><span><span class="tl">{tab}</span>{i === 0 && <b class="n">1</b>}</span></label>)}
+        </div>
+      </Dock>
     </div>
   </div>
 )}
@@ -103,11 +108,9 @@ const icons = ['#i-sent', '#i-archive', '#i-spam', '#i-trash'];
       <div class="v v0">
         <p class="ht">{d.hand.title}</p>
         <div class="hl">{d.zero.rows.slice(0, 2).map(([who, what, when], i) => <Row who={who} what={what} when={when} unread={i === 0} />)}</div>
-        <p class="dock">
-          <span class="dots"><i></i><i></i><i></i></span>
-          <svg><use href="#i-search"/></svg>
-          <svg><use href="#i-compose"/></svg>
-        </p>
+        <Dock search={d.search}>
+          <p class="ptabs" aria-hidden="true">{d.focus.tabs.map((tab, i) => <span class:list={{ on: i === 0 }}><span class="tl">{tab}</span>{i === 0 && <b class="n">1</b>}</span>)}</p>
+        </Dock>
       </div>
       <div class="v v1">
         <p class="quote">{d.zero.rows[0][0]} · {d.zero.rows[0][1]}</p>
